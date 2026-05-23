@@ -1,28 +1,36 @@
 {
   "name": "cladedesigns",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "description": "HeyGen HyperFrames video-as-code workspace — HTML + GSAP compositions that render to MP4",
   "private": true,
+  "type": "module",
+  "workspaces": [
+    "main-video",
+    "product-promo",
+    "kinetic-type",
+    "swiss-grid",
+    "blank-starter"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
+    "dev:main": "npx hyperframes preview --project main-video",
+    "dev:promo": "npx hyperframes preview --project product-promo",
+    "dev:kinetic": "npx hyperframes preview --project kinetic-type",
+    "dev:swiss": "npx hyperframes preview --project swiss-grid",
+    "lint:all": "npx hyperframes lint main-video && npx hyperframes lint product-promo && npx hyperframes lint kinetic-type && npx hyperframes lint swiss-grid",
+    "render:main": "npx hyperframes render main-video --output renders/main-video.mp4",
+    "render:all": "npm run render:main && npx hyperframes render product-promo --output renders/product-promo.mp4 && npx hyperframes render kinetic-type --output renders/kinetic-type.mp4",
+    "skills": "npx hyperframes skills"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jibranpcccc/cladedesigns"
+  },
+  "keywords": ["heygen", "hyperframes", "video-as-code", "gsap", "html-video"],
+  "license": "MIT",
   "dependencies": {
-    "@heygen/streaming-avatar": "^2.0.17",
-    "livekit-client": "^2.19.0",
-    "next": "16.2.6",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
-  },
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.2.6",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "@hyperframes/core": "^0.6.38",
+    "@hyperframes/player": "^0.6.38",
+    "@hyperframes/shader-transitions": "^0.6.38",
+    "hyperframes": "^0.6.38"
   }
 }

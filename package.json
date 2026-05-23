@@ -25,12 +25,21 @@
     "type": "git",
     "url": "https://github.com/jibranpcccc/cladedesigns"
   },
-  "keywords": ["heygen", "hyperframes", "video-as-code", "gsap", "html-video"],
+  "keywords": [
+    "heygen",
+    "hyperframes",
+    "video-as-code",
+    "gsap",
+    "html-video"
+  ],
   "license": "MIT",
   "dependencies": {
+    "@fontsource/jetbrains-mono": "^5.2.8",
+    "@fontsource/space-grotesk": "^5.2.10",
     "@hyperframes/core": "^0.6.38",
     "@hyperframes/player": "^0.6.38",
     "@hyperframes/shader-transitions": "^0.6.38",
+    "gsap": "^3.15.0",
     "hyperframes": "^0.6.38"
   }
 }

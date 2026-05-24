@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Premium Screen Studio — AI Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12/dist/gsap.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:#020612;cursor:none;font-family:'Inter',system-ui,sans-serif}
+#root{position:relative;width:1920px;height:1080px;overflow:hidden;background:#020612}
+
+/* ── Blueprint grid ── */
+#grid{position:absolute;inset:0;pointer-events:none;z-index:1;
+  background-image:linear-gradient(rgba(6,182,212,.05)1px,transparent 1px),linear-gradient(90deg,rgba(6,182,212,.05)1px,transparent 1px);
+  background-size:40px 40px}
+
+/* ── Neon blobs ── */
+.blob{position:absolute;border-radius:50%;filter:blur(130px);pointer-events:none;z-index:2;animation:blobFloat 14s ease-in-out infinite alternate}
+#blob-c{width:760px;height:520px;left:-120px;top:180px;background:rgba(6,182,212,.11);animation-delay:0s}
+#blob-m{width:640px;height:640px;right:-100px;bottom:80px;background:rgba(220,0,255,.09);animation-delay:-6s}
+@keyframes blobFloat{
+  0%{transform:translate(0,0) scale(1)}
+  40%{transform:translate(28px,-22px) scale(1.06)}
+  70%{transform:translate(-18px,26px) scale(0.96)}
+  100%{transform:translate(14px,8px) scale(1.03)}}
+
+/* ── Vignette ── */
+#vig{position:absolute;inset:0;z-index:3;pointer-events:none;
+  background:radial-gradient(ellipse 1800px 1000px at center,transparent 38%,rgba(2,6,18,.75)100%)}
+
+/* ── Perspective wrapper ── */
+#persp{position:absolute;inset:0;z-index:5;perspective:1400px}
+
+/* ── Stage (inertia target) ── */
+#stage{position:absolute;inset:0;transform-style:preserve-3d}
+
+/* ── Shared window base ── */
+.window{
+  position:absolute;width:1380px;top:200px;left:270px;
+  background:rgba(6,10,26,.82);
+  backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);
+  border:1px solid rgba(255,255,255,.07);border-radius:18px;
+  box-shadow:0 0 0 1px rgba(255,255,255,.03) inset,0 50px 140px rgba(0,0,0,.65),0 0 80px rgba(6,182,212,.03);
+  overflow:hidden;transform-style:preserve-3d}
+
+/* ── Title bar ── */
+.titlebar{height:46px;background:rgba(255,255,255,.025);border-bottom:1px solid rgba(255,255,255,.06);
+  display:flex;align-items:center;padding:0 18px;gap:18px}
+.tlights{display:flex;gap:8px;align-items:center}
+.tl{width:12px;height:12px;border-radius:50%}
+.tl-r{background:#ff5f57}.tl-y{background:#febc2e}.tl-g{background:#28c840}
+.tbar-title{flex:1;text-align:center;font-size:12px;font-weight:500;color:rgba(255,255,255,.3);letter-spacing:.5px}
+.tbar-spc{width:52px}
+
+/* ── IDE body ── */
+#ide-body{padding:48px 60px 36px}
+#ide-eyebrow{font-size:12px;letter-spacing:6px;text-transform:uppercase;color:rgba(6,182,212,.65);margin-bottom:36px;font-weight:600}
+.word-row{display:flex;flex-wrap:wrap;gap:2px 0;margin-bottom:4px}
+
+/* ── Words ── */
+.word{position:relative;display:inline-block;padding:7px 16px;cursor:default}
+.wt{position:relative;z-index:2;display:block;font-size:50px;font-weight:700;line-height:1.15;
+  color:rgba(255,255,255,.17);letter-spacing:-.5px}
+.pill{position:absolute;inset:0;border-radius:11px;
+  background:rgba(6,182,212,.11);border:1px solid rgba(6,182,212,.38);
+  box-shadow:0 0 24px rgba(6,182,212,.08);z-index:1}
+
+/* ── CTA ── */
+#cta-wrap{padding:0 60px 46px;position:relative}
+#cta-glow{position:absolute;inset:0 0 0 60px;border-radius:12px;
+  background:rgba(6,182,212,.22);border:1px solid rgba(6,182,212,.85);
+  box-shadow:0 0 40px rgba(6,182,212,.28)}
+#cta-btn{position:relative;z-index:2;display:inline-flex;align-items:center;gap:14px;
+  padding:18px 36px;border-radius:12px;
+  background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.22);
+  font-size:22px;font-weight:600;color:rgba(6,182,212,.72);letter-spacing:.2px}
+#cta-ic{font-size:26px;font-weight:900}
+
+/* ── IDE border glow ring ── */
+#ide-ring{position:absolute;inset:-2px;border-radius:20px;border:1.5px solid rgba(6,182,212,0);pointer-events:none;z-index:20}
+
+/* ── Analytics window ── */
+#ana-body{padding:44px 44px;display:flex;gap:28px}
+.mc{flex:1;background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:34px 30px}
+.mc-lbl{font-size:11px;letter-spacing:5px;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:22px;font-weight:600}
+.mc-val{font-size:78px;font-weight:900;line-height:1;color:#fff;letter-spacing:-3px;margin-bottom:14px}
+.mc-dlta{font-size:16px;color:rgba(6,182,212,.8);font-weight:600;display:flex;align-items:center;gap:8px}
+.mc-dlta::before{content:'↑';font-size:14px}
+
+/* ── Cursor ── */
+#cur{position:absolute;top:0;left:0;z-index:100;pointer-events:none}
+#cur-glow{position:absolute;width:280px;height:280px;border-radius:50%;
+  border:1px solid rgba(6,182,212,.14);margin:-140px 0 0 -140px;
+  background:radial-gradient(circle at center,rgba(6,182,212,.055)0%,transparent 65%)}
+#cur-arrow{position:absolute;width:22px;height:28px;margin:-2px 0 0 -2px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.6))}
+
+/* ── Shockwave ── */
+#shockwave{position:absolute;z-index:99;width:28px;height:28px;border-radius:50%;
+  border:2.5px solid rgba(6,182,212,.9);margin:-14px 0 0 -14px;pointer-events:none}
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="premium-screen" data-width="1920" data-height="1080" data-start="0" data-duration="25">
+<div class="scene clip" id="s1" data-start="0" data-duration="25" data-track-index="0">
+
+  <div id="grid"></div>
+  <div class="blob" id="blob-c"></div>
+  <div class="blob" id="blob-m"></div>
+  <div id="vig"></div>
+
+  <div id="persp">
+   <div id="stage">
+
+    <!-- ── IDE WINDOW ── -->
+    <div class="window" id="ide">
+      <div id="ide-ring"></div>
+      <div class="titlebar">
+        <div class="tlights"><div class="tl tl-r"></div><div class="tl tl-y"></div><div class="tl tl-g"></div></div>
+        <div class="tbar-title">workflow.md — HyperFrames Studio</div>
+        <div class="tbar-spc"></div>
+      </div>
+      <div id="ide-body">
+        <div id="ide-eyebrow">Getting started</div>
+        <div class="word-row">
+          <span class="word" id="w0"><span class="wt">Transform</span><span class="pill" id="p0"></span></span>
+          <span class="word" id="w1"><span class="wt">your</span><span class="pill" id="p1"></span></span>
+          <span class="word" id="w2"><span class="wt">screen</span><span class="pill" id="p2"></span></span>
+          <span class="word" id="w3"><span class="wt">recordings</span><span class="pill" id="p3"></span></span>
+          <span class="word" id="w4"><span class="wt">into</span><span class="pill" id="p4"></span></span>
+        </div>
+        <div class="word-row">
+          <span class="word" id="w5"><span class="wt">polished</span><span class="pill" id="p5"></span></span>
+          <span class="word" id="w6"><span class="wt">cinematic</span><span class="pill" id="p6"></span></span>
+          <span class="word" id="w7"><span class="wt">videos</span><span class="pill" id="p7"></span></span>
+          <span class="word" id="w8"><span class="wt">with</span><span class="pill" id="p8"></span></span>
+          <span class="word" id="w9"><span class="wt">zero</span><span class="pill" id="p9"></span></span>
+          <span class="word" id="w10"><span class="wt">effort.</span><span class="pill" id="p10"></span></span>
+        </div>
+      </div>
+      <div id="cta-wrap">
+        <div id="cta-glow"></div>
+        <div id="cta-btn"><span id="cta-ic">→</span> Start free at hyperframes.heygen.com</div>
+      </div>
+    </div>
+
+    <!-- ── ANALYTICS WINDOW ── -->
+    <div class="window" id="analytics">
+      <div class="titlebar">
+        <div class="tlights"><div class="tl tl-r"></div><div class="tl tl-y"></div><div class="tl tl-g"></div></div>
+        <div class="tbar-title">analytics.heygen.com — Dashboard</div>
+        <div class="tbar-spc"></div>
+      </div>
+      <div id="ana-body">
+        <div class="mc" id="mc1">
+          <div class="mc-lbl">Total Views</div>
+          <div class="mc-val">12.4K</div>
+          <div class="mc-dlta">23% this week</div>
+        </div>
+        <div class="mc" id="mc2">
+          <div class="mc-lbl">Completion Rate</div>
+          <div class="mc-val">94%</div>
+          <div class="mc-dlta">8% vs last week</div>
+        </div>
+        <div class="mc" id="mc3">
+          <div class="mc-lbl">Revenue</div>
+          <div class="mc-val">$2.4K</div>
+          <div class="mc-dlta">41% this month</div>
+        </div>
+      </div>
+    </div>
+
+   </div><!-- #stage -->
+  </div><!-- #persp -->
+
+  <!-- ── CURSOR ── -->
+  <div id="cur">
+    <div id="cur-glow"></div>
+    <svg id="cur-arrow" viewBox="0 0 22 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M2.5 2L2.5 23.5L8.5 17.5L12 25.5L16.5 23.8L13 15.5L20.5 15.5Z" fill="white" stroke="rgba(0,0,0,.55)" stroke-width="1.5" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+  <!-- ── SHOCKWAVE ── -->
+  <div id="shockwave"></div>
+
+</div><!-- s1 -->
+</div><!-- root -->
+
+<script>
+window.__timelines = window.__timelines || {};
+var tl = gsap.timeline({ paused: true });
+
+var N = 11, GAP = 0.55;
+
+/* ─── INITIAL STATES ─────────────────────────────── */
+tl.set("#ide",        { autoAlpha:0, y:28, scale:.97 }, 0);
+tl.set("#analytics",  { x:1660, autoAlpha:1 }, 0);
+tl.set(".pill",       { scale:.82, autoAlpha:0 }, 0);
+tl.set(["#mc1","#mc2","#mc3"], { y:-180, autoAlpha:0 }, 0);
+tl.set("#shockwave",  { scale:0, autoAlpha:0 }, 0);
+tl.set("#cta-glow",   { autoAlpha:0 }, 0);
+tl.set("#ide-ring",   { autoAlpha:0 }, 0);
+tl.set("#cur",        { x:560, y:440 }, 0);
+
+/* ─── PHASE 0 · IDE ENTERS ───────────────────────── */
+tl.to("#ide", { autoAlpha:1, y:0, scale:1, duration:.55, ease:"expo.out" }, 0);
+
+/* ─── PHASE 1 · WORD-BY-WORD HIGHLIGHT (0.3–6.35s) ─ */
+
+// Cursor drifts slowly across text, row by row
+tl.to("#cur", { x:720, y:440, duration:1.6, ease:"power2.inOut" }, .3);
+tl.to("#cur", { x:1020, y:438, duration:1.6, ease:"power2.inOut" }, 1.6);
+tl.to("#cur", { x:640, y:524, duration:.45, ease:"power2.inOut" }, 3.1);
+tl.to("#cur", { x:950, y:522, duration:1.4, ease:"power2.inOut" }, 3.4);
+tl.to("#cur", { x:1220, y:522, duration:.9, ease:"power2.inOut" }, 4.9);
+
+// Stage inertia — subtle lag behind cursor
+tl.to("#stage", { x:7, y:-2, duration:1.9, ease:"power1.inOut" }, .35);
+tl.to("#stage", { x:-4, y:3, duration:1.6, ease:"power1.inOut" }, 2.3);
+tl.to("#stage", { x:4, y:2, duration:1.8, ease:"power1.inOut" }, 4.1);
+
+// Activate / deactivate each word
+[0,1,2,3,4,5,6,7,8,9,10].forEach(function(i) {
+  var wid = "#w" + i, pid = "#p" + i;
+  var t   = 0.3 + i * GAP;
+  var tOff = (i === N-1) ? t + .95 : t + GAP;
+
+  tl.to(pid,  { scale:1, autoAlpha:1, duration:.17, ease:"back.out(2.2)" }, t);
+  tl.to(wid+" .wt", { color:"#fff", textShadow:"0 0 18px rgba(6,182,212,.75)", duration:.14 }, t);
+  tl.to(wid,  { scale:1.1, duration:.17, ease:"back.out(1.8)" }, t);
+
+  tl.to(pid,  { scale:.88, autoAlpha:0, duration:.24 }, tOff);
+  tl.to(wid+" .wt", { color:"rgba(255,255,255,.36)", textShadow:"none", duration:.2 }, tOff);
+  tl.to(wid,  { scale:1, duration:.2 }, tOff);
+});
+
+/* ─── PHASE 2 · CURSOR → CTA + ZOOM (6.5–11s) ────── */
+
+// Cursor descends to CTA
+tl.to("#cur", { x:480, y:610, duration:.75, ease:"power3.inOut" }, 6.5);
+tl.to("#stage", { x:0, y:0, duration:.6, ease:"power2.inOut" }, 6.5);
+
+// Camera pushes in 1.25× toward CTA (cx≈380, cy≈590)
+// translate formula: x=(960-380)*0.25=145, y=(540-590)*0.25=-12
+tl.to("#stage", { scale:1.25, x:145, y:-12, duration:.6, ease:"power2.inOut" }, 7.05);
+
+// Magnetic snap — cursor locks to CTA center
+tl.to("#cur", { x:590, y:628, duration:.3, ease:"expo.out" }, 7.35);
+
+// CTA link lights up
+tl.to("#cta-glow", { autoAlpha:1, duration:.22, ease:"power2.out" }, 7.35);
+tl.to("#cta-btn",  { scale:1.08, duration:.22, ease:"power2.out", transformOrigin:"left center" }, 7.35);
+tl.to("#ide-ring", { autoAlpha:1, boxShadow:"0 0 0 1.5px rgba(6,182,212,.55),0 0 50px rgba(6,182,212,.18)", borderColor:"rgba(6,182,212,.55)", duration:.2 }, 7.35);
+
+// ── CLICK (7.55s) ──
+// 3D Z-axis compression: tilt 2.5° X, -1.5° Y
+tl.to("#ide", { rotateX:2.5, rotateY:-1.5, scale:.978, duration:.18, ease:"power3.out" }, 7.55);
+tl.to("#cur-arrow", { scale:.84, duration:.1 }, 7.55);
+tl.to("#cur-glow",  { background:"radial-gradient(circle,rgba(6,182,212,.32)0%,transparent 65%)", duration:.09 }, 7.55);
+
+// Shockwave ring from cursor position
+tl.set("#shockwave", { x:590, y:628, scale:0, autoAlpha:1 }, 7.55);
+tl.to("#shockwave",  { scale:22, autoAlpha:0, duration:.65, ease:"power2.out" }, 7.55);
+
+// ── ELASTIC RECOIL (7.73s) ──
+tl.to("#ide", { rotateX:0, rotateY:0, scale:1, duration:.65, ease:"elastic.out(1,.38)" }, 7.73);
+tl.to("#cur-arrow", { scale:1, duration:.35, ease:"elastic.out(1,.5)" }, 7.73);
+tl.to("#cur-glow", { background:"radial-gradient(circle,rgba(6,182,212,.055)0%,transparent 65%)", duration:.4 }, 7.73);
+tl.to("#ide-ring",  { autoAlpha:0, duration:.5 }, 7.9);
+tl.to("#cta-glow",  { autoAlpha:0, duration:.5 }, 7.9);
+tl.to("#cta-btn",   { scale:1, duration:.4, ease:"power2.out" }, 7.9);
+
+// Camera pulls back to 1×
+tl.to("#stage", { scale:1, x:0, y:0, duration:.7, ease:"power2.inOut" }, 9.1);
+tl.to("#cur",   { x:960, y:280, duration:1.1, ease:"power2.inOut" }, 9.1);
+
+/* ─── PHASE 3 · INFINITE CANVAS SLIDE (11–25s) ─────── */
+
+// IDE exits left, analytics enters from right simultaneously
+tl.to("#ide",       { x:-1680, duration:.65, ease:"expo.inOut" }, 11.05);
+tl.to("#analytics", { x:0,     duration:.65, ease:"expo.inOut" }, 11.15);
+
+// Cursor shifts to address bar of new window
+tl.to("#cur", { x:960, y:228, duration:.7, ease:"power3.inOut" }, 11.2);
+
+// Three metric cards drop from top, staggered, with bounce
+tl.to("#mc1", { y:0, autoAlpha:1, duration:.5, ease:"back.out(1.8)" }, 12.0);
+tl.to("#mc2", { y:0, autoAlpha:1, duration:.5, ease:"back.out(1.8)" }, 12.3);
+tl.to("#mc3", { y:0, autoAlpha:1, duration:.5, ease:"back.out(1.8)" }, 12.6);
+
+// Cursor settles into metrics area
+tl.to("#cur", { x:450, y:500, duration:1.2, ease:"power2.inOut" }, 13.0);
+
+// Macro creep zoom 100% → 104% over 10 seconds — lock frame
+tl.to("#stage", { scale:1.04, duration:10, ease:"none" }, 13.2);
+
+// Cursor drifts slowly during zoom
+tl.to("#cur", { x:820, y:460, duration:10, ease:"power1.inOut" }, 13.2);
+
+/* ─── FADE OUT ──────────────────────────────────────── */
+tl.to("#s1", { autoAlpha:0, duration:.5 }, 24.5);
+
+window.__timelines["premium-screen"] = tl;
+</script>
+</div>
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BREAKING AI — News Alert</title>
+  <script src="../assets/js/gsap.min.js"></script>
+  <style>
+    @font-face { font-family:"Space Grotesk"; src:url("../assets/fonts/space-grotesk-latin-700-normal.woff2") format("woff2"); font-weight:700; }
+    @font-face { font-family:"Space Grotesk"; src:url("../assets/fonts/space-grotesk-latin-400-normal.woff2") format("woff2"); font-weight:400; }
+    @font-face { font-family:"JetBrains Mono"; src:url("../assets/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2"); font-weight:400; }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    body, html { width:1920px; height:1080px; overflow:hidden; background:#08000a; font-family:"Space Grotesk",sans-serif; }
+    #root { position:relative; width:1920px; height:1080px; overflow:hidden; background:#08000a; }
+
+    /* Dramatic BG sweep */
+    #bg-sweep {
+      position:absolute; inset:0;
+      background:linear-gradient(135deg, #0a0008 0%, #100010 50%, #08000a 100%);
+    }
+    #bg-red-glow {
+      position:absolute; inset:0;
+      background:radial-gradient(ellipse 900px 300px at 50% 30%, rgba(255,20,60,0.12) 0%,transparent 70%);
+    }
+
+    /* Top alert bar */
+    #alert-bar {
+      position:absolute; top:0; left:0; right:0; height:90px;
+      background:#FF1438;
+      display:flex; align-items:center; padding:0 60px; gap:30px;
+      overflow:hidden;
+    }
+    #alert-bar-shine {
+      position:absolute; top:0; left:-200px; width:200px; height:100%;
+      background:linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      z-index:2;
+    }
+    #breaking-label {
+      font-size:40px; font-weight:700; letter-spacing:6px; text-transform:uppercase;
+      color:#fff; position:relative; z-index:1;
+    }
+    #alert-dot {
+      width:14px; height:14px; border-radius:50%;
+      background:#fff; box-shadow:0 0 12px rgba(255,255,255,0.8);
+      position:relative; z-index:1;
+    }
+    #alert-date {
+      margin-left:auto; font-family:"JetBrains Mono",monospace;
+      font-size:22px; color:rgba(255,255,255,0.7); letter-spacing:3px;
+      position:relative; z-index:1;
+    }
+
+    /* MAIN HEADLINE */
+    #headline-wrap {
+      position:absolute; top:160px; left:80px; right:80px;
+    }
+    #headline-sub {
+      font-family:"JetBrains Mono",monospace; font-size:24px;
+      letter-spacing:6px; text-transform:uppercase; color:#FF1438;
+      margin-bottom:24px;
+    }
+    #headline {
+      font-size:148px; font-weight:700; line-height:0.9;
+      color:#fff; letter-spacing:-4px;
+    }
+    #headline .hl-red { color:#FF1438; }
+    #headline .hl-dim { color:rgba(255,255,255,0.4); }
+
+    /* Stats row */
+    #stats-row {
+      position:absolute; top:640px; left:80px; right:80px;
+      display:flex; gap:0; border-top:1px solid rgba(255,255,255,0.08);
+      padding-top:40px;
+    }
+    .stat-col {
+      flex:1; padding-right:60px;
+      border-right:1px solid rgba(255,255,255,0.06);
+    }
+    .stat-col:last-child { border-right:none; }
+    .stat-num {
+      font-size:80px; font-weight:700; color:#fff; line-height:1;
+      margin-bottom:8px;
+    }
+    .stat-num .stat-unit { font-size:40px; color:#FF1438; }
+    .stat-label {
+      font-family:"JetBrains Mono",monospace; font-size:18px;
+      text-transform:uppercase; letter-spacing:4px;
+      color:rgba(255,255,255,0.35);
+    }
+
+    /* Bottom ticker */
+    #ticker-wrap {
+      position:absolute; bottom:0; left:0; right:0; height:70px;
+      background:rgba(255,20,56,0.15); border-top:1px solid rgba(255,20,56,0.3);
+      overflow:hidden; display:flex; align-items:center;
+    }
+    #ticker-tag {
+      background:#FF1438; padding:0 28px; height:100%;
+      display:flex; align-items:center;
+      font-family:"JetBrains Mono",monospace; font-size:20px;
+      letter-spacing:4px; color:#fff; flex-shrink:0; white-space:nowrap;
+    }
+    #ticker-text {
+      padding-left:40px; white-space:nowrap;
+      font-family:"JetBrains Mono",monospace; font-size:22px;
+      letter-spacing:2px; color:rgba(255,255,255,0.6);
+    }
+
+    /* Side accent line */
+    #accent-v {
+      position:absolute; top:90px; bottom:70px; left:60px;
+      width:3px; background:linear-gradient(to bottom,#FF1438,rgba(255,20,56,0));
+    }
+
+    /* Scan line effect */
+    #hscan {
+      position:absolute; left:0; right:0; height:2px; top:0;
+      background:linear-gradient(to right,transparent,rgba(255,20,56,0.8),transparent);
+      z-index:20;
+    }
+
+    .vig {
+      position:absolute; inset:0; z-index:90; pointer-events:none;
+      background:radial-gradient(ellipse 1800px 1000px at center, transparent 40%,rgba(0,0,0,0.7) 100%);
+    }
+  </style>
+</head>
+<body>
+<div id="root" data-composition-id="clip5-breaking" data-width="1920" data-height="1080" data-start="0" data-duration="4">
+  <div class="scene clip" id="s1" data-start="0" data-duration="4" data-track-index="0">
+    <div id="bg-sweep"></div>
+    <div id="bg-red-glow"></div>
+    <div id="hscan"></div>
+
+    <!-- Top alert bar -->
+    <div id="alert-bar">
+      <div id="alert-bar-shine"></div>
+      <div id="alert-dot"></div>
+      <div id="breaking-label">Breaking AI</div>
+      <div id="alert-date">May 2025</div>
+    </div>
+
+    <!-- Vertical accent -->
+    <div id="accent-v"></div>
+
+    <!-- Main headline -->
+    <div id="headline-wrap">
+      <div id="headline-sub">Artificial Intelligence · Latest</div>
+      <div id="headline">
+        <span class="hl-dim">Open</span><span class="hl-red">AI</span><br>
+        <span>Releases</span><br>
+        <span class="hl-red">GPT-5</span>
+      </div>
+    </div>
+
+    <!-- Stats row -->
+    <div id="stats-row">
+      <div class="stat-col">
+        <div class="stat-num" id="stat1">1M<span class="stat-unit">+</span></div>
+        <div class="stat-label">Users in 24h</div>
+      </div>
+      <div class="stat-col" style="padding-left:60px;">
+        <div class="stat-num" id="stat2">10<span class="stat-unit">x</span></div>
+        <div class="stat-label">Faster reasoning</div>
+      </div>
+      <div class="stat-col" style="padding-left:60px;">
+        <div class="stat-num" id="stat3">$20<span class="stat-unit">/mo</span></div>
+        <div class="stat-label">Pro plan pricing</div>
+      </div>
+    </div>
+
+    <!-- Ticker -->
+    <div id="ticker-wrap">
+      <div id="ticker-tag">AI PULSE</div>
+      <div id="ticker-text">
+        OpenAI unveils GPT-5 · Anthropic raises $4B Series D · Google Gemini Ultra 2.0 drops · Meta releases Llama 4 Scout · xAI Grok 3 goes open-source · Mistral 3 Large outperforms GPT-4o ·
+      </div>
+    </div>
+
+    <div class="vig"></div>
+  </div>
+  <script>
+    window.__timelines = window.__timelines || {};
+    var tl = gsap.timeline({ paused: true });
+
+    tl.set("#alert-bar", { y:-90, autoAlpha:0 }, 0);
+    tl.set("#accent-v", { scaleY:0, transformOrigin:"top center", autoAlpha:0 }, 0);
+    tl.set("#headline-sub", { x:-40, autoAlpha:0 }, 0);
+    tl.set(".hl-dim,.hl-red,#headline span:not(.hl-dim):not(.hl-red)", { y:80, autoAlpha:0 }, 0);
+    tl.set("#stats-row", { y:40, autoAlpha:0 }, 0);
+    tl.set(".stat-col", { y:30, autoAlpha:0 }, 0);
+    tl.set("#ticker-wrap", { y:70, autoAlpha:0 }, 0);
+    tl.set("#hscan", { y:-2 }, 0);
+    tl.set("#bg-red-glow", { scale:0, autoAlpha:0 }, 0);
+    tl.set("#alert-bar-shine", { x:-200 }, 0);
+
+    /* horizontal scan sweeps down */
+    tl.to("#hscan", { y:1080, duration:0.35, ease:"power2.inOut" }, 0);
+
+    /* bg glow expands */
+    tl.to("#bg-red-glow", { scale:1, autoAlpha:1, duration:0.5, ease:"power2.out" }, 0.05);
+
+    /* alert bar crashes in */
+    tl.to("#alert-bar", { y:0, autoAlpha:1, duration:0.35, ease:"expo.out" }, 0.1);
+
+    /* shine sweep */
+    tl.to("#alert-bar-shine", { x:2200, duration:0.6, ease:"power2.inOut" }, 0.3);
+
+    /* vertical accent line */
+    tl.to("#accent-v", { scaleY:1, autoAlpha:1, duration:0.5, ease:"power2.out" }, 0.3);
+
+    /* headline sub label */
+    tl.to("#headline-sub", { x:0, autoAlpha:1, duration:0.4, ease:"power2.out" }, 0.4);
+
+    /* headline words slam in from below, staggered */
+    tl.to(".hl-dim", { y:0, autoAlpha:1, duration:0.4, ease:"expo.out" }, 0.55);
+    tl.to(".hl-red,.hl-dim", { duration:0 }, 0); /* no-op to prevent conflict */
+    tl.to("#headline .hl-red:first-of-type", { y:0, autoAlpha:1, duration:0.35, ease:"expo.out" }, 0.58);
+    tl.to("#headline span:nth-child(3)", { y:0, autoAlpha:1, duration:0.4, ease:"expo.out" }, 0.72);
+    tl.to("#headline span:nth-child(5)", { y:0, autoAlpha:1, duration:0.45, ease:"expo.out" }, 0.88);
+
+    /* stats row */
+    tl.to("#stats-row", { y:0, autoAlpha:1, duration:0.4, ease:"power2.out" }, 1.1);
+    tl.to(".stat-col", { y:0, autoAlpha:1, duration:0.35, ease:"back.out(1.5)", stagger:0.1 }, 1.2);
+
+    /* ticker slides up */
+    tl.to("#ticker-wrap", { y:0, autoAlpha:1, duration:0.45, ease:"power3.out" }, 1.4);
+
+    /* ticker text scrolls left */
+    tl.fromTo("#ticker-text",
+      { x:1920 },
+      { x:-3000, duration:3.5, ease:"none" },
+      0.5
+    );
+
+    /* alert dot pulse */
+    tl.to("#alert-dot", { scale:1.4, duration:0.2, ease:"power2.out", repeat:4, yoyo:true }, 0.5);
+
+    /* headline GPT-5 flash/emphasize */
+    tl.to("#headline span:nth-child(5)", { scale:1.04, color:"#FF1438", duration:0.2, ease:"power2.out", transformOrigin:"left center" }, 2.0);
+    tl.to("#headline span:nth-child(5)", { scale:1, duration:0.25 }, 2.2);
+
+    /* second shine on alert bar */
+    tl.set("#alert-bar-shine", { x:-200 }, 2.5);
+    tl.to("#alert-bar-shine", { x:2200, duration:0.5, ease:"power2.inOut" }, 2.5);
+
+    /* fade out */
+    tl.to("#s1", { autoAlpha:0, duration:0.4, ease:"power2.in" }, 3.6);
+
+    window.__timelines["clip5-breaking"] = tl;
+  </script>
+</div>
+</body>
+</html>

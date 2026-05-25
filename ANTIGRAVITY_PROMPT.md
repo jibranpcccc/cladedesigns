@@ -109,6 +109,50 @@ Then group segments into scenes. Apply these rules:
 
 ---
 
+## STEP 3.5 — BUILD A WORD-LEVEL TIMING MAP (audio sync, every scene)
+
+This is the most important step for sync. Every on-screen reveal must land on the exact word it illustrates.
+
+For each scene, take its VO segment and compute per-word timestamps:
+
+1. Count the words in the segment (`W`)
+2. Reserve 0.3s lead-in and 0.3s tail-out for transition padding
+3. Effective speech window = `sceneDuration - 0.6s`
+4. Per-word duration = `(sceneDuration - 0.6) / W`
+5. Word `i` (0-indexed) starts at: `0.3 + i × perWordDuration`
+6. Adjust manually for:
+   - **Long words** (3+ syllables): add 0.1s to that word's slot
+   - **Numbers** ("ninety-four point two"): treat as multiple words
+   - **Punctuation pauses** (commas, periods): add 0.2s pause after
+   - **Hero word** (the big claim word — model name, the big number, the verb): hold an extra 0.4–0.8s before the next word begins
+
+**Output for every scene — a word timing table:**
+
+```
+SCENE 02 — "Qwen 3.7 Max scored ninety-four on SWE-Bench Verified."
+Duration: 6s | Words: 10 | Speech window: 5.4s | Per-word: 0.54s
+
+| t (sec) | word        | on-screen action                                  |
+|---------|-------------|---------------------------------------------------|
+| 0.3     | "Qwen"      | model name fades in, letter 1                     |
+| 0.6     | "3.7"       | version chip pops                                 |
+| 0.9     | "Max"       | full name lock-in, glow pulse                     |
+| 1.5     | "scored"    | result panel slides in                            |
+| 2.1     | "ninety-"   | big number starts count-up from 0                 |
+| 2.6     | "four"      | number lands on 94, flash burst                   |
+| 3.4     | "on"        | (no visual)                                       |
+| 3.7     | "SWE-"      | benchmark badge starts entering from right        |
+| 4.3     | "Bench"     | badge lands                                       |
+| 4.9     | "Verified." | green checkmark stamps on badge                   |
+| 5.4–6.0 | (hold)      | continuous glow loops carry the scene out         |
+```
+
+Build one of these tables for every scene before writing any GSAP code.
+
+**Sync rule (mandatory):** Every `tl.to()` / `tl.fromTo()` call in your timeline must start at a timestamp that matches a word in this table — never at a made-up time like `1.42` unless that's where a real word lands. Ambient/continuous loops (background grid, scan, particles) can start at `0` — those don't need word sync.
+
+---
+
 ## STEP 4 — SELECT A TEMPLATE FOR EVERY SCENE
 
 Use the narrative function of each scene to pick its template. When two templates could work, choose whichever fills the screen more and better matches the VO pacing.
@@ -151,6 +195,7 @@ Use the narrative function of each scene to pick its template. When two template
 1. Replace ALL product-specific content — model names, numbers, benchmark names, text — with content from the script and URLs
 2. Keep the entire HTML/CSS/JS structure intact
 3. Enhance with the density rules below
+4. **Wire every animation to the word timing table from Step 3.5** — see "Audio sync" rules below
 
 ### Non-negotiable rules (every scene, no exceptions)
 
@@ -215,6 +260,43 @@ These scenes use light backgrounds (#ededf8, #f5f5ff, #f5f5f5). Do NOT add dark 
 - Model names, benchmark names, dates — exact spelling from source
 - If a claim is not in the script or a fetched URL, do not put it on screen
 
+**Audio sync — every text reveal lands on its word:**
+- Open every scene's `<script>` block with a comment that pastes the word timing table for that scene
+- Every text element on screen must be tied to a specific word in the table
+- Per-word text reveals (kinetic words, headlines, captions) — use one `tl.fromTo()` per word, each starting at that word's timestamp
+- Hero numbers (count-up) — `START_TIME` = the timestamp of the first digit-word ("ninety-" in "ninety-four"); `duration` = the time span until the number is fully spoken
+- Badges/chips that name a thing — pop in at the timestamp of the noun ("SWE-Bench" → badge enters at "SWE-")
+- Checkmarks/strikethroughs — land on the verb or confirming word ("Verified" → checkmark stamps)
+- Bars that fill — `START_TIME` = the timestamp of the data word (e.g. "scored"); all bars offset by 0.05s, finish before the number is spoken
+- Ambient loops (background grid, particles, corner pulse, scan line) — start at `0` with `repeat: -1`; they don't need word sync
+- Never use round-number timestamps like `1.0`, `2.0`, `3.0` unless a word actually lands there
+
+**Example timeline block (matches the word table from Step 3.5):**
+```js
+// WORD TIMING — Scene 02 (6s, 10 words, 0.54s/word)
+// 0.3 "Qwen" | 0.6 "3.7" | 0.9 "Max" | 1.5 "scored" | 2.1 "ninety-" | 2.6 "four"
+// 3.4 "on" | 3.7 "SWE-" | 4.3 "Bench" | 4.9 "Verified."
+
+const tl = gsap.timeline({ paused: true });
+
+// ambient — start at 0
+tl.fromTo('.scan', { left: '-4px' }, { left: '1924px', duration: 9, ease: 'none', repeat: -1 }, 0);
+
+// word-synced reveals
+tl.fromTo('.model-name', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5 }, 0.3);   // "Qwen"
+tl.fromTo('.version-chip', { scale: 0 }, { scale: 1, duration: 0.3, ease: 'back.out(2)' }, 0.6);   // "3.7"
+tl.to('.model-name', { textShadow: '0 0 30px #ff6b35', duration: 0.4, repeat: -1, yoyo: true }, 0.9);   // "Max" — lock + pulse
+tl.fromTo('.result-panel', { x: -200, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5 }, 1.5);   // "scored"
+
+const num = { v: 0 };
+tl.to(num, { v: 94, duration: 0.5, ease: 'power2.out',
+  onUpdate: () => { numEl.textContent = Math.round(num.v); } }, 2.1);   // "ninety-" → count-up
+tl.fromTo('.count-flash', { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 2, duration: 0.3 }, 2.6);   // "four" — flash
+
+tl.fromTo('.bench-badge', { x: 300, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5 }, 3.7);   // "SWE-"
+tl.fromTo('.checkmark', { scale: 0 }, { scale: 1, duration: 0.3, ease: 'back.out(2)' }, 4.9);   // "Verified."
+```
+
 **Code completeness — no shortcuts:**
 - Write every HTML, CSS, and JS line completely. Never use `// ... same as s01`, `/* rest unchanged */`, `<!-- repeat above -->`, or any placeholder
 - Every file must be 100% standalone — runnable by opening it directly in a browser with no other files
@@ -270,6 +352,9 @@ WARNINGS: [any numbers you couldn't verify / URLs you couldn't access]
 ...
 ```
 One sentence of rationale per scene below the table.
+
+### B.1 Word timing tables (one per scene)
+Print the word-to-timestamp table from Step 3.5 for every scene. This is the source of truth for all animation timing.
 
 ### C. All HTML scene files
 One complete file per scene. Name them: `scene-01-[slug].html`, `scene-02-[slug].html`, etc.
@@ -351,6 +436,14 @@ After writing all files, before delivering, verify every item:
 - [ ] Every template choice matches the narrative function of that segment
 - [ ] Total duration is between 45 and 90 seconds
 
+**Audio sync (word-to-word):**
+- [ ] Every scene has a word timing table pasted as a comment at the top of its `<script>` block
+- [ ] Every text element on screen is wired to a specific word's timestamp
+- [ ] Count-up numbers start at the timestamp of their first digit-word
+- [ ] Badges/checkmarks land on the noun or verb they represent
+- [ ] No `tl.to()` timestamp is a guessed round number — every one comes from the word table
+- [ ] Ambient/continuous loops (grid, scan, particles, corner pulse) start at `0`
+
 If any box is unchecked, fix it before delivering.
 
 ---
@@ -363,9 +456,10 @@ Do not ask clarifying questions. Do not ask for approval at any point. Execute t
 2. Fetch every URL the user provided — identify what each one is
 3. Output the intelligence report
 4. Output the scene plan + rationale
-5. Write every HTML scene file (complete, no shortcuts)
-6. Write index.html
-7. Done
+5. Output the word timing table for every scene
+6. Write every HTML scene file (complete, no shortcuts, every animation wired to a word timestamp)
+7. Write index.html
+8. Done
 
 The only time you pause is if a URL returns a hard error. State the error in one line and continue with what you have.
 

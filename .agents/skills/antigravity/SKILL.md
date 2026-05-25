@@ -1,455 +1,280 @@
 ---
 name: antigravity
-description: Fully autonomous HyperFrames video production. Give it a script and URLs — it reads every local sample template, fetches all URLs, analyzes the script, generates per-scene TTS narration, extracts exact word-level timestamps via Whisper, writes fully word-synced HTML scene files and index.html to disk, then commits and pushes. Zero back-and-forth. Usage: /antigravity — then paste your script and URLs.
+description: Script-first, audio-first HyperFrames video production. Give a script and URLs — generates TTS audio, extracts exact word timestamps, builds every scene HTML from scratch around those words, commits and pushes. Usage: /antigravity then paste script and URLs.
 ---
 
 # ANTIGRAVITY
 
-You receive a script and a list of URLs. You produce a complete HyperFrames video — audio, HTML, index.html — committed and pushed. You make every decision. You never ask for clarification.
+Script in. Video out. Zero questions.
 
 ---
 
-## INPUT FORMAT
+## STEP 1 — READ THE SCRIPT FIRST. NOTHING ELSE.
 
-After invoking this skill, the user provides:
-```
-[SCRIPT]
-Full narration text here, written as it will be spoken.
+Split the script into scenes. One scene = one continuous thought.
 
-[URLS]
-https://...
-https://...
-```
+Rules:
+- 6–14 seconds per scene. Under 5s → merge. Over 14s → split.
+- Target: 45–90 seconds total, 7–12 scenes.
+- Opening scene: s14, s01, or s07. Closing: always s08.
+- Never the same template twice in a row.
 
-If the user mixes them together without labels — figure it out. URLs start with `http`. Everything else is script.
+For each scene, answer: **what does this sentence need to SHOW?** That decides the template.
 
----
-
-## PHASE 0 — ORIENT (before anything else)
-
-Read every sample template from local disk. Do not fetch from GitHub — they are already here.
-
-```
-/home/user/cladedesigns/samples/s01-bold-claim-cube.html
-/home/user/cladedesigns/samples/s02-giant-stat.html
-/home/user/cladedesigns/samples/s03-step-cards.html
-/home/user/cladedesigns/samples/s04-timeline.html
-/home/user/cladedesigns/samples/s05-split-cards.html
-/home/user/cladedesigns/samples/s06-bar-chart.html
-/home/user/cladedesigns/samples/s07-strikethrough-reveal.html
-/home/user/cladedesigns/samples/s08-browser-mockup-cta.html
-/home/user/cladedesigns/samples/s09-analytics-mockup.html
-/home/user/cladedesigns/samples/s10-vague-clear.html
-/home/user/cladedesigns/samples/s11-y-diagram.html
-/home/user/cladedesigns/samples/s12-count-up-orbit.html
-/home/user/cladedesigns/samples/s13-benchmark-dense.html
-/home/user/cladedesigns/samples/s14-kinetic-words.html
-```
-
-Internalize from each: background color, accent color, every CSS class, GSAP structure, narrative purpose.
-
----
-
-## PHASE 1 — RESEARCH ALL URLs
-
-Fetch every URL the user provided. Identify each type without being told:
-
-**YouTube URLs**
-- You cannot watch — fetch the page and read title, description, auto-caption/transcript text in source
-- Extract: product name, key claims, numbers, energy level, pacing
-
-**Data sites** (artificialanalysis.ai, huggingface.co, openrouter.ai, lmarena.ai, etc.)
-- Fetch the page — extract every number, score, ranking, model name
-- These are authoritative — only use numbers from here, never invented
-
-**Screenshot / image URLs**
-- Analyze visually: is this a real screen recording or a designed concept?
-  - Real: browser chrome, compression artifacts, normal density, standard aspect ratio
-  - Concept: pixel-perfect, impossible density, photoshop crispness
-- Real → extract exact values and text as ground truth
-- Concept → extract visual style and density ideas only, never use its numbers as facts
-
-**Docs / blog / announcement URLs**
-- Extract: feature names, version numbers, capability claims, quotes, benchmark names
-
-**Unreachable URL:** one line — what failed, what you assumed — then continue.
-
----
-
-## PHASE 2 — ANALYZE THE SCRIPT
-
-For every sentence or logical segment extract:
-1. **Core claim** — what is being said
-2. **Data needed** — numbers, names, benchmarks — match to Phase 1 findings
-3. **Narrative function** — what job this segment does (see Template Table)
-4. **Energy** — slow/weighty · fast/punchy · celebratory · provocative · instructional
-5. **Word count** — count exactly
-
-Group into scenes:
-- One scene = one continuous visual idea, 6–14 seconds
-- Under 5 seconds → merge with the closest adjacent segment on the same topic
-- Over 14 seconds → split at the most logical break
-- Target total: **45–90 seconds, 7–12 scenes**
-- Opening scene: s14, s01, or s07 (high visual impact)
-- Closing scene: always s08 (CTA)
-- Never use the same template twice in a row
-
-**Template selection:**
-
-| Narrative function | Template |
+| Scene need | Template |
 |---|---|
-| ONE shocking number (weeks, days, attempts) | s12 count-up orbit |
-| #1 ranking / best in class claim | s01 bold claim cube |
-| Big stat + supporting context cards | s02 giant stat |
-| Here's how it works — 3-step process | s03 step cards |
-| Release history / milestones over time | s04 timeline |
-| Model A vs Model B (exactly 2) | s05 split comparison |
-| Ranking 4–6 models on ONE benchmark | s06 bar chart |
-| Everyone thinks X — actually it's Y | s07 strikethrough reveal |
-| Go try it / call to action / demo | s08 browser CTA |
-| Showing a real leaderboard or analytics site | s09 analytics mockup |
-| Wrong way vs right way / teaching | s10 vague vs clear |
-| One model works everywhere / integrations | s11 hub-and-spoke |
-| One model scored across MULTIPLE benchmarks | s13 benchmark dense |
-| Headline words punching in one by one | s14 kinetic words |
+| One shocking number | s12 — count-up orbit |
+| We are #1 / best in class | s01 — bold claim cube |
+| Big stat + supporting facts | s02 — giant stat |
+| 3-step process / how it works | s03 — step cards |
+| Timeline / release history | s04 — timeline |
+| Head-to-head, 2 models | s05 — split comparison |
+| Ranking 4–6 models, one benchmark | s06 — bar chart |
+| Old belief vs new truth | s07 — strikethrough reveal |
+| Call to action / go try it | s08 — browser CTA |
+| Real leaderboard / analytics site | s09 — analytics mockup |
+| Wrong way vs right way | s10 — vague vs clear |
+| One model, many integrations | s11 — hub and spoke |
+| One model, many benchmark scores | s13 — benchmark dense |
+| Words punching in one by one | s14 — kinetic words |
 
-**s06 vs s13:** s06 = multiple models / one benchmark. s13 = one model / many benchmarks.
-
-**Edge cases:**
-- Number + context cards → s02 beats s12
-- 2 models → s05, 4+ models → s06
-- Teaching + specific example → s10 beats s14
+Output a scene plan table:
+```
+| # | VO text (exact) | Shows | Template | Est. duration |
+```
 
 ---
 
-## PHASE 3 — AUDIO + EXACT WORD TIMESTAMPS
+## STEP 2 — FETCH URLS
 
-This is the core of the sync system. Do not skip. Do not use estimated timing.
+After scene plan is done, fetch every URL the user gave.
 
-### 3a. Create output directory
+- **YouTube**: fetch page, read title + description + transcript text. Extract claims and numbers.
+- **Data sites** (artificialanalysis.ai, huggingface.co, openrouter.ai): fetch and extract every number, score, ranking. These are the only authoritative numbers — never invent any.
+- **Screenshots**: real recording (browser chrome, compression) → extract exact values. Designed concept (pixel-perfect, impossible density) → extract style only, not numbers.
+- **Docs / blogs**: extract feature names, version numbers, benchmark names, quotes.
+- **Unreachable**: one line — what failed, what you assumed — continue.
 
-Slug the video title (lowercase, hyphens). Create:
+Match extracted numbers to scenes that need them.
+
+---
+
+## STEP 3 — AUDIO FIRST. HTML SECOND.
+
+Do not write a single line of HTML until this step is complete.
+
+**Create output folder:**
 ```bash
 mkdir -p /home/user/cladedesigns/[video-slug]/audio
 ```
 
-### 3b. Select voice
+**Pick voice from script energy:**
+- Punchy / marketing → `af_sky` speed `1.1`
+- Professional / data → `af_nova` speed `1.0`
+- Tutorial / calm → `am_adam` speed `0.9`
 
-Read the overall script energy:
-- High energy, punchy, marketing: `af_sky` at `--speed 1.1`
-- Professional, data-focused, authoritative: `af_nova` at `--speed 1.0`
-- Tutorial, instructional, calm: `am_adam` at `--speed 0.9`
-
-### 3c. Generate TTS per scene
-
-For each scene, write its VO segment to a temp file and generate audio:
-
+**For each scene — generate audio then transcribe:**
 ```bash
-# For each scene (example: scene 02)
-echo "Qwen 3.7 Max scored ninety-four on SWE-Bench Verified." > /tmp/s02.txt
-npx hyperframes tts /tmp/s02.txt --voice af_nova --speed 1.0 \
-  --output /home/user/cladedesigns/[video-slug]/audio/scene-02.wav
-```
+echo "[scene VO text]" > /tmp/scene-01.txt
+npx hyperframes tts /tmp/scene-01.txt --voice af_nova --speed 1.0 \
+  --output /home/user/cladedesigns/[video-slug]/audio/scene-01.wav
 
-One audio file per scene. This makes timestamps scene-local (start at 0.0) — no offset math.
-
-### 3d. Transcribe each audio file
-
-```bash
 npx hyperframes transcribe \
-  /home/user/cladedesigns/[video-slug]/audio/scene-02.wav \
-  --model small.en
-# → produces transcript.json with word-level timestamps
-mv transcript.json /home/user/cladedesigns/[video-slug]/audio/scene-02.transcript.json
+  /home/user/cladedesigns/[video-slug]/audio/scene-01.wav --model small.en
+mv transcript.json /home/user/cladedesigns/[video-slug]/audio/scene-01.json
 ```
 
-Output shape:
+Transcript gives exact word timestamps:
 ```json
 [
-  { "id": "w0", "text": "Qwen",     "start": 0.31, "end": 0.58 },
-  { "id": "w1", "text": "3.7",      "start": 0.58, "end": 0.82 },
-  { "id": "w2", "text": "Max",      "start": 0.82, "end": 1.10 },
-  { "id": "w3", "text": "scored",   "start": 1.35, "end": 1.72 },
-  { "id": "w4", "text": "ninety",   "start": 1.85, "end": 2.20 },
-  { "id": "w5", "text": "four",     "start": 2.20, "end": 2.44 },
-  { "id": "w6", "text": "on",       "start": 2.55, "end": 2.70 },
-  { "id": "w7", "text": "SWE",      "start": 2.72, "end": 3.10 },
-  { "id": "w8", "text": "Bench",    "start": 3.10, "end": 3.45 },
-  { "id": "w9", "text": "Verified", "start": 3.50, "end": 4.05 }
+  { "text": "Qwen",     "start": 0.31, "end": 0.58 },
+  { "text": "scored",   "start": 1.35, "end": 1.72 },
+  { "text": "ninety",   "start": 1.85, "end": 2.20 }
 ]
 ```
 
-**Set scene duration** = last word's `end` + 0.8s hold. Round up to nearest 0.5s.
+**Set scene duration** = last word `end` + 0.8s hold, rounded to nearest 0.5s.
 
-### 3e. Fallback (if TTS fails)
-
-If `npx hyperframes tts` fails (Python missing, etc.):
-- Print one line: `TTS unavailable — using estimated timing`
-- Compute per-word timestamps: `wordStart = 0.3 + i × ((sceneDuration - 0.6) / wordCount)`
-- Continue. Never block.
+**Fallback** (if TTS fails): print `TTS unavailable — estimating` and use `wordStart = 0.3 + i × ((duration - 0.6) / wordCount)`. Never block.
 
 ---
 
-## PHASE 4 — WRITE EVERY SCENE
+## STEP 4 — BUILD EACH SCENE FROM SCRATCH
 
-For each scene, copy the matching sample's full HTML as the starting point. Replace ALL product-specific content (model names, numbers, text, colors stay the same). Wire every animation to transcript timestamps.
+**The script is the director. The transcript is the editor. The template is the camera.**
 
-### File location and naming
-```
-/home/user/cladedesigns/[video-slug]/scene-01-[slug].html
-/home/user/cladedesigns/[video-slug]/scene-02-[slug].html
-...
-```
+For every scene:
 
-### Mandatory code structure
+1. **List the content elements this VO needs on screen.** Example: "Qwen 3.7 Max scored 94 on SWE-Bench" needs: model name, score number, benchmark badge, checkmark. Write this list before touching HTML.
 
+2. **Build HTML structure around those elements.** Not around a sample file — around your list.
+
+3. **Wire every content element to its word's timestamp** from the transcript JSON.
+
+4. **Add the ambient layer** (grid, particles, scan line, corner brackets) on top.
+
+5. **Write the file** to `/home/user/cladedesigns/[video-slug]/scene-01-[slug].html`
+
+---
+
+### Required code patterns (use these exactly)
+
+**File skeleton:**
 ```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
-  <style>/* all styles */</style>
+  <style>/* styles */</style>
 </head>
 <body style="margin:0;overflow:hidden;">
-  <div data-composition-id="scene-02-benchmark"
+  <div data-composition-id="scene-01-[slug]"
        data-width="1920" data-height="1080" data-duration="[SECONDS]"
        style="position:relative;width:1920px;height:1080px;background:[BG];overflow:hidden;">
-    <canvas class="mv-grid" style="position:absolute;inset:0;"></canvas>
-    <!-- scene content -->
+    <canvas class="mv-grid" style="position:absolute;inset:0;pointer-events:none;"></canvas>
+    <!-- content elements go here -->
   </div>
   <script>
-    // TRANSCRIPT — scene-02
-    // w0 "Qwen" 0.31 | w1 "3.7" 0.58 | w2 "Max" 0.82 | w3 "scored" 1.35
-    // w4 "ninety" 1.85 | w5 "four" 2.20 | w7 "SWE" 2.72 | w9 "Verified" 3.50
+    // WORD TIMESTAMPS — scene-01
+    // [word] [start]s | [word] [start]s | ...
 
-    const root = document.querySelector('[data-composition-id="scene-02-benchmark"]');
-
-    // canvas grid
-    const canvas = root.querySelector('.mv-grid');
-    canvas.width = 1920; canvas.height = 1080;
-    const ctx = canvas.getContext('2d');
-    for (let x = 0; x <= 1920; x += 80) {
-      ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,1080);
-      ctx.strokeStyle='rgba(ACCENT,0.04)'; ctx.lineWidth=1; ctx.stroke();
-    }
-    for (let y = 0; y <= 1080; y += 80) {
-      ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(1920,y);
-      ctx.strokeStyle='rgba(ACCENT,0.04)'; ctx.lineWidth=1; ctx.stroke();
-    }
+    const root = document.querySelector('[data-composition-id="scene-01-[slug]"]');
+    const ctx = (()=>{ const c=root.querySelector('.mv-grid'); c.width=1920; c.height=1080; return c.getContext('2d'); })();
+    for(let x=0;x<=1920;x+=80){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,1080);ctx.strokeStyle='rgba([AR],[AG],[AB],0.04)';ctx.lineWidth=1;ctx.stroke();}
+    for(let y=0;y<=1080;y+=80){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(1920,y);ctx.strokeStyle='rgba([AR],[AG],[AB],0.04)';ctx.lineWidth=1;ctx.stroke();}
 
     const tl = gsap.timeline({ paused: true });
 
-    // ambient loops — always start at 0
-    tl.fromTo('.scan', { left:'-4px' }, { left:'1924px', duration:9, ease:'none', repeat:-1 }, 0);
-    tl.to('.cb-tl,.cb-tr,.cb-bl,.cb-br', { opacity:0.6, duration:1.2, repeat:-1, yoyo:true }, 0);
+    // AMBIENT — always start at 0
+    tl.fromTo('.scan',{left:'-4px'},{left:'1924px',duration:9,ease:'none',repeat:-1},0);
+    tl.to('.cb',{opacity:0.5,duration:1.2,repeat:-1,yoyo:true,stagger:0.3},0);
 
-    // word-synced reveals — timestamps from transcript
-    tl.fromTo('.model-name', { opacity:0, y:30 }, { opacity:1, y:0, duration:0.4 }, 0.31);   // "Qwen"
-    tl.fromTo('.version-chip', { scale:0 }, { scale:1, duration:0.3, ease:'back.out(2)' }, 0.58);  // "3.7"
-    tl.to('.model-name', { textShadow:'0 0 30px rgba(ACCENT,0.8)', duration:1.2, repeat:-1, yoyo:true }, 0.82); // "Max"
-    tl.fromTo('.result-panel', { x:-200, opacity:0 }, { x:0, opacity:1, duration:0.4 }, 1.35);  // "scored"
-    const num = { v:0 };
-    tl.to(num, { v:94, duration:0.59, ease:'power2.out',
-      onUpdate: () => { numEl.textContent = Math.round(num.v); } }, 1.85);  // "ninety" → count-up
-    tl.fromTo('.count-flash', { opacity:0, scale:0.5 }, { opacity:1, scale:2, duration:0.25 }, 2.20); // "four"
-    tl.to('.count-flash', { opacity:0, duration:0.3 }, 2.45);
-    tl.fromTo('.bench-badge', { x:300, opacity:0 }, { x:0, opacity:1, duration:0.4 }, 2.72);  // "SWE"
-    tl.fromTo('.checkmark', { scale:0 }, { scale:1, duration:0.3, ease:'back.out(2)' }, 3.50); // "Verified"
-
-    // hero glow — starts after hero word lands
-    tl.to('.hero-element', { boxShadow:'0 0 60px rgba(ACCENT,0.6)', duration:1.4, repeat:-1, yoyo:true }, 0.82);
+    // CONTENT — each timestamp from transcript JSON
+    // tl.fromTo('.element', {from}, {to, duration:0.4}, word.start);
 
     window.__timelines = window.__timelines || {};
-    window.__timelines["scene-02-benchmark"] = tl;
-    if (!window.__hfEngine) setTimeout(() => tl.play(), 200);
+    window.__timelines["scene-01-[slug]"] = tl;
+    if (!window.__hfEngine) setTimeout(()=>tl.play(),200);
   </script>
 </body>
 </html>
 ```
 
-### Word-to-animation mapping rules
-
-Every `tl.fromTo()` / `tl.to()` that reveals content **must start at a word's `start` timestamp**. No invented times.
-
-| What appears | When it enters |
-|---|---|
-| Model / product name | At the first word of the name |
-| Version chip / badge | At the version number word |
-| Big number (count-up) | At the first digit-word; duration = span to last digit-word |
-| Benchmark badge | At the first word of the benchmark name |
-| Checkmark / strikethrough | At the confirming verb ("Verified", "beats", "wins") |
-| Step card | At the step's action verb |
-| Bar fill starts | At the data comparison word ("versus", "scored", "compared") |
-| Closing CTA | At the call-to-action verb ("try", "start", "go") |
-| Ambient loops (grid, scan, particles, corner pulse) | Always `0` — these never need word sync |
-
-### Visual density — dark backgrounds (s01–s05, s07, s10–s14)
-
-Every dark-background scene must have:
-- Canvas dot/line grid (draw once, no animation)
-- 16–28 particles: hardcoded `left/top` percentages, CSS float animation
-- Horizontal or vertical scan line: `repeat:-1`
-- 4 corner brackets: continuous opacity pulse `repeat:-1, yoyo:true`
-- Top info bar: 3 sections, blinking dot, content relevant to scene
-- Bottom 5-stat bar: 5 real data points from script/URLs
-- 3+ continuous `repeat:-1, yoyo:true` loops (glow, pulse, float)
-- Something moving in every quadrant at all times
-
-### Visual density — light backgrounds (s06, s08, s09)
-
-Do NOT add dark cyber elements. Keep it looking like a real website:
-- Particles: `rgba(85,51,221,0.10)` — dark at very low opacity
-- Scan line: subtle gradient overlay, not neon
-- Corner brackets: omit or `15%` opacity
-- White text: never. Always dark text on light backgrounds.
-
-### Color palette — never change
-
-| Template | Background | Accent |
-|---|---|---|
-| s01 | `#1a1a2e` | `#ff6b35` |
-| s02 | `#120820` | `#8c64ff` |
-| s03 | `#1e2235` | `#ff6b35` |
-| s04 | `#0a1628` | `#00d4ff` |
-| s05 | `#111820` | `#4dff91` / `#ffbb33` |
-| s06 | `#ededf8` | `#5533dd` |
-| s07 | `#0d1f0a` | `#7cfc60` |
-| s08 | `#f5f5ff` | `#5533dd` |
-| s09 | `#f5f5f5` | `#5533dd` |
-| s10 | `#0d2010` | `#50dc64` / `#ff5050` |
-| s11 | `#111218` | `#ff7850` |
-| s12 | `#0a0a0a` | `#ffffff` |
-| s13 | `#0f0a1e` | `#7c5fff` |
-| s14 | `#1a0d2e` | `#ffcc00` |
-
-### Data rules
-
-- Every number on screen comes from a Phase 1 fetched URL or the script — never invented
-- If a number can't be verified: write `<!-- UNVERIFIED: assumed [value] -->` inline
-- Model names and benchmark names: exact spelling from source
-
-### Code completeness
-
-- Write every HTML/CSS/JS line in full — no `// same as above`, `/* see s01 */`, `<!-- repeat pattern -->`
-- Every file opens in a browser with no other files — 100% standalone
-
----
-
-## PHASE 5 — WRITE index.html
-
-```
-/home/user/cladedesigns/[video-slug]/index.html
+**Count-up number** (start = first digit word's timestamp, duration = span to last digit word):
+```js
+const n={v:0};
+tl.to(n,{v:94,duration:0.58,ease:'power2.out',onUpdate:()=>{el.textContent=Math.round(n.v);}},1.85);
 ```
 
+**Particles (dark-bg scenes):**
 ```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>[Video Title]</title>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
-</head>
-<body style="margin:0;background:#000;overflow:hidden;">
-  <div data-composition-id="main" data-width="1920" data-height="1080"
-       data-duration="[TOTAL_SECONDS]">
+<div class="pt" style="left:8%;top:14%;--d:3.8s;--dl:0.2s;--c:rgba([R],[G],[B],0.18)"></div>
+```
+```css
+.pt{position:absolute;width:5px;height:5px;border-radius:50%;background:var(--c);
+    animation:ptf var(--d) var(--dl) ease-in-out infinite alternate;}
+@keyframes ptf{from{transform:translateY(0)}to{transform:translateY(-14px)}}
+```
+Add 16–20 particles with varied hardcoded positions. Light-bg scenes (s06/s08/s09): use `rgba(85,51,221,0.08)` and reduce to 8–10.
 
-    <div class="clip" data-track-index="0"
-         data-start="0" data-duration="[S1]" data-transition-out="[T1]">
-      <!-- scene-01 content inline -->
-    </div>
-
-    <div class="clip" data-track-index="0"
-         data-start="[S1]" data-duration="[S2]" data-transition-out="[T2]">
-      <!-- scene-02 content inline -->
-    </div>
-
-    <!-- data-start = cumulative sum of all previous scene durations -->
-  </div>
-  <script>
-    window.__timelines = window.__timelines || {};
-    const tl = gsap.timeline({ paused: true });
-    window.__timelines["main"] = tl;
-    if (!window.__hfEngine) setTimeout(() => tl.play(), 200);
-  </script>
-</body>
-</html>
+**Simultaneous bars** (all start within 0.05s of each other):
+```js
+tl.to('.bar1',{width:'94%',duration:0.7,ease:'power2.out'},word.start);
+tl.to('.bar2',{width:'81%',duration:0.7,ease:'power2.out'},word.start+0.05);
+tl.to('.bar3',{width:'76%',duration:0.7,ease:'power2.out'},word.start+0.10);
 ```
 
-**Transitions between scenes:**
-
-| Transition | Use when |
-|---|---|
-| `flash-through-white` | Big reveal, #1 moment, peak energy |
-| `glitch` | Challenging assumption, disruption |
-| `whip-pan` | Fast cut, rapid-fire facts |
-| `chromatic-split` | Data-to-data, high-tech reveal |
-| `cross-warp-morph` | Same topic, different angle |
-| `cinematic-zoom` | Zooming into key detail |
-| `light-leak` | Positive, "it works", aspirational |
-| `domain-warp` | Abstract concept, paradigm shift |
-| `sdf-iris` | New chapter, topic change |
-| `swirl-vortex` | Energetic topic switch |
-| `gravitational-lens` | Weight, impact, important moment |
-| `ripple-waves` | Smooth, flowing |
-| `ridged-burn` | Intense burning reveal |
-| `thermal-distortion` | Benchmark intensity, data heat |
+**Glow loop on hero element** (starts when hero word lands):
+```js
+tl.to('.hero',{boxShadow:'0 0 60px rgba([R],[G],[B],0.6)',duration:1.4,repeat:-1,yoyo:true,ease:'sine.inOut'},heroWord.start);
+```
 
 ---
 
-## PHASE 6 — COMMIT AND PUSH
+### Color palette
 
+| Template | Background | Accent RGB |
+|---|---|---|
+| s01 | `#1a1a2e` | `255,107,53` |
+| s02 | `#120820` | `140,100,255` |
+| s03 | `#1e2235` | `255,107,53` |
+| s04 | `#0a1628` | `0,212,255` |
+| s05 | `#111820` | `77,255,145` |
+| s06 | `#ededf8` | `85,51,221` |
+| s07 | `#0d1f0a` | `124,252,96` |
+| s08 | `#f5f5ff` | `85,51,221` |
+| s09 | `#f5f5f5` | `85,51,221` |
+| s10 | `#0d2010` | `80,220,100` |
+| s11 | `#111218` | `255,120,80` |
+| s12 | `#0a0a0a` | `255,255,255` |
+| s13 | `#0f0a1e` | `124,95,255` |
+| s14 | `#1a0d2e` | `255,204,0` |
+
+---
+
+### Word-to-element rules
+
+Every content reveal must start at its word's `start` timestamp. No round numbers unless a word lands there.
+
+| Element | Enters at |
+|---|---|
+| Model / product name | First word of the name |
+| Version number / chip | The version word |
+| Big number (count-up) | First digit word |
+| Benchmark name | First word of benchmark |
+| Checkmark / stamp | The confirming verb |
+| Bar chart fills | The comparison word |
+| Step card | That step's verb |
+
+Ambient elements (grid, scan, particles, corners) always start at `0`.
+
+### Rules that never break
+- Every number on screen came from a fetched URL or the script — never invented
+- No `Math.random()`, `Date.now()`, or network fetches inside HTML
+- Every file opens standalone in a browser — no dependencies
+- No placeholder comments (`// same as above`, `/* see s01 */`)
+
+---
+
+## STEP 5 — index.html AND COMMIT
+
+**index.html** at `/home/user/cladedesigns/[video-slug]/index.html`:
+```html
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+</head><body style="margin:0;background:#000;overflow:hidden;">
+<div data-composition-id="main" data-width="1920" data-height="1080" data-duration="[TOTAL]">
+  <div class="clip" data-track-index="0" data-start="0"      data-duration="[D1]" data-transition-out="[T1]"><!-- scene-01 --></div>
+  <div class="clip" data-track-index="0" data-start="[D1]"   data-duration="[D2]" data-transition-out="[T2]"><!-- scene-02 --></div>
+  <!-- data-start = cumulative sum of all prior scene durations -->
+</div>
+<script>
+  window.__timelines=window.__timelines||{};
+  const tl=gsap.timeline({paused:true});
+  window.__timelines["main"]=tl;
+  if(!window.__hfEngine)setTimeout(()=>tl.play(),200);
+</script></body></html>
+```
+
+Transitions: `flash-through-white` (peak moment) · `glitch` (disruption) · `whip-pan` (fast cut) · `chromatic-split` (data reveal) · `light-leak` (positive) · `sdf-iris` (new chapter) · `swirl-vortex` (energy switch) · `cinematic-zoom` (zoom in) · `domain-warp` (paradigm shift) · `gravitational-lens` (weight/impact) · `cross-warp-morph` (same topic, new angle) · `ripple-waves` (smooth) · `ridged-burn` (intense) · `thermal-distortion` (data heat)
+
+**Commit:**
 ```bash
 cd /home/user/cladedesigns
 git add [video-slug]/
-git commit -m "Add [video-slug] — [N] scenes, [X]s, word-synced audio"
+git commit -m "Add [video-slug] — [N] scenes [X]s word-synced"
 git push -u origin $(git branch --show-current)
 ```
 
 ---
 
-## DELIVERY — what you say to the user
-
-Print once, after everything is done:
+## DONE — print this only:
 
 ```
-ANTIGRAVITY COMPLETE
-─────────────────────────────────────
-Video: [Title]
-Scenes: [N] | Total: [X]s
-Audio: [voice] @ [speed]x
-Output: /[video-slug]/
-
-Scene breakdown:
-  01 [template] [Xs] "[first 5 words of VO]..." → [transition]
-  02 ...
-  ...
-
-Files written:
-  ✓ scene-01-[slug].html
-  ✓ scene-02-[slug].html
-  ...
-  ✓ index.html
-  ✓ audio/ ([N] .wav + .json files)
-
-Committed and pushed.
-─────────────────────────────────────
-WARNINGS: [any UNVERIFIED numbers / failed URLs]
+✓ [N] scenes | [X]s total | [voice] voice
+✓ Files: [video-slug]/scene-01 … scene-N + index.html
+✓ Audio: [video-slug]/audio/ ([N] wav + json)
+✓ Pushed
+⚠ Unverified: [any flagged numbers, or "none"]
 ```
-
-Nothing else. No narration of steps. No asking for approval. The output is the deliverable.
-
----
-
-## SELF-CHECK (run mentally before Phase 4)
-
-- [ ] Every number on screen came from a fetched URL or the script
-- [ ] Every `tl.to()` timestamp is from a transcript word's `start` — no invented times
-- [ ] No two consecutive scenes use the same template
-- [ ] Opening scene: s01, s07, s12, or s14
-- [ ] Closing scene: s08
-- [ ] Every dark-bg scene has grid + particles + scan + corners + top bar + bottom bar
-- [ ] Light-bg scenes (s06/s08/s09) look like real websites, not sci-fi HUDs
-- [ ] Every file is 100% standalone
-- [ ] No placeholder comments
-- [ ] Total duration: 45–90 seconds

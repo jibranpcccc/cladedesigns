@@ -244,24 +244,84 @@ Build the scene around that hero graphic. Everything else (background, particles
 
 ### UI recreation — when the script references a real product
 
-When the script mentions a specific real-world interface, you build it from scratch with the real brand's actual design. Do not approximate. Use exactly:
+When the script mentions a specific real-world interface, you build it from scratch with the real brand's actual design. Works for any AI company, any product, any year. Do not approximate. Use exactly:
 - The brand's **real hex colors** (researched in Step 2b)
-- The brand's **real font stack** (Inter, Söhne, Tiempos, Geist, SF Pro, etc.)
+- The brand's **real font stack** (Inter, Söhne, Tiempos, Geist, SF Pro, JetBrains Mono, etc.)
 - The brand's **real layout patterns** — sidebar widths, header heights, button shapes
 - The brand's **real iconography** — recreate logos in SVG or CSS
 - The brand's **real microcopy** — exact button labels ("Continue with Google"), exact menu items
 
-Common interfaces you will need to recreate well:
-- **ChatGPT** — `#212121` dark / `#ffffff` light, Söhne font, sidebar 260px, user msg bubble vs assistant flat
+#### Chat / model interfaces
+- **ChatGPT** — `#212121` dark / `#ffffff` light, Söhne font, sidebar 260px
 - **Claude.ai** — `#faf9f5` cream, Tiempos serif headlines + Styrene sans, right-side artifact panel
-- **Cursor / VS Code** — `#1e1e1e` bg, JetBrains Mono / Fira Code font, file tree left, syntax-highlighted code
-- **Browser window chrome** — macOS traffic lights or Chrome tabs, URL bar with padlock icon, real URL
-- **Stripe checkout** — `#635bff` purple, Inter font, the actual payment form layout
-- **GitHub** — `#0d1117` dark / `#ffffff` light, Mona Sans font, real file tree and code view
-- **Analytics dashboard** — recharts-style line graphs, real-looking metric cards
-- **Mobile app screen** — iPhone notch + status bar, real app navigation patterns
+- **Gemini** — `#1f1f1f` dark / `#f0f4f9` light, Google Sans, gem-icon left sidebar
+- **Grok / xAI** — `#000000` black, Inter, X-style minimal nav
+- **DeepSeek chat** — `#202327` dark, Inter, simple message column
+- **Qwen chat (chat.qwen.ai)** — `#fafafa` light, system sans, sidebar with model picker
+- **Mistral le Chat** — `#fa520f` orange accent, Inter, clean cream/dark
+- **Perplexity** — `#1f2025` dark / `#fbfaf4` light, FK Display Pro + FK Grotesk, source citations under answer
+- **Meta AI / Llama** — Facebook blue `#0866ff`, SF Pro, simple chat layout
+- **Any other AI chat app you don't recognize** — research the brand, then default to: clean theme matching their site, Inter font, model selector top-left, chat column centered max 768px
+
+#### Dev / code tools
+- **Cursor** — `#1e1e1e` bg, JetBrains Mono code, file tree left, AI chat right panel
+- **VS Code** — same as Cursor, blue activity bar `#007acc`
+- **GitHub Copilot in editor** — VS Code base + ghost-text suggestions in greyed style
+- **Replit / v0 / Bolt** — preview pane right, code pane left, terminal bottom
+- **Windsurf** — similar to Cursor, Windsurf's blue-teal accent
+
+#### Data / leaderboard / docs sites
+- **Hugging Face** — `#ff9d00` yellow accent, Inter, model card with tags, README preview
+- **Artificial Analysis** — clean white, Inter, comparison table with sparklines
+- **LM Arena (Chatbot Arena)** — minimal, side-by-side voting layout, leaderboard table
+- **OpenRouter** — dark theme, model picker with price/context columns
+- **GitHub repo** — `#0d1117` dark / `#ffffff` light, Mona Sans, file tree + README
+- **OpenAI / Anthropic / Google AI docs** — match the company's marketing site styling
+
+#### News / announcement formats
+- **X / Twitter post** — `#000000` bg, Chirp font, 600px width, profile pic + name + handle + verified tick + post text + engagement row
+- **Hacker News thread** — `#f6f6ef` cream, Verdana, orange `#ff6600` top bar, comment tree
+- **Reddit thread** — `#0b1416` dark, IBM Plex Sans, upvote column left, post + comments
+- **Discord announcement** — `#36393f` dark, gg sans font, server channel layout
+- **TechCrunch / The Verge / Ars article** — match the publication's actual header and typography
+- **Press release header** — company logo top, dateline, headline in their brand font
+
+#### Pricing / checkout / dashboards
+- **Stripe checkout** — `#635bff` purple, Inter, the actual payment form
+- **OpenAI pricing page** — white, real plan tiers (Free/Plus/Pro/Team/Enterprise)
+- **Anthropic pricing** — cream, Tiempos, model card tiers
+- **Analytics dashboard** — Recharts-style line graphs, metric cards, KPI numbers
+
+#### Mobile / native
+- **iPhone app screen** — iOS notch + status bar (9:41, signal, battery), SF Pro, native navigation
+- **Android app screen** — material design, Roboto, status bar + bottom nav
+- **App Store / Play Store listing** — real layout with screenshots row, install button
 
 **The text and numbers inside the recreation are still real** — pulled from the script or Step 2 research. Only the LAYOUT and STYLE is being recreated.
+
+### Brand identity fallback (when you genuinely can't find brand info)
+
+For very new or obscure AI products where Step 2b research returns nothing usable:
+1. Use the actual logo/wordmark from their website if available (even just as text in their primary color)
+2. Default font stack: `'Inter', -apple-system, sans-serif`
+3. Default dark theme: bg `#0a0a0a`, text `#fafafa`, accent matches the company's primary color from their site
+4. Default light theme: bg `#ffffff`, text `#0a0a0a`, accent matches the company's primary color
+5. Never invent a logo — if you have nothing, use the company name in their brand color, weight 700, generous letter-spacing
+
+### AI news scene patterns (beyond product launches)
+
+| News type | How to render it |
+|---|---|
+| **Model launch** | s14 opening → s01 headline claim → s06/s13 benchmarks → s05 vs prior → s08 try-it CTA |
+| **Funding round** | s12 dollar amount count-up → s02 investors/details → s04 company timeline |
+| **Open-source release** | s07 "closed → open" reveal → recreate GitHub repo page → s03 install steps |
+| **Benchmark drop** | recreate the leaderboard site → s06 ranking bars → s01 winner claim |
+| **Capability announcement** (e.g. "computer use", "voice mode") | s14 feature name → s03 how-it-works → recreated demo UI |
+| **Acquisition** | s04 both companies on timeline → s12 deal size → s11 combined offering |
+| **Pricing change** | recreate the pricing page → s05 old vs new → s07 strikethrough old price |
+| **Industry milestone** ("first model to X") | s07 "everyone said impossible → done" → s01 hero claim → s02 the proof |
+| **Lawsuit / drama / controversy** | recreate the X post or press release → s10 misleading vs reality → s04 timeline of events |
+| **Job/team news** | recreate LinkedIn-style post → headshots + roles → company logo |
 
 ### Visual quality bar — non-negotiable
 

@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1920, height=1080" />
+  <title>Sample: Number Count-Up + Orbit</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;900&family=Inter:wght@400;500;600;700&display=block" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 1920px; height: 1080px; overflow: hidden; background: #0a0a0a; }
+  </style>
+</head>
+<body>
+
+<div
+  data-composition-id="s12-count-orbit"
+  data-width="1920"
+  data-height="1080"
+  data-duration="12"
+>
+  <!-- Subtle grid -->
+  <canvas class="mv-grid"></canvas>
+
+  <!-- Radial glow behind center -->
+  <div class="radial-glow"></div>
+
+  <!-- Top info bar -->
+  <div class="top-bar">
+    <div class="tb-l">RELEASE VELOCITY · QWEN SERIES · 2025</div>
+    <div class="tb-m"><span class="tb-dot"></span>LIVE TRACKING</div>
+    <div class="tb-r">FASTEST CYCLE IN AI HISTORY</div>
+  </div>
+
+  <!-- Corners -->
+  <div class="corner-tl"></div>
+  <div class="corner-tr"></div>
+  <div class="corner-bl"></div>
+  <div class="corner-br"></div>
+
+  <!-- Scan line -->
+  <div class="scan-h"></div>
+
+  <!-- Left version timeline panel -->
+  <div class="version-panel">
+    <div class="vp-title">RELEASE TIMELINE</div>
+    <div class="vp-item vpi1">
+      <div class="vp-dot"></div>
+      <div class="vp-info">
+        <div class="vp-ver">Qwen 3.5</div>
+        <div class="vp-date">FEB 2025</div>
+      </div>
+    </div>
+    <div class="vp-line vpl1"></div>
+    <div class="vp-gap vg1">6 WKS</div>
+    <div class="vp-line vpl2"></div>
+    <div class="vp-item vpi2">
+      <div class="vp-dot"></div>
+      <div class="vp-info">
+        <div class="vp-ver">Qwen 3.6</div>
+        <div class="vp-date">MAR 2025</div>
+      </div>
+    </div>
+    <div class="vp-line vpl3"></div>
+    <div class="vp-gap vg2">6 WKS</div>
+    <div class="vp-line vpl4"></div>
+    <div class="vp-item vpi3">
+      <div class="vp-dot"></div>
+      <div class="vp-info">
+        <div class="vp-ver">Qwen 3.6+</div>
+        <div class="vp-date">APR 2025</div>
+      </div>
+    </div>
+    <div class="vp-line vpl5"></div>
+    <div class="vp-gap vg3">6 WKS</div>
+    <div class="vp-line vpl6"></div>
+    <div class="vp-item vpi4 vpi-active">
+      <div class="vp-dot vp-dot-active"></div>
+      <div class="vp-info">
+        <div class="vp-ver">Qwen 3.7 Max</div>
+        <div class="vp-date">MAY 2025 · NOW</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right velocity panel -->
+  <div class="velocity-panel">
+    <div class="vel-title">VELOCITY METRICS</div>
+    <div class="vel-row vr1">
+      <div class="vel-label">Model params</div>
+      <div class="vel-val">235B</div>
+    </div>
+    <div class="vel-row vr2">
+      <div class="vel-label">Active params</div>
+      <div class="vel-val">22B</div>
+    </div>
+    <div class="vel-row vr3">
+      <div class="vel-label">Context window</div>
+      <div class="vel-val">128K</div>
+    </div>
+    <div class="vel-row vr4">
+      <div class="vel-label">SWE-bench score</div>
+      <div class="vel-val accent">72.1</div>
+    </div>
+    <div class="vel-divider"></div>
+    <div class="vel-record">
+      <div class="vrc-icon">🏆</div>
+      <div class="vrc-text">Fastest iteration<br>cycle ever tracked</div>
+    </div>
+    <div class="vel-mini-bars">
+      <div class="vmb-label">PACE INDEX</div>
+      <div class="vmb-track"><div class="vmb-fill"></div></div>
+      <div class="vmb-label" style="margin-top:8px">QUALITY INDEX</div>
+      <div class="vmb-track"><div class="vmb-fill vmb-f2"></div></div>
+    </div>
+  </div>
+
+  <!-- 3 orbit rings -->
+  <div class="orbit-ring or-inner">
+    <div class="orbit-dot od-inner"></div>
+  </div>
+  <div class="orbit-ring or-mid">
+    <div class="orbit-dot od-mid"></div>
+    <div class="orbit-dot od-mid2"></div>
+  </div>
+  <div class="orbit-ring or-outer">
+    <div class="orbit-dot od-outer"></div>
+    <div class="orbit-dot od-outer2"></div>
+    <div class="orbit-dot od-outer3"></div>
+  </div>
+
+  <!-- Center content -->
+  <div class="center-content">
+    <div class="count-number">0</div>
+    <div class="count-unit">WKS</div>
+    <div class="count-label">BETWEEN JUMPS</div>
+    <div class="count-sub">Six weeks from Qwen 3.5 to 3.6 to 3.6+ to 3.7.<br>Every single time.</div>
+    <div class="count-flash"></div>
+  </div>
+
+  <!-- Floating badges -->
+  <div class="float-badge fb1">4× RELEASES</div>
+  <div class="float-badge fb2">0 SLOWING DOWN</div>
+  <div class="float-badge fb3">RELENTLESS</div>
+
+  <!-- Particles -->
+  <div class="pt" style="left:4%;top:16%;--d:5.0s;--dl:0s;--c:rgba(255,255,255,0.12)"></div>
+  <div class="pt" style="left:9%;top:62%;--d:4.2s;--dl:0.5s;--c:rgba(255,255,255,0.08)"></div>
+  <div class="pt" style="left:15%;top:32%;--d:6.1s;--dl:0.9s;--c:rgba(200,200,255,0.1)"></div>
+  <div class="pt" style="left:3%;top:80%;--d:4.8s;--dl:1.2s;--c:rgba(255,255,255,0.09)"></div>
+  <div class="pt" style="left:22%;top:8%;--d:3.7s;--dl:0.3s;--c:rgba(255,255,255,0.07)"></div>
+  <div class="pt" style="left:19%;top:90%;--d:7.0s;--dl:1.6s;--c:rgba(200,200,255,0.11)"></div>
+  <div class="pt" style="left:88%;top:10%;--d:4.5s;--dl:0.6s;--c:rgba(255,255,255,0.1)"></div>
+  <div class="pt" style="left:93%;top:46%;--d:5.9s;--dl:1.0s;--c:rgba(255,255,255,0.08)"></div>
+  <div class="pt" style="left:96%;top:72%;--d:4.1s;--dl:1.9s;--c:rgba(200,200,255,0.1)"></div>
+  <div class="pt" style="left:85%;top:86%;--d:5.3s;--dl:0.4s;--c:rgba(255,255,255,0.09)"></div>
+  <div class="pt" style="left:76%;top:5%;--d:6.5s;--dl:0.8s;--c:rgba(255,255,255,0.11)"></div>
+  <div class="pt" style="left:68%;top:94%;--d:4.3s;--dl:1.4s;--c:rgba(200,200,255,0.08)"></div>
+  <div class="pt" style="left:55%;top:3%;--d:7.2s;--dl:2.1s;--c:rgba(255,255,255,0.07)"></div>
+  <div class="pt" style="left:44%;top:97%;--d:3.9s;--dl:0.7s;--c:rgba(255,255,255,0.1)"></div>
+  <div class="pt" style="left:34%;top:7%;--d:5.4s;--dl:1.3s;--c:rgba(200,200,255,0.09)"></div>
+  <div class="pt" style="left:62%;top:89%;--d:4.6s;--dl:0.5s;--c:rgba(255,255,255,0.11)"></div>
+  <div class="pt" style="left:11%;top:50%;--d:3.8s;--dl:1.7s;--c:rgba(255,255,255,0.08)"></div>
+  <div class="pt" style="left:90%;top:30%;--d:5.7s;--dl:0.2s;--c:rgba(200,200,255,0.1)"></div>
+  <div class="pt" style="left:51%;top:96%;--d:4.9s;--dl:1.5s;--c:rgba(255,255,255,0.09)"></div>
+  <div class="pt" style="left:28%;top:4%;--d:3.5s;--dl:1.0s;--c:rgba(255,255,255,0.12)"></div>
+
+  <!-- Bottom bar -->
+  <div class="bottom-bar">
+    <div class="bb-item"><span class="bb-num">6</span><span class="bb-lbl">WEEKS</span></div>
+    <div class="bb-sep"></div>
+    <div class="bb-item"><span class="bb-num">4×</span><span class="bb-lbl">RELEASES</span></div>
+    <div class="bb-sep"></div>
+    <div class="bb-item"><span class="bb-num">235B</span><span class="bb-lbl">PARAMS</span></div>
+    <div class="bb-sep"></div>
+    <div class="bb-item"><span class="bb-num">72.1</span><span class="bb-lbl">SWE SCORE</span></div>
+    <div class="bb-sep"></div>
+    <div class="bb-item"><span class="bb-num">128K</span><span class="bb-lbl">CONTEXT</span></div>
+  </div>
+
+  <style>
+    [data-composition-id="s12-count-orbit"] {
+      width: 1920px; height: 1080px; background: #0a0a0a;
+      font-family: "Space Grotesk", sans-serif;
+      position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* Grid */
+    [data-composition-id="s12-count-orbit"] .mv-grid {
+      position: absolute; inset: 0; pointer-events: none; z-index: 0; opacity: 0;
+    }
+
+    /* Radial glow */
+    [data-composition-id="s12-count-orbit"] .radial-glow {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 800px; height: 800px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
+      pointer-events: none; z-index: 1; opacity: 0;
+    }
+
+    /* Top bar */
+    [data-composition-id="s12-count-orbit"] .top-bar {
+      position: absolute; top: 0; left: 0; right: 0; height: 44px;
+      background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; font-size: 13px; font-family: "Inter", sans-serif;
+      font-weight: 600; letter-spacing: 0.1em; color: rgba(255,255,255,0.2);
+      z-index: 10; opacity: 0;
+    }
+    [data-composition-id="s12-count-orbit"] .tb-m { display:flex;align-items:center;gap:8px;color:rgba(255,255,255,0.4); }
+    [data-composition-id="s12-count-orbit"] .tb-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: #fff;
+      animation: s12dot 1.2s ease-in-out infinite;
+    }
+    @keyframes s12dot { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+    /* Corners */
+    [data-composition-id="s12-count-orbit"] .corner-tl,
+    [data-composition-id="s12-count-orbit"] .corner-tr,
+    [data-composition-id="s12-count-orbit"] .corner-bl,
+    [data-composition-id="s12-count-orbit"] .corner-br {
+      position: absolute; width: 28px; height: 28px; z-index: 10; opacity: 0;
+    }
+    [data-composition-id="s12-count-orbit"] .corner-tl { top:52px;left:12px; border-top:2px solid rgba(255,255,255,0.25); border-left:2px solid rgba(255,255,255,0.25); }
+    [data-composition-id="s12-count-orbit"] .corner-tr { top:52px;right:12px; border-top:2px solid rgba(255,255,255,0.25); border-right:2px solid rgba(255,255,255,0.25); }
+    [data-composition-id="s12-count-orbit"] .corner-bl { bottom:54px;left:12px; border-bottom:2px solid rgba(255,255,255,0.25); border-left:2px solid rgba(255,255,255,0.25); }
+    [data-composition-id="s12-count-orbit"] .corner-br { bottom:54px;right:12px; border-bottom:2px solid rgba(255,255,255,0.25); border-right:2px solid rgba(255,255,255,0.25); }
+
+    /* Scan line */
+    [data-composition-id="s12-count-orbit"] .scan-h {
+      position: absolute; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent);
+      top: -4px; z-index: 3; pointer-events: none;
+    }
+
+    /* Version panel */
+    [data-composition-id="s12-count-orbit"] .version-panel {
+      position: absolute; left: 60px; top: 50%; transform: translateY(-50%);
+      width: 260px; z-index: 10; opacity: 0;
+    }
+    [data-composition-id="s12-count-orbit"] .vp-title {
+      font-size: 11px; font-family: "Inter", sans-serif; font-weight: 700;
+      letter-spacing: 0.14em; color: rgba(255,255,255,0.25); margin-bottom: 20px;
+    }
+    [data-composition-id="s12-count-orbit"] .vp-item {
+      display: flex; align-items: center; gap: 14px; opacity: 0;
+    }
+    [data-composition-id="s12-count-orbit"] .vp-dot {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: rgba(255,255,255,0.25); flex-shrink: 0;
+    }
+    [data-composition-id="s12-count-orbit"] .vp-dot-active {
+      background: #ffffff; box-shadow: 0 0 12px rgba(255,255,255,0.6);
+    }
+    [data-composition-id="s12-count-orbit"] .vp-ver { font-size: 20px; font-weight: 700; color: rgba(255,255,255,0.7); }
+    [data-composition-id="s12-count-orbit"] .vp-date { font-size: 13px; font-family: "Inter", sans-serif; color: rgba(255,255,255,0.3); }
+    [data-composition-id="s12-count-orbit"] .vpi-active .vp-ver { color: #fff; }
+    [data-composition-id="s12-count-orbit"] .vp-line {
+      width: 2px; height: 0; background: rgba(255,255,255,0.12); margin-left: 5px;
+    }
+    [data-composition-id="s12-count-orbit"] .vp-gap {
+      font-size: 12px; font-family: "Inter", sans-serif; font-weight: 700;
+      letter-spacing: 0.1em; color: rgba(255,255,255,0.2);
+      margin-left: 22px; opacity: 0;
+    }
+
+    /* Velocity panel */
+    [data-composition-id="s12-count-orbit"] .velocity-panel {
+      position: absolute; right: 60px; top: 50%; transform: translateY(-50%);
+      width: 280px; z-index: 10;
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px; padding: 22px 24px; opacity: 0;
+    }
+    [data-composition-id="s12-count-orbit"] .vel-title {
+      font-size: 11px; font-family: "Inter", sans-serif; font-weight: 700;
+      letter-spacing: 0.14em; color: rgba(255,255,255,0.25); margin-bottom: 16px;
+    }
+    [data-composition-id="s12-count-orbit"] .vel-row {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 10px; opacity: 0;
+    }
+    [data-composition-id="s12-count-orbit"] .vel-label { font-size: 14px; font-family: "Inter", sans-serif; color: rgba(255,255,255,0.35); }
+    [data-composition-id="s12-count-orbit"] .vel-val { font-size: 22px; font-weight: 900; color: rgba(255,255,255,0.8); }
+    [data-composition-id="s12-count-orbit"] .accent { color: #ffffff; }
+    [data-composition-id="s12-count-orbit"] .vel-divider { height: 1px; background: rgba(255,255,255,0.06); margin: 10px 0; }
+    [data-composition-id="s12-count-orbit"] .vel-record {
+      display: flex; align-items: flex-start; gap: 10px;
+      margin-bottom: 14px; opacity: 0;
+    }
+    [data-composition-id="s12-count-orbit"] .vrc-icon { font-size: 20px; }
+    [data-composition-id="s12-count-orbit"] .vrc-text {
+      font-size: 14px; font-family: "Inter", sans-serif; color: rgba(255,255,255,0.4); line-height: 1.5;
+    }
+    [data-composition-id="s12-count-orbit"] .vel-mini-bars { opacity: 0; }
+    [data-composition-id="s12-count-orbit"] .vmb-label {
+      font-size: 10px; font-family: "Inter", sans-serif; font-weight: 700;
+      letter-spacing: 0.1em; color: rgba(255,255,255,0.2); margin-bottom: 4px;
+    }
+    [data-composition-id="s12-count-orbit"] .vmb-track {
+      height: 5px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden;
+    }
+    [data-composition-id="s12-count-orbit"] .vmb-fill { height:100%;width:0;background:#fff;border-radius:3px; }
+    [data-composition-id="s12-count-orbit"] .vmb-f2 { background: rgba(255,255,255,0.7); }
+
+    /* Orbit rings */
+    [data-composition-id="s12-count-orbit"] .orbit-ring {
+      position: absolute; top: 50%; left: 50%;
+      border-radius: 50%; opacity: 0;
+    }
+    [data-composition-id="s12-count-orbit"] .or-inner {
+      width: 500px; height: 500px;
+      transform: translate(-50%, -50%);
+      border: 1.5px solid rgba(255,255,255,0.07);
+      animation: s12spin-i 5s linear infinite;
+    }
+    [data-composition-id="s12-count-orbit"] .or-mid {
+      width: 700px; height: 700px;
+      transform: translate(-50%, -50%);
+      border: 1px solid rgba(255,255,255,0.05);
+      animation: s12spin-m 8s linear infinite;
+    }
+    [data-composition-id="s12-count-orbit"] .or-outer {
+      width: 880px; height: 880px;
+      transform: translate(-50%, -50%);
+      border: 1px solid rgba(255,255,255,0.03);
+      animation: s12spin-o 12s linear infinite;
+    }
+    @keyframes s12spin-i { from{transform:translate(-50%,-50%) rotate(0deg)}   to{transform:translate(-50%,-50%) rotate(360deg)} }
+    @keyframes s12spin-m { from{transform:translate(-50%,-50%) rotate(0deg)}   to{transform:translate(-50%,-50%) rotate(-360deg)} }
+    @keyframes s12spin-o { from{transform:translate(-50%,-50%) rotate(0deg)}   to{transform:translate(-50%,-50%) rotate(360deg)} }
+
+    [data-composition-id="s12-count-orbit"] .orbit-dot {
+      position: absolute; border-radius: 50%;
+      background: rgba(255,255,255,0.7);
+      box-shadow: 0 0 10px rgba(255,255,255,0.4);
+    }
+    [data-composition-id="s12-count-orbit"] .od-inner  { width:10px;height:10px; top:-5px; left:50%; transform:translateX(-50%); }
+    [data-composition-id="s12-count-orbit"] .od-mid    { width:8px; height:8px;  top:-4px; left:50%; transform:translateX(-50%); }
+    [data-composition-id="s12-count-orbit"] .od-mid2   { width:8px; height:8px;  bottom:-4px; left:50%; transform:translateX(-50%); }
+    [data-composition-id="s12-count-orbit"] .od-outer  { width:6px; height:6px;  top:-3px; left:50%; transform:translateX(-50%); }
+    [data-composition-id="s12-count-orbit"] .od-outer2 { width:6px; height:6px;  bottom:-3px; left:50%; transform:translateX(-50%); }
+    [data-composition-id="s12-count-orbit"] .od-outer3 { width:6px; height:6px;  top:50%; right:-3px; transform:translateY(-50%); }
+
+    /* Center content */
+    [data-composition-id="s12-count-orbit"] .center-content {
+      text-align: center; position: relative; z-index: 5;
+    }
+    [data-composition-id="s12-count-orbit"] .count-number {
+      font-size: 400px; font-weight: 900; color: #ffffff;
+      line-height: 0.85; letter-spacing: -0.04em; opacity: 0;
+      text-shadow: 0 0 80px rgba(255,255,255,0.15);
+    }
+    [data-composition-id="s12-count-orbit"] .count-unit {
+      font-size: 60px; font-weight: 900; letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.25); margin-top: -10px;
+      opacity: 0; transform: translateY(20px);
+    }
+    [data-composition-id="s12-count-orbit"] .count-label {
+      font-size: 44px; font-weight: 700; letter-spacing: 0.22em;
+      color: rgba(255,255,255,0.3); font-family: "Inter", sans-serif;
+      margin-top: 8px; opacity: 0;
+    }
+    [data-composition-id="s12-count-orbit"] .count-sub {
+      font-size: 22px; color: rgba(255,255,255,0.2);
+      font-family: "Inter", sans-serif; font-weight: 400;
+      margin-top: 18px; line-height: 1.6; opacity: 0;
+    }
+    [data-composition-id="s12-count-orbit"] .count-flash {
+      position: absolute; inset: -80px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
+      pointer-events: none; opacity: 0; transform: scale(0.5);
+    }
+
+    /* Floating badges */
+    [data-composition-id="s12-count-orbit"] .float-badge {
+      position: absolute; padding: 8px 18px; border-radius: 100px;
+      font-size: 14px; font-family: "Inter", sans-serif; font-weight: 700;
+      letter-spacing: 0.1em; color: rgba(255,255,255,0.5);
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.03); opacity: 0; z-index: 6;
+    }
+    [data-composition-id="s12-count-orbit"] .fb1 { top: 140px; left: 380px; }
+    [data-composition-id="s12-count-orbit"] .fb2 { top: 140px; right: 380px; }
+    [data-composition-id="s12-count-orbit"] .fb3 { bottom: 160px; left: 50%; transform: translateX(-50%); }
+
+    /* Particles */
+    [data-composition-id="s12-count-orbit"] .pt {
+      position: absolute; width: 4px; height: 4px; border-radius: 50%;
+      background: var(--c); z-index: 1; pointer-events: none;
+      animation: s12pt var(--d) var(--dl) ease-in-out infinite alternate;
+    }
+    @keyframes s12pt { from{transform:translateY(0)} to{transform:translateY(-14px)} }
+
+    /* Bottom bar */
+    [data-composition-id="s12-count-orbit"] .bottom-bar {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 52px;
+      background: rgba(255,255,255,0.02); border-top: 1px solid rgba(255,255,255,0.05);
+      display: flex; align-items: center; z-index: 10; opacity: 0;
+    }
+    [data-composition-id="s12-count-orbit"] .bb-item {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 1px;
+    }
+    [data-composition-id="s12-count-orbit"] .bb-num { font-size: 17px; font-weight: 900; color: rgba(255,255,255,0.7); }
+    [data-composition-id="s12-count-orbit"] .bb-lbl {
+      font-size: 10px; font-family: "Inter", sans-serif; font-weight: 600;
+      letter-spacing: 0.1em; color: rgba(255,255,255,0.2);
+    }
+    [data-composition-id="s12-count-orbit"] .bb-sep {
+      width: 1px; height: 26px; background: rgba(255,255,255,0.06);
+    }
+  </style>
+
+  <script>
+    (function () {
+      const S     = '[data-composition-id="s12-count-orbit"]';
+      const root  = document.querySelector(S);
+      const numEl = root.querySelector('.count-number');
+      const tl    = gsap.timeline({ paused: true });
+      const TARGET = 6;
+
+      /* Grid */
+      const canvas = root.querySelector('.mv-grid');
+      canvas.width = 1920; canvas.height = 1080;
+      const ctx = canvas.getContext('2d');
+      for (let x = 0; x <= 1920; x += 100) {
+        ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,1080);
+        ctx.strokeStyle='rgba(255,255,255,0.025)'; ctx.lineWidth=1; ctx.stroke();
+      }
+      for (let y = 0; y <= 1080; y += 100) {
+        ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(1920,y);
+        ctx.strokeStyle='rgba(255,255,255,0.025)'; ctx.lineWidth=1; ctx.stroke();
+      }
+
+      /* Grid + glow fade */
+      tl.to(`${S} .mv-grid`,    { opacity:1, duration:1.2 }, 0);
+      tl.to(`${S} .radial-glow`,{ opacity:1, duration:1.5 }, 0.2);
+
+      /* Scan sweep */
+      tl.fromTo(`${S} .scan-h`,
+        { top:'-4px' }, { top:'1084px', duration:9, ease:'none', repeat:-1 }, 0);
+
+      /* Top bar + corners */
+      tl.to(`${S} .top-bar`, { opacity:1, duration:0.4 }, 0);
+      tl.to(`${S} .corner-tl, ${S} .corner-tr, ${S} .corner-bl, ${S} .corner-br`,
+        { opacity:1, duration:0.3, stagger:0.08 }, 0.1);
+
+      /* Version panel fades in */
+      tl.to(`${S} .version-panel`, { opacity:1, duration:0.5 }, 0.3);
+      tl.to(`${S} .vp-line`,  { height:24, duration:0.25, stagger:0.15, ease:'power2.out' }, 0.6);
+      tl.to(`${S} .vp-item`,  { opacity:1, duration:0.3, stagger:0.2 }, 0.7);
+      tl.to(`${S} .vp-gap`,   { opacity:1, duration:0.3, stagger:0.2 }, 0.85);
+
+      /* Velocity panel */
+      tl.to(`${S} .velocity-panel`, { opacity:1, duration:0.5 }, 0.4);
+      tl.to(`${S} .vel-row`,   { opacity:1, duration:0.25, stagger:0.1 }, 0.7);
+      tl.to(`${S} .vel-record`,{ opacity:1, duration:0.3 }, 1.2);
+      tl.to(`${S} .vel-mini-bars`, { opacity:1, duration:0.3 }, 1.4);
+      tl.to(`${S} .vmb-fill`,  { width:'92%', duration:0.9, ease:'power2.out' }, 1.5);
+      tl.to(`${S} .vmb-f2`,    { width:'85%', duration:0.9, ease:'power2.out' }, 1.6);
+
+      /* Number appears */
+      tl.to(`${S} .count-number`, { opacity:1, duration:0.4, ease:'power2.out' }, 0.4);
+
+      /* Count up 0 → 6 */
+      const dummy = { v: 0 };
+      tl.to(dummy, {
+        v: TARGET, duration: 1.8, ease: 'power2.out',
+        onUpdate: () => { numEl.textContent = Math.round(dummy.v); }
+      }, 0.6);
+
+      /* Flash when it hits 6 */
+      tl.fromTo(`${S} .count-flash`,
+        { opacity:0, scale:0.5 },
+        { opacity:1, scale:2, duration:0.4, ease:'power2.out' }, 2.3);
+      tl.to(`${S} .count-flash`, { opacity:0, duration:0.5, ease:'power2.in' }, 2.7);
+
+      /* Number glow pulse after hitting 6 */
+      tl.to(`${S} .count-number`, {
+        textShadow: '0 0 120px rgba(255,255,255,0.5), 0 0 40px rgba(255,255,255,0.3)',
+        duration: 1.5, repeat: -1, yoyo: true, ease: 'sine.inOut'
+      }, 2.8);
+
+      /* Unit and labels */
+      tl.to(`${S} .count-unit`,  { opacity:1, y:0, duration:0.5, ease:'back.out(1.7)' }, 2.1);
+      tl.to(`${S} .count-label`, { opacity:1, duration:0.5, ease:'power2.out' }, 2.3);
+      tl.to(`${S} .count-sub`,   { opacity:1, duration:0.5, ease:'power2.out' }, 2.8);
+
+      /* Orbit rings fade in */
+      tl.to(`${S} .or-inner`, { opacity:1, duration:0.6 }, 1.8);
+      tl.to(`${S} .or-mid`,   { opacity:1, duration:0.6 }, 2.0);
+      tl.to(`${S} .or-outer`, { opacity:1, duration:0.6 }, 2.2);
+
+      /* Floating badges */
+      tl.to(`${S} .fb1`, { opacity:1, duration:0.4, ease:'back.out(1.5)' }, 3.0);
+      tl.to(`${S} .fb2`, { opacity:1, duration:0.4, ease:'back.out(1.5)' }, 3.2);
+      tl.to(`${S} .fb3`, { opacity:1, duration:0.4, ease:'back.out(1.5)' }, 3.4);
+
+      /* Bottom bar */
+      tl.to(`${S} .bottom-bar`, { opacity:1, duration:0.4 }, 3.0);
+
+      /* Orbit rings continuous glow */
+      tl.to(`${S} .or-inner`, {
+        borderColor: 'rgba(255,255,255,0.14)',
+        duration: 2.0, repeat:-1, yoyo:true, ease:'sine.inOut'
+      }, 3.0);
+
+      /* Corner pulse */
+      tl.to(`${S} .corner-tl, ${S} .corner-tr, ${S} .corner-bl, ${S} .corner-br`, {
+        opacity:0.15, duration:1.5, repeat:-1, yoyo:true, ease:'sine.inOut'
+      }, 2.0);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["s12-count-orbit"] = tl;
+      if (!window.__hfEngine) setTimeout(() => tl.play(), 200);
+    })();
+  </script>
+</div>
+</body>
+</html>

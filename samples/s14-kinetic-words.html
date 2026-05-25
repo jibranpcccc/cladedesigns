@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1920, height=1080" />
+  <title>Sample: Kinetic Word-by-Word Typography (3× Animation Density)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;900&family=Inter:wght@400;500;600;700&display=block" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 1920px; height: 1080px; overflow: hidden; background: #050508; }
+  </style>
+</head>
+<body>
+
+<!--
+  SCENE TYPE: Kinetic Word-by-Word Typography — 3× animation density reference
+  BACKGROUND: Near-black #050508
+  ACCENT: Amber/yellow #ffc832
+  USE WHEN: Delivering a single powerful statement word by word (count-up, shocking fact)
+  DURATION: 12s
+  LAYERS (simultaneous throughout):
+    - Animated diagonal stripe background (CSS, always drifting)
+    - 18 floating amber particles (CSS, fixed positions)
+    - Top accent line wipes across at 0s
+    - Eyebrow label slides in
+    - 7 headline words — each with a UNIQUE enter animation (drop, scale, skew, elastic, clip)
+    - Each word gets an individual glow after landing
+    - Right side: large count-up number "0→6" with spinning orbit ring + pulsing dot
+    - Left/bottom: 4 version cards stagger up from below
+    - SVG connecting lines draw between elements
+    - Bottom "Every. Single. Time." — 3 words pop in separately
+    - Continuous: key words pulse glow, counter glows, orbit ring spins forever
+    - Continuous: top line sweeps back across from 8s (CSS ping-pong)
+-->
+
+<div
+  data-composition-id="s14-kinetic-words"
+  data-width="1920"
+  data-height="1080"
+  data-duration="12"
+>
+
+  <!-- Background diagonal stripes (always moving) -->
+  <div class="bg-stripes"></div>
+
+  <!-- Ambient particles (18 fixed positions) -->
+  <div class="bg-particles">
+    <div class="pt" style="left:60px;top:200px;--d:7s;--dl:0s"></div>
+    <div class="pt" style="left:200px;top:600px;--d:9s;--dl:1.3s"></div>
+    <div class="pt" style="left:380px;top:100px;--d:6s;--dl:0.5s"></div>
+    <div class="pt" style="left:500px;top:820px;--d:8s;--dl:2.1s"></div>
+    <div class="pt" style="left:680px;top:320px;--d:7.5s;--dl:0.9s"></div>
+    <div class="pt" style="left:900px;top:940px;--d:10s;--dl:1.7s"></div>
+    <div class="pt" style="left:1080px;top:60px;--d:6.5s;--dl:3.0s"></div>
+    <div class="pt" style="left:1240px;top:500px;--d:8.5s;--dl:0.4s"></div>
+    <div class="pt" style="left:1400px;top:780px;--d:9.5s;--dl:2.4s"></div>
+    <div class="pt" style="left:1580px;top:160px;--d:7.2s;--dl:1.0s"></div>
+    <div class="pt" style="left:1720px;top:640px;--d:8.8s;--dl:2.8s"></div>
+    <div class="pt" style="left:1880px;top:400px;--d:6.2s;--dl:0.7s"></div>
+    <div class="pt" style="left:140px;top:440px;--d:9.2s;--dl:3.5s"></div>
+    <div class="pt" style="left:760px;top:700px;--d:7.8s;--dl:1.5s"></div>
+    <div class="pt" style="left:1140px;top:860px;--d:8.2s;--dl:2.0s"></div>
+    <div class="pt" style="left:1640px;top:900px;--d:6.8s;--dl:0.2s"></div>
+    <div class="pt" style="left:840px;top:140px;--d:7.0s;--dl:3.2s"></div>
+    <div class="pt" style="left:320px;top:960px;--d:9.8s;--dl:1.8s"></div>
+  </div>
+
+  <!-- Top accent line -->
+  <div class="top-line"></div>
+
+  <!-- Eyebrow -->
+  <div class="eyebrow">Six weeks between model jumps</div>
+
+  <!-- Main headline: 7 words, each with unique animation -->
+  <div class="headline-wrap">
+    <div class="hl-line l1">
+      <span class="hw w1">The</span>
+      <span class="hw w2">fastest</span>
+      <span class="hw w3">AI</span>
+    </div>
+    <div class="hl-line l2">
+      <span class="hw w4">release</span>
+      <span class="hw w5">cycle</span>
+    </div>
+    <div class="hl-line l3">
+      <span class="hw w6">in</span>
+      <span class="hw w7">history.</span>
+    </div>
+  </div>
+
+  <!-- Underline accent under headline -->
+  <div class="headline-underline"></div>
+
+  <!-- Right: orbiting counter -->
+  <div class="counter-wrap">
+    <div class="orbit-ring">
+      <div class="orbit-dot"></div>
+    </div>
+    <div class="counter-inner">
+      <div class="counter-num">0</div>
+      <div class="counter-unit">WEEKS</div>
+      <div class="counter-label">average cadence</div>
+    </div>
+  </div>
+
+  <!-- Bottom: 4 version cards -->
+  <div class="cards-row">
+    <div class="vcard vc1">
+      <div class="vc-label">Nov 2024</div>
+      <div class="vc-name">Qwen 3.5</div>
+    </div>
+    <div class="vcard-arrow">→</div>
+    <div class="vcard vc2">
+      <div class="vc-label">Jan 2025</div>
+      <div class="vc-name">Qwen 3.6</div>
+    </div>
+    <div class="vcard-arrow">→</div>
+    <div class="vcard vc3">
+      <div class="vc-label">Feb 2025</div>
+      <div class="vc-name">Qwen 3.6+</div>
+    </div>
+    <div class="vcard-arrow">→</div>
+    <div class="vcard vc4">
+      <div class="vc-label">Apr 2025</div>
+      <div class="vc-name">Qwen 3.7</div>
+      <div class="vc-now">NOW</div>
+    </div>
+  </div>
+
+  <!-- Closing punch: 3 words -->
+  <div class="punch-row">
+    <span class="pw p1">Every.</span>
+    <span class="pw p2">Single.</span>
+    <span class="pw p3">Time.</span>
+  </div>
+
+  <!-- SVG connector lines -->
+  <svg class="connect-svg" viewBox="0 0 1920 1080" preserveAspectRatio="none">
+    <line class="cline cl1"
+      x1="100" y1="192" x2="1380" y2="192"
+      stroke="rgba(255,200,50,0.12)" stroke-width="1" stroke-dasharray="8 5"/>
+    <line class="cline cl2"
+      x1="1340" y1="300" x2="1340" y2="720"
+      stroke="rgba(255,200,50,0.15)" stroke-width="1" stroke-dasharray="8 5"/>
+  </svg>
+
+  <style>
+    [data-composition-id="s14-kinetic-words"] {
+      width: 1920px;
+      height: 1080px;
+      background: #050508;
+      font-family: "Space Grotesk", sans-serif;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ── Diagonal stripe background (always drifting) ── */
+    [data-composition-id="s14-kinetic-words"] .bg-stripes {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 58px,
+        rgba(255,200,50,0.018) 58px,
+        rgba(255,200,50,0.018) 60px
+      );
+      animation: stripe-drift 14s linear infinite;
+    }
+    @keyframes stripe-drift {
+      from { background-position: 0 0; }
+      to   { background-position: 116px 116px; }
+    }
+
+    /* ── Particles ── */
+    [data-composition-id="s14-kinetic-words"] .pt {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: rgba(255,200,50,0.5);
+      animation: pt-pulse var(--d) var(--dl) ease-in-out infinite alternate;
+    }
+    @keyframes pt-pulse {
+      from { transform: scale(1) translateY(0); opacity: 0.2; }
+      to   { transform: scale(2.2) translateY(-28px); opacity: 0.75; }
+    }
+
+    /* ── Top accent line ── */
+    [data-composition-id="s14-kinetic-words"] .top-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #ffc832, rgba(255,200,50,0.3), transparent);
+    }
+
+    /* ── Eyebrow ── */
+    [data-composition-id="s14-kinetic-words"] .eyebrow {
+      position: absolute;
+      top: 72px;
+      left: 100px;
+      font-size: 20px;
+      font-family: "Inter", sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #ffc832;
+      opacity: 0;
+    }
+
+    /* ── Headline ── */
+    [data-composition-id="s14-kinetic-words"] .headline-wrap {
+      position: absolute;
+      top: 120px;
+      left: 100px;
+      right: 560px;
+    }
+    [data-composition-id="s14-kinetic-words"] .hl-line {
+      display: flex;
+      align-items: baseline;
+      gap: 20px;
+      line-height: 1;
+    }
+    [data-composition-id="s14-kinetic-words"] .hw {
+      font-size: 138px;
+      font-weight: 900;
+      color: #ffffff;
+      display: inline-block;
+      opacity: 0;
+      line-height: 1.0;
+    }
+    /* Word accent overrides */
+    [data-composition-id="s14-kinetic-words"] .w2 {
+      color: #ffc832;
+      font-style: italic;
+    }
+    [data-composition-id="s14-kinetic-words"] .w3 {
+      color: transparent;
+      -webkit-text-stroke: 3px #ffc832;
+    }
+    [data-composition-id="s14-kinetic-words"] .w7 {
+      color: rgba(255,255,255,0.45);
+    }
+
+    /* Headline underline */
+    [data-composition-id="s14-kinetic-words"] .headline-underline {
+      position: absolute;
+      top: 556px;
+      left: 100px;
+      width: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #ffc832, rgba(255,200,50,0));
+    }
+
+    /* ── Right counter ── */
+    [data-composition-id="s14-kinetic-words"] .counter-wrap {
+      position: absolute;
+      top: 130px;
+      right: 60px;
+      width: 480px;
+      height: 580px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+    }
+    [data-composition-id="s14-kinetic-words"] .orbit-ring {
+      position: absolute;
+      width: 420px;
+      height: 420px;
+      border: 2px solid rgba(255,200,50,0.18);
+      border-radius: 50%;
+      animation: ring-spin 6s linear infinite;
+    }
+    @keyframes ring-spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+    [data-composition-id="s14-kinetic-words"] .orbit-dot {
+      position: absolute;
+      top: -7px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #ffc832;
+      box-shadow: 0 0 20px rgba(255,200,50,0.9), 0 0 40px rgba(255,200,50,0.4);
+    }
+    [data-composition-id="s14-kinetic-words"] .counter-inner {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    [data-composition-id="s14-kinetic-words"] .counter-num {
+      font-size: 280px;
+      font-weight: 900;
+      color: #ffc832;
+      line-height: 0.85;
+      letter-spacing: -0.05em;
+    }
+    [data-composition-id="s14-kinetic-words"] .counter-unit {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      color: rgba(255,255,255,0.5);
+      font-family: "Inter", sans-serif;
+      margin-top: 12px;
+    }
+    [data-composition-id="s14-kinetic-words"] .counter-label {
+      font-size: 18px;
+      color: rgba(255,255,255,0.28);
+      font-family: "Inter", sans-serif;
+      margin-top: 6px;
+    }
+
+    /* ── Bottom version cards ── */
+    [data-composition-id="s14-kinetic-words"] .cards-row {
+      position: absolute;
+      bottom: 100px;
+      left: 100px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    [data-composition-id="s14-kinetic-words"] .vcard {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      padding: 18px 28px;
+      min-width: 148px;
+      text-align: center;
+      opacity: 0;
+      position: relative;
+    }
+    [data-composition-id="s14-kinetic-words"] .vc4 {
+      border-color: rgba(255,200,50,0.4);
+      background: rgba(255,200,50,0.07);
+    }
+    [data-composition-id="s14-kinetic-words"] .vc-label {
+      font-size: 14px;
+      color: rgba(255,255,255,0.32);
+      font-family: "Inter", sans-serif;
+      letter-spacing: 0.06em;
+      margin-bottom: 5px;
+    }
+    [data-composition-id="s14-kinetic-words"] .vc-name {
+      font-size: 26px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    [data-composition-id="s14-kinetic-words"] .vc-now {
+      position: absolute;
+      top: -10px;
+      right: 10px;
+      background: #ffc832;
+      color: #050508;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    [data-composition-id="s14-kinetic-words"] .vcard-arrow {
+      font-size: 28px;
+      color: rgba(255,200,50,0.35);
+      opacity: 0;
+    }
+
+    /* ── Punch line ── */
+    [data-composition-id="s14-kinetic-words"] .punch-row {
+      position: absolute;
+      bottom: 50px;
+      right: 100px;
+      display: flex;
+      gap: 20px;
+    }
+    [data-composition-id="s14-kinetic-words"] .pw {
+      font-size: 64px;
+      font-weight: 900;
+      display: inline-block;
+      opacity: 0;
+    }
+    [data-composition-id="s14-kinetic-words"] .p1 { color: rgba(255,255,255,0.85); }
+    [data-composition-id="s14-kinetic-words"] .p2 { color: rgba(255,200,50,0.85); }
+    [data-composition-id="s14-kinetic-words"] .p3 { color: #ffc832; }
+
+    /* ── SVG lines ── */
+    [data-composition-id="s14-kinetic-words"] .connect-svg {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    [data-composition-id="s14-kinetic-words"] .cline {
+      stroke-dashoffset: 1400;
+    }
+  </style>
+
+  <script>
+    (function () {
+      const S  = '[data-composition-id="s14-kinetic-words"]';
+      const tl = gsap.timeline({ paused: true });
+
+      /* ── CSS animations (stripes, particles) start immediately automatically ── */
+
+      /* ── 0.0s: Top accent line wipes across full width ── */
+      tl.to(`${S} .top-line`, { width: 1920, duration: 0.85, ease: "power2.inOut" }, 0);
+
+      /* ── 0.3s: Eyebrow slides in from left ── */
+      tl.fromTo(`${S} .eyebrow`,
+        { opacity: 0, x: -30 },
+        { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" },
+        0.3
+      );
+
+      /* ── 0.6s: Counter wrap fades + rises in ── */
+      tl.fromTo(`${S} .counter-wrap`,
+        { opacity: 0, y: 50 },
+        { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" },
+        0.6
+      );
+
+      /* ── 0.9–2.3s: 7 headline words, each unique enter ── */
+
+      /* w1 "The" — drops in from above */
+      tl.fromTo(`${S} .w1`,
+        { opacity: 0, y: -80 },
+        { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" },
+        0.9
+      );
+
+      /* w2 "fastest" — slams in from left with skew */
+      tl.fromTo(`${S} .w2`,
+        { opacity: 0, x: -120, skewX: -12 },
+        { opacity: 1, x: 0, skewX: 0, duration: 0.5, ease: "power2.out" },
+        1.1
+      );
+
+      /* w3 "AI" — elastic scale-in */
+      tl.fromTo(`${S} .w3`,
+        { opacity: 0, scale: 0.2, rotation: -20 },
+        { opacity: 1, scale: 1, rotation: 0, duration: 0.65, ease: "elastic.out(1, 0.5)" },
+        1.3
+      );
+
+      /* w4 "release" — clip-path wipe from left */
+      tl.fromTo(`${S} .w4`,
+        { opacity: 1, clipPath: "inset(0 100% 0 0)" },
+        { opacity: 1, clipPath: "inset(0 0% 0 0)", duration: 0.55, ease: "power2.inOut" },
+        1.55
+      );
+
+      /* w5 "cycle" — drops from below */
+      tl.fromTo(`${S} .w5`,
+        { opacity: 0, y: 90 },
+        { opacity: 1, y: 0, duration: 0.45, ease: "back.out(1.7)" },
+        1.8
+      );
+
+      /* w6 "in" — fast pop */
+      tl.fromTo(`${S} .w6`,
+        { opacity: 0, scale: 2 },
+        { opacity: 1, scale: 1, duration: 0.35, ease: "power3.out" },
+        2.0
+      );
+
+      /* w7 "history." — slides from right, fades */
+      tl.fromTo(`${S} .w7`,
+        { opacity: 0, x: 100 },
+        { opacity: 1, x: 0, duration: 0.55, ease: "power2.out" },
+        2.2
+      );
+
+      /* ── 2.4s: Underline wipes in ── */
+      tl.to(`${S} .headline-underline`, { width: 1200, duration: 0.7, ease: "power2.out" }, 2.4);
+
+      /* ── 1.0–2.5s: Counter counts up 0 → 6 ── */
+      const counterEl = document.querySelector(`${S} .counter-num`);
+      const dummy = { v: 0 };
+      tl.to(dummy, {
+        v: 6,
+        duration: 1.8,
+        ease: "power2.out",
+        onUpdate: () => { if (counterEl) counterEl.textContent = Math.round(dummy.v); }
+      }, 1.0);
+
+      /* ── 2.0s: SVG lines draw ── */
+      tl.to(`${S} .cl1`, { strokeDashoffset: 0, duration: 0.7, ease: "power2.out" }, 2.0);
+      tl.to(`${S} .cl2`, { strokeDashoffset: 0, duration: 0.6, ease: "power2.out" }, 2.4);
+
+      /* ── 2.5s: Version cards stagger up ── */
+      tl.fromTo(`${S} .vcard`,
+        { opacity: 0, y: 40 },
+        { opacity: 1, y: 0, duration: 0.45, stagger: 0.1, ease: "back.out(1.5)" },
+        2.5
+      );
+      tl.fromTo(`${S} .vcard-arrow`,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.3, stagger: 0.1 },
+        2.7
+      );
+
+      /* ── 3.5–3.9s: Punch words pop in ── */
+      tl.fromTo(`${S} .p1`,
+        { opacity: 0, scale: 0.5 },
+        { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2)" },
+        3.5
+      );
+      tl.fromTo(`${S} .p2`,
+        { opacity: 0, scale: 0.5 },
+        { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2)" },
+        3.72
+      );
+      tl.fromTo(`${S} .p3`,
+        { opacity: 0, scale: 0.5 },
+        { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2)" },
+        3.94
+      );
+
+      /* ─────────── CONTINUOUS LOOPS ─────────── */
+
+      /* "fastest" word glow pulses after landing */
+      tl.to(`${S} .w2`, {
+        textShadow: "0 0 50px rgba(255,200,50,0.95), 0 0 100px rgba(255,200,50,0.4)",
+        duration: 1.4, repeat: -1, yoyo: true, ease: "sine.inOut"
+      }, 2.5);
+
+      /* "AI" word outline glow */
+      tl.to(`${S} .w3`, {
+        filter: "drop-shadow(0 0 16px rgba(255,200,50,0.8))",
+        duration: 1.8, repeat: -1, yoyo: true, ease: "sine.inOut"
+      }, 2.8);
+
+      /* Counter number glow */
+      tl.to(`${S} .counter-num`, {
+        textShadow: "0 0 70px rgba(255,200,50,0.9), 0 0 140px rgba(255,200,50,0.4)",
+        duration: 1.6, repeat: -1, yoyo: true, ease: "sine.inOut"
+      }, 2.6);
+
+      /* vc4 card border glow */
+      tl.to(`${S} .vc4`, {
+        boxShadow: "0 0 30px rgba(255,200,50,0.3), 0 0 60px rgba(255,200,50,0.12)",
+        duration: 1.2, repeat: -1, yoyo: true, ease: "sine.inOut"
+      }, 3.0);
+
+      /* p3 "Time." pulse */
+      tl.to(`${S} .p3`, {
+        textShadow: "0 0 30px rgba(255,200,50,0.9)",
+        duration: 1.0, repeat: -1, yoyo: true, ease: "sine.inOut"
+      }, 4.2);
+
+      /* Underline pulse */
+      tl.to(`${S} .headline-underline`, {
+        opacity: 0.4, duration: 1.5, repeat: -1, yoyo: true, ease: "sine.inOut"
+      }, 3.5);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["s14-kinetic-words"] = tl;
+      if (!window.__hfEngine) setTimeout(() => tl.play(), 200);
+    })();
+  </script>
+</div>
+</body>
+</html>

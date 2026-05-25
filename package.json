@@ -1,0 +1,45 @@
+{
+  "name": "cladedesigns",
+  "version": "1.0.0",
+  "description": "HeyGen HyperFrames video-as-code workspace — HTML + GSAP compositions that render to MP4",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "main-video",
+    "product-promo",
+    "kinetic-type",
+    "swiss-grid",
+    "blank-starter"
+  ],
+  "scripts": {
+    "dev:main": "npx hyperframes preview --project main-video",
+    "dev:promo": "npx hyperframes preview --project product-promo",
+    "dev:kinetic": "npx hyperframes preview --project kinetic-type",
+    "dev:swiss": "npx hyperframes preview --project swiss-grid",
+    "lint:all": "npx hyperframes lint main-video && npx hyperframes lint product-promo && npx hyperframes lint kinetic-type && npx hyperframes lint swiss-grid",
+    "render:main": "npx hyperframes render main-video --output renders/main-video.mp4",
+    "render:all": "npm run render:main && npx hyperframes render product-promo --output renders/product-promo.mp4 && npx hyperframes render kinetic-type --output renders/kinetic-type.mp4",
+    "skills": "npx hyperframes skills"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jibranpcccc/cladedesigns"
+  },
+  "keywords": [
+    "heygen",
+    "hyperframes",
+    "video-as-code",
+    "gsap",
+    "html-video"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@fontsource/jetbrains-mono": "^5.2.8",
+    "@fontsource/space-grotesk": "^5.2.10",
+    "@hyperframes/core": "^0.6.38",
+    "@hyperframes/player": "^0.6.38",
+    "@hyperframes/shader-transitions": "^0.6.38",
+    "gsap": "^3.15.0",
+    "hyperframes": "^0.6.38"
+  }
+}

@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1920, height=1080" />
+  <title>Sample: Dense Benchmark Reveal (3× Animation Density)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=block" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 1920px; height: 1080px; overflow: hidden; background: #080812; }
+  </style>
+</head>
+<body>
+
+<!--
+  SCENE TYPE: Dense Benchmark Reveal — 3× animation density reference
+  BACKGROUND: Deep navy-black #080812
+  ACCENT: Purple #8b5cf6 / #a78bfa
+  USE WHEN: Showing model rankings, performance data, competitive stats
+  DURATION: 14s
+  LAYERS (all running simultaneously after trigger):
+    - Animated grid background (CSS keyframes, always moving)
+    - 24 floating particles (CSS, fixed positions, always moving)
+    - Horizontal scan line (CSS, sweeps left→right, 8s loop)
+    - Title words: staggered drop-in from top
+    - Center divider: draws down
+    - Rank badge: scales in with pulse rings expanding outward
+    - Pulse rings: continuous subtle breathing after appear
+    - 5 benchmark bars: stagger in from right, then fills animate simultaneously
+    - Bottom stats: stagger up from below
+    - Continuous glow on #1 rank number
+    - Continuous glow on top bar fill
+-->
+
+<div
+  data-composition-id="s13-benchmark-dense"
+  data-width="1920"
+  data-height="1080"
+  data-duration="14"
+>
+
+  <!-- Layer 1: Animated grid -->
+  <div class="bg-grid"></div>
+
+  <!-- Layer 2: Particles (24 fixed positions — no Math.random) -->
+  <div class="particles">
+    <div class="pt" style="left:80px;top:120px;--d:6s;--dl:0s"></div>
+    <div class="pt" style="left:240px;top:340px;--d:8s;--dl:1.2s"></div>
+    <div class="pt" style="left:440px;top:80px;--d:7s;--dl:0.4s"></div>
+    <div class="pt" style="left:620px;top:900px;--d:9s;--dl:2.1s"></div>
+    <div class="pt" style="left:780px;top:200px;--d:6.5s;--dl:0.8s"></div>
+    <div class="pt" style="left:960px;top:960px;--d:8.5s;--dl:1.6s"></div>
+    <div class="pt" style="left:1100px;top:60px;--d:7.2s;--dl:3.0s"></div>
+    <div class="pt" style="left:1280px;top:460px;--d:6.8s;--dl:0.2s"></div>
+    <div class="pt" style="left:1420px;top:820px;--d:9.2s;--dl:1.8s"></div>
+    <div class="pt" style="left:1560px;top:140px;--d:7.6s;--dl:0.6s"></div>
+    <div class="pt" style="left:1680px;top:560px;--d:8.2s;--dl:2.4s"></div>
+    <div class="pt" style="left:1820px;top:300px;--d:6.2s;--dl:1.0s"></div>
+    <div class="pt" style="left:180px;top:700px;--d:9.5s;--dl:3.4s"></div>
+    <div class="pt" style="left:360px;top:520px;--d:7.8s;--dl:2.8s"></div>
+    <div class="pt" style="left:520px;top:640px;--d:8.8s;--dl:0.9s"></div>
+    <div class="pt" style="left:840px;top:760px;--d:6.4s;--dl:3.2s"></div>
+    <div class="pt" style="left:1020px;top:380px;--d:9.8s;--dl:1.4s"></div>
+    <div class="pt" style="left:1180px;top:680px;--d:7.4s;--dl:2.6s"></div>
+    <div class="pt" style="left:1360px;top:240px;--d:8.6s;--dl:0.3s"></div>
+    <div class="pt" style="left:1500px;top:440px;--d:6.6s;--dl:1.7s"></div>
+    <div class="pt" style="left:1740px;top:720px;--d:9.0s;--dl:2.0s"></div>
+    <div class="pt" style="left:100px;top:860px;--d:7.0s;--dl:3.6s"></div>
+    <div class="pt" style="left:700px;top:400px;--d:8.0s;--dl:2.2s"></div>
+    <div class="pt" style="left:1860px;top:900px;--d:6.0s;--dl:1.5s"></div>
+  </div>
+
+  <!-- Layer 3: Scan line -->
+  <div class="scan-line"></div>
+
+  <!-- Title row — 5 words with stagger -->
+  <div class="title-row">
+    <span class="tw tw1">Qwen</span>
+    <span class="tw tw2">3.7</span>
+    <span class="tw tw3">leads</span>
+    <span class="tw tw4">the</span>
+    <span class="tw tw5">pack.</span>
+  </div>
+
+  <!-- Sub-eyebrow -->
+  <div class="title-sub">Intelligence index · artificialanalysis.ai · May 2025</div>
+
+  <!-- Center divider -->
+  <div class="center-divider"></div>
+
+  <!-- Left: Hero rank -->
+  <div class="hero-left">
+    <div class="pulse-ring pr1"></div>
+    <div class="pulse-ring pr2"></div>
+    <div class="pulse-ring pr3"></div>
+    <div class="rank-badge">
+      <div class="rank-hash">#</div>
+      <div class="rank-num">1</div>
+    </div>
+    <div class="rank-of-wrap">
+      <div class="rank-of">of 151 models</div>
+    </div>
+    <div class="rank-label">Intelligence Index</div>
+    <div class="rank-score-wrap">
+      <div class="rank-score-num">57</div>
+      <div class="rank-score-max">/100</div>
+    </div>
+    <div class="rank-tag">↑ +2 pts vs Claude 3.7</div>
+  </div>
+
+  <!-- Right: Bars comparison -->
+  <div class="bars-section">
+    <div class="bars-eyebrow">Performance vs. Competition</div>
+
+    <div class="bar-item bi1">
+      <div class="bar-name bn1">Qwen 3.7-Max</div>
+      <div class="bar-track"><div class="bar-fill bf1"></div></div>
+      <div class="bar-val bv1">57</div>
+    </div>
+    <div class="bar-item bi2">
+      <div class="bar-name">Claude 3.7 Sonnet</div>
+      <div class="bar-track"><div class="bar-fill bf2"></div></div>
+      <div class="bar-val">55</div>
+    </div>
+    <div class="bar-item bi3">
+      <div class="bar-name">GPT-4o</div>
+      <div class="bar-track"><div class="bar-fill bf3"></div></div>
+      <div class="bar-val">52</div>
+    </div>
+    <div class="bar-item bi4">
+      <div class="bar-name">Gemini 1.5 Pro</div>
+      <div class="bar-track"><div class="bar-fill bf4"></div></div>
+      <div class="bar-val">50</div>
+    </div>
+    <div class="bar-item bi5">
+      <div class="bar-name">Llama 3.1 405B</div>
+      <div class="bar-track"><div class="bar-fill bf5"></div></div>
+      <div class="bar-val">46</div>
+    </div>
+
+    <!-- Highlight badge that pops on bar 1 -->
+    <div class="winner-badge">WINNER</div>
+  </div>
+
+  <!-- Bottom stats row -->
+  <div class="bottom-stats">
+    <div class="bstat bs1">
+      <div class="bstat-val">$2.50</div>
+      <div class="bstat-key">Input / M tokens</div>
+    </div>
+    <div class="bstat-divider"></div>
+    <div class="bstat bs2">
+      <div class="bstat-val">$7.50</div>
+      <div class="bstat-key">Output / M tokens</div>
+    </div>
+    <div class="bstat-divider"></div>
+    <div class="bstat bs3">
+      <div class="bstat-val">131K</div>
+      <div class="bstat-key">Context window</div>
+    </div>
+    <div class="bstat-divider"></div>
+    <div class="bstat bs4">
+      <div class="bstat-val">48ms</div>
+      <div class="bstat-key">Time to first token</div>
+    </div>
+    <div class="bstat-divider"></div>
+    <div class="bstat bs5">
+      <div class="bstat-val">93.4%</div>
+      <div class="bstat-key">MMLU score</div>
+    </div>
+  </div>
+
+  <style>
+    [data-composition-id="s13-benchmark-dense"] {
+      width: 1920px;
+      height: 1080px;
+      background: #080812;
+      font-family: "Space Grotesk", sans-serif;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ── Background grid (always moving) ── */
+    [data-composition-id="s13-benchmark-dense"] .bg-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(139,92,246,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(139,92,246,0.05) 1px, transparent 1px);
+      background-size: 80px 80px;
+      animation: grid-drift 18s linear infinite;
+    }
+    @keyframes grid-drift {
+      from { background-position: 0 0; }
+      to   { background-position: 80px 80px; }
+    }
+
+    /* ── Particles ── */
+    [data-composition-id="s13-benchmark-dense"] .pt {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: rgba(139,92,246,0.6);
+      animation: pt-float var(--d) var(--dl) ease-in-out infinite alternate;
+    }
+    @keyframes pt-float {
+      from { transform: translateY(0) scale(1); opacity: 0.25; }
+      to   { transform: translateY(-36px) scale(1.8); opacity: 0.75; }
+    }
+
+    /* ── Scan line ── */
+    [data-composition-id="s13-benchmark-dense"] .scan-line {
+      position: absolute;
+      top: 0;
+      left: -3px;
+      width: 3px;
+      height: 100%;
+      background: linear-gradient(
+        transparent 0%,
+        rgba(139,92,246,0.0) 20%,
+        rgba(139,92,246,0.5) 50%,
+        rgba(139,92,246,0.0) 80%,
+        transparent 100%
+      );
+      animation: scan-sweep 8s linear infinite;
+      opacity: 0.6;
+    }
+    @keyframes scan-sweep {
+      from { left: -3px; }
+      to   { left: 1923px; }
+    }
+
+    /* ── Title row ── */
+    [data-composition-id="s13-benchmark-dense"] .title-row {
+      position: absolute;
+      top: 52px;
+      left: 100px;
+      display: flex;
+      align-items: baseline;
+      gap: 22px;
+    }
+    [data-composition-id="s13-benchmark-dense"] .tw {
+      font-size: 80px;
+      font-weight: 900;
+      color: #ffffff;
+      opacity: 0;
+      display: inline-block;
+    }
+    [data-composition-id="s13-benchmark-dense"] .tw2 {
+      color: #a78bfa;
+      font-style: italic;
+    }
+    [data-composition-id="s13-benchmark-dense"] .tw5 {
+      color: rgba(255,255,255,0.55);
+    }
+
+    [data-composition-id="s13-benchmark-dense"] .title-sub {
+      position: absolute;
+      top: 158px;
+      left: 100px;
+      font-size: 20px;
+      font-family: "Inter", sans-serif;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 0.06em;
+      opacity: 0;
+    }
+
+    /* ── Center divider ── */
+    [data-composition-id="s13-benchmark-dense"] .center-divider {
+      position: absolute;
+      left: 820px;
+      top: 190px;
+      width: 1px;
+      height: 0;
+      background: linear-gradient(
+        transparent,
+        rgba(139,92,246,0.4) 20%,
+        rgba(139,92,246,0.4) 80%,
+        transparent
+      );
+    }
+
+    /* ── Hero left ── */
+    [data-composition-id="s13-benchmark-dense"] .hero-left {
+      position: absolute;
+      top: 190px;
+      left: 0;
+      width: 820px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding-top: 20px;
+    }
+
+    /* Pulse rings */
+    [data-composition-id="s13-benchmark-dense"] .pulse-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1.5px solid rgba(139,92,246,0.4);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0;
+    }
+    [data-composition-id="s13-benchmark-dense"] .pr1 { width: 300px; height: 300px; }
+    [data-composition-id="s13-benchmark-dense"] .pr2 { width: 420px; height: 420px; border-color: rgba(139,92,246,0.2); }
+    [data-composition-id="s13-benchmark-dense"] .pr3 { width: 540px; height: 540px; border-color: rgba(139,92,246,0.1); }
+
+    /* Rank badge */
+    [data-composition-id="s13-benchmark-dense"] .rank-badge {
+      display: flex;
+      align-items: flex-start;
+      line-height: 1;
+      opacity: 0;
+      position: relative;
+      z-index: 2;
+    }
+    [data-composition-id="s13-benchmark-dense"] .rank-hash {
+      font-size: 72px;
+      font-weight: 900;
+      color: rgba(139,92,246,0.8);
+      margin-top: 28px;
+      line-height: 1;
+    }
+    [data-composition-id="s13-benchmark-dense"] .rank-num {
+      font-size: 300px;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 0.88;
+      letter-spacing: -0.05em;
+    }
+    [data-composition-id="s13-benchmark-dense"] .rank-of-wrap {
+      opacity: 0;
+    }
+    [data-composition-id="s13-benchmark-dense"] .rank-of {
+      font-size: 22px;
+      color: rgba(255,255,255,0.35);
+      font-family: "Inter", sans-serif;
+    }
+    [data-composition-id="s13-benchmark-dense"] .rank-label {
+      font-size: 22px;
+      font-family: "Inter", sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-top: 8px;
+      opacity: 0;
+    }
+    [data-composition-id="s13-benchmark-dense"] .rank-score-wrap {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-top: 10px;
+      opacity: 0;
+    }
+    [data-composition-id="s13-benchmark-dense"] .rank-score-num {
+      font-size: 80px;
+      font-weight: 900;
+      color: #8b5cf6;
+      line-height: 1;
+    }
+    [data-composition-id="s13-benchmark-dense"] .rank-score-max {
+      font-size: 34px;
+      color: rgba(255,255,255,0.25);
+      font-family: "Inter", sans-serif;
+    }
+    [data-composition-id="s13-benchmark-dense"] .rank-tag {
+      margin-top: 12px;
+      font-size: 20px;
+      font-family: "Inter", sans-serif;
+      color: #a78bfa;
+      background: rgba(139,92,246,0.12);
+      border: 1px solid rgba(139,92,246,0.25);
+      border-radius: 100px;
+      padding: 6px 20px;
+      opacity: 0;
+    }
+
+    /* ── Bars section ── */
+    [data-composition-id="s13-benchmark-dense"] .bars-section {
+      position: absolute;
+      top: 190px;
+      left: 880px;
+      right: 80px;
+      opacity: 0;
+    }
+    [data-composition-id="s13-benchmark-dense"] .bars-eyebrow {
+      font-size: 18px;
+      font-family: "Inter", sans-serif;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 36px;
+    }
+    [data-composition-id="s13-benchmark-dense"] .bar-item {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 24px;
+      opacity: 0;
+    }
+    [data-composition-id="s13-benchmark-dense"] .bar-name {
+      width: 240px;
+      font-size: 22px;
+      color: rgba(255,255,255,0.6);
+      font-family: "Inter", sans-serif;
+      text-align: right;
+      flex-shrink: 0;
+    }
+    [data-composition-id="s13-benchmark-dense"] .bn1 {
+      color: #ffffff;
+      font-weight: 700;
+    }
+    [data-composition-id="s13-benchmark-dense"] .bar-track {
+      flex: 1;
+      height: 36px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+    [data-composition-id="s13-benchmark-dense"] .bar-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 6px;
+      transition: none;
+    }
+    [data-composition-id="s13-benchmark-dense"] .bf1 {
+      background: linear-gradient(90deg, #7c3aed, #a78bfa, #c4b5fd);
+    }
+    [data-composition-id="s13-benchmark-dense"] .bf2 { background: rgba(255,255,255,0.18); }
+    [data-composition-id="s13-benchmark-dense"] .bf3 { background: rgba(255,255,255,0.13); }
+    [data-composition-id="s13-benchmark-dense"] .bf4 { background: rgba(255,255,255,0.10); }
+    [data-composition-id="s13-benchmark-dense"] .bf5 { background: rgba(255,255,255,0.07); }
+    [data-composition-id="s13-benchmark-dense"] .bar-val {
+      font-size: 26px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.4);
+      width: 48px;
+      font-family: "JetBrains Mono", monospace;
+    }
+    [data-composition-id="s13-benchmark-dense"] .bv1 {
+      color: #c4b5fd;
+    }
+
+    /* Winner badge */
+    [data-composition-id="s13-benchmark-dense"] .winner-badge {
+      display: inline-block;
+      background: #8b5cf6;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: "Inter", sans-serif;
+      letter-spacing: 0.14em;
+      padding: 5px 14px;
+      border-radius: 6px;
+      margin-left: 258px;
+      margin-top: -12px;
+      opacity: 0;
+      transform: scale(0.7);
+    }
+
+    /* ── Bottom stats ── */
+    [data-composition-id="s13-benchmark-dense"] .bottom-stats {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      align-items: stretch;
+      border-top: 1px solid rgba(139,92,246,0.15);
+    }
+    [data-composition-id="s13-benchmark-dense"] .bstat {
+      flex: 1;
+      text-align: center;
+      padding: 28px 0 32px;
+      opacity: 0;
+    }
+    [data-composition-id="s13-benchmark-dense"] .bstat-divider {
+      width: 1px;
+      background: rgba(255,255,255,0.06);
+      align-self: stretch;
+    }
+    [data-composition-id="s13-benchmark-dense"] .bstat-val {
+      font-size: 44px;
+      font-weight: 900;
+      color: #ffffff;
+      font-family: "JetBrains Mono", monospace;
+    }
+    [data-composition-id="s13-benchmark-dense"] .bstat-key {
+      font-size: 16px;
+      color: rgba(255,255,255,0.3);
+      font-family: "Inter", sans-serif;
+      margin-top: 6px;
+      letter-spacing: 0.06em;
+    }
+    [data-composition-id="s13-benchmark-dense"] .bs1 .bstat-val { color: #a78bfa; }
+  </style>
+
+  <script>
+    (function () {
+      const S  = '[data-composition-id="s13-benchmark-dense"]';
+      const tl = gsap.timeline({ paused: true });
+
+      /* ── 0.0s: Grid + particles + scan-line start automatically via CSS ── */
+
+      /* ── 0.2s: Title words drop in with stagger ── */
+      tl.fromTo(`${S} .tw`,
+        { opacity: 0, y: -50 },
+        { opacity: 1, y: 0, duration: 0.5, stagger: 0.09, ease: "back.out(1.6)" },
+        0.2
+      );
+
+      /* ── 0.5s: Sub-eyebrow fades in ── */
+      tl.fromTo(`${S} .title-sub`,
+        { opacity: 0, x: -20 },
+        { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" },
+        0.5
+      );
+
+      /* ── 0.6s: Center divider draws down ── */
+      tl.to(`${S} .center-divider`, { height: 760, duration: 0.9, ease: "power2.out" }, 0.6);
+
+      /* ── 0.7s: Rank badge scales in ── */
+      tl.fromTo(`${S} .rank-badge`,
+        { opacity: 0, scale: 0.6 },
+        { opacity: 1, scale: 1, duration: 0.65, ease: "back.out(1.5)" },
+        0.7
+      );
+
+      /* ── 0.9s: "of 151 models" ── */
+      tl.fromTo(`${S} .rank-of-wrap`,
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" },
+        0.9
+      );
+
+      /* ── 1.0s: Pulse rings expand simultaneously ── */
+      tl.fromTo(`${S} .pr1`,
+        { scale: 0, opacity: 0 },
+        { scale: 1, opacity: 0.7, duration: 0.55, ease: "power2.out" },
+        1.0
+      );
+      tl.fromTo(`${S} .pr2`,
+        { scale: 0, opacity: 0 },
+        { scale: 1, opacity: 0.45, duration: 0.65, ease: "power2.out" },
+        1.1
+      );
+      tl.fromTo(`${S} .pr3`,
+        { scale: 0, opacity: 0 },
+        { scale: 1, opacity: 0.25, duration: 0.75, ease: "power2.out" },
+        1.2
+      );
+
+      /* ── 1.0s: Rank label + score appear simultaneously ── */
+      tl.fromTo(`${S} .rank-label`,
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" },
+        1.0
+      );
+      tl.fromTo(`${S} .rank-score-wrap`,
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" },
+        1.15
+      );
+      tl.fromTo(`${S} .rank-tag`,
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" },
+        1.35
+      );
+
+      /* ── 0.9s: Bars section appears ── */
+      tl.to(`${S} .bars-section`, { opacity: 1, duration: 0.3 }, 0.9);
+
+      /* ── 1.0s: Bar items stagger in from right ── */
+      tl.fromTo(`${S} .bar-item`,
+        { opacity: 0, x: 50 },
+        { opacity: 1, x: 0, duration: 0.5, stagger: 0.11, ease: "power2.out" },
+        1.0
+      );
+
+      /* ── 1.3s: All bar fills animate simultaneously (different widths) ── */
+      tl.to(`${S} .bf1`, { width: "97%", duration: 1.1, ease: "power2.out" }, 1.3);
+      tl.to(`${S} .bf2`, { width: "93%", duration: 1.1, ease: "power2.out" }, 1.35);
+      tl.to(`${S} .bf3`, { width: "88%", duration: 1.1, ease: "power2.out" }, 1.40);
+      tl.to(`${S} .bf4`, { width: "84%", duration: 1.1, ease: "power2.out" }, 1.45);
+      tl.to(`${S} .bf5`, { width: "77%", duration: 1.1, ease: "power2.out" }, 1.50);
+
+      /* ── 2.2s: Winner badge pops in ── */
+      tl.fromTo(`${S} .winner-badge`,
+        { opacity: 0, scale: 0.6 },
+        { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(2)" },
+        2.2
+      );
+
+      /* ── 2.6s: Bottom stats stagger up ── */
+      tl.fromTo(`${S} .bstat`,
+        { opacity: 0, y: 24 },
+        { opacity: 1, y: 0, duration: 0.5, stagger: 0.1, ease: "power2.out" },
+        2.6
+      );
+
+      /* ─────────────── CONTINUOUS LOOPS (start after initial reveals) ─────────────── */
+
+      /* Rank number glow pulses */
+      tl.to(`${S} .rank-num`, {
+        textShadow: "0 0 80px rgba(139,92,246,0.9), 0 0 160px rgba(139,92,246,0.4)",
+        duration: 1.6, repeat: -1, yoyo: true, ease: "sine.inOut"
+      }, 1.6);
+
+      /* Pulse rings breathe */
+      tl.to(`${S} .pr1`, {
+        scale: 1.07, opacity: 0.35, duration: 1.8, repeat: -1, yoyo: true, ease: "sine.inOut"
+      }, 1.8);
+      tl.to(`${S} .pr2`, {
+        scale: 1.05, opacity: 0.18, duration: 2.2, repeat: -1, yoyo: true, ease: "sine.inOut"
+      }, 2.0);
+      tl.to(`${S} .pr3`, {
+        scale: 1.03, opacity: 0.08, duration: 2.8, repeat: -1, yoyo: true, ease: "sine.inOut"
+      }, 2.2);
+
+      /* Top bar fill glow pulses */
+      tl.to(`${S} .bf1`, {
+        boxShadow: "0 0 24px rgba(167,139,250,0.9), 0 0 8px rgba(167,139,250,0.5)",
+        duration: 1.4, repeat: -1, yoyo: true, ease: "sine.inOut"
+      }, 2.4);
+
+      /* Score number subtle pulse */
+      tl.to(`${S} .rank-score-num`, {
+        textShadow: "0 0 30px rgba(139,92,246,1)",
+        duration: 1.2, repeat: -1, yoyo: true, ease: "sine.inOut"
+      }, 2.0);
+
+      /* tw2 "3.7" subtle glow */
+      tl.to(`${S} .tw2`, {
+        textShadow: "0 0 20px rgba(167,139,250,0.7)",
+        duration: 2.0, repeat: -1, yoyo: true, ease: "sine.inOut"
+      }, 1.4);
+
+      /* Winner badge subtle pulse */
+      tl.to(`${S} .winner-badge`, {
+        boxShadow: "0 0 20px rgba(139,92,246,0.6)",
+        duration: 1.0, repeat: -1, yoyo: true, ease: "sine.inOut"
+      }, 2.6);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["s13-benchmark-dense"] = tl;
+      if (!window.__hfEngine) setTimeout(() => tl.play(), 200);
+    })();
+  </script>
+</div>
+</body>
+</html>

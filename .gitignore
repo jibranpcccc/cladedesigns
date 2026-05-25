@@ -1,0 +1,10 @@
+node_modules/
+renders/
+.DS_Store
+*.mp4
+*.webm
+*.mp3
+*.wav
+*.woff2
+.env
+.env.local

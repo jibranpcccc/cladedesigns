@@ -34,21 +34,23 @@ https://raw.githubusercontent.com/jibranpcccc/cladedesigns/main/samples/s14-kine
 ```
 
 **If the user says "check for updates" or "check github":**
-1. Fetch https://github.com/jibranpcccc/cladedesigns/commits/main
-2. Look for new commits since your last read
-3. Re-fetch any sample files that were modified
-4. If new sample files (s15+) exist in /samples/, read those too
-5. Update your knowledge silently, then confirm: "Updated. [N] files changed."
+1. Re-fetch every sample URL above — all 14 files
+2. Also try fetching s15, s16, s17 at the same base URL pattern — if any return valid HTML, read them too
+3. Update your internal knowledge of every template
+4. Confirm: "Updated. Re-read [N] files. [X] new templates found." (or "no new templates")
+
+Do NOT try to parse the GitHub commits HTML page — just re-fetch the files directly.
 
 ---
 
 ## STEP 1 — READ THE CODEBASE (every session, before anything else)
 
-Fetch and fully read every URL in the sample library above. You need to know:
+Fetch and fully read every URL in the sample library above. You need to internalize:
 - Every background color and accent color per template
 - Every CSS class name and animation pattern
 - Every GSAP timeline structure
 - What each template looks like and what narrative purpose it serves
+- The exact GSAP CDN tag used: `<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>`
 
 Do not proceed to Step 2 until you have read all 14 samples + CLAUDE.md.
 
@@ -59,29 +61,28 @@ Do not proceed to Step 2 until you have read all 14 samples + CLAUDE.md.
 The user gives URLs without labels. You must figure out what each URL is and extract everything useful from it.
 
 **YouTube / video URLs:**
-- This is the reference video the user is recreating or improving
-- Watch it (or read the transcript/description if you can't watch)
-- Extract: visual style, pacing, scene types used, color palette, energy level
-- Note: what you see here is the ORIGINAL content — real data, real timestamps
-- Numbers and scores shown in this video are ground truth
+- You cannot watch YouTube videos — do not try
+- Fetch the page; read the title, description, and any transcript/caption/subtitle text in the page source
+- Extract from that text: topic, key claims, model/product names, numbers mentioned, energy level
+- Numbers mentioned in YouTube transcripts are reference data — use them if they match URLs you also fetched
 
-**Data website URLs** (artificialanalysis.ai, huggingface.co, openrouter.ai, etc.):
+**Data website URLs** (artificialanalysis.ai, huggingface.co, openrouter.ai, lmarena.ai, etc.):
 - Fetch the page
-- Extract every number, ranking, and score you can find
+- Extract every number, ranking, score, and model name you can find
 - These are your authoritative data sources — use these exact numbers in charts and bars
 - Never invent benchmark scores — only use numbers you fetched from a URL
 
 **Screenshot / image URLs:**
 - Fetch and analyze visually
 - Ask yourself: does this look like a real screen recording, or a designed concept?
-  - Real: slight imperfection, real UI chrome, compression artifacts, standard aspect ratios
-  - Concept/idealized: pixel-perfect layout, unusually high element density, things that couldn't exist in a real recording
-- Real images → extract exact data values and text from them
-- Concept images → extract desired visual style, density, and layout ideas only — do NOT use numbers from these as facts
+  - **Real recording**: slight imperfection, real browser/OS chrome, compression artifacts, standard aspect ratios (16:9, etc.), UI elements at normal web densities
+  - **Designed concept**: pixel-perfect layout, unusually high element density, things that couldn't exist in a real single-screen recording, photoshop-level crispness
+- Real images → extract exact data values, text, numbers — these are ground truth
+- Concept/idealized images → extract desired visual style, density, and layout ideas ONLY — do NOT use numbers from these as facts
 
-**Documentation / blog post URLs:**
-- Extract feature names, version numbers, capability descriptions, quotes
-- Use these for scene content (capability tags, step card text, strikethrough claims)
+**Documentation / blog post / announcement URLs:**
+- Extract feature names, version numbers, capability descriptions, benchmark claims, quotes
+- Use these for scene content: capability tags, step card text, strikethrough claims, timeline milestones
 
 **When you can't access a URL:** Say so in one line, state what you assumed, and continue.
 
@@ -95,15 +96,22 @@ Read the full script. For every sentence or logical segment, extract:
 2. **What data it needs** — numbers, model names, benchmark names (match these to what you fetched from URLs)
 3. **Its narrative function** — see Scene Library below
 4. **Its emotional energy** — slow/weighty, fast/punchy, celebratory, provocative, instructional
-5. **Estimated duration** — count the words, assume ~2.5 words/second for normal VO pace
+5. **Estimated duration** — count the words and apply this pacing rule:
+   - Normal narration: ~2.5 words/second
+   - Punchy/dramatic VO (short sentences, pauses): ~2.0 words/second
+   - Add 1–2 seconds of hold after any big reveal or shocking number
 
-Then group segments into scenes. One scene = one continuous visual idea, typically 6–14 seconds.
+Then group segments into scenes. Apply these rules:
+- **One scene = one continuous visual idea**, typically 6–14 seconds
+- **If a segment is under 5 seconds** → merge it with the adjacent segment that shares its topic
+- **If a segment is over 14 seconds** → split it into two scenes at the most logical break point
+- **Target total video length**: 45–90 seconds (7–12 scenes) for a standard AI product video
 
 ---
 
 ## STEP 4 — SELECT A TEMPLATE FOR EVERY SCENE
 
-Use the narrative function of each scene to pick its template. When two templates could work, use your judgment — choose whichever fills the screen more and better matches the VO pacing.
+Use the narrative function of each scene to pick its template. When two templates could work, choose whichever fills the screen more and better matches the VO pacing.
 
 **Never use the same template twice in a row.**
 
@@ -114,15 +122,19 @@ Use the narrative function of each scene to pick its template. When two template
 | Big stat surrounded by supporting facts | **s02** giant stat + cards |
 | "Here's how it works" — 3-step process | **s03** step cards |
 | Release history or milestones over time | **s04** timeline |
-| Model A is better than Model B | **s05** split comparison |
-| Ranking 4–6 models by one benchmark | **s06** bar chart |
+| Model A is better than Model B (2 models) | **s05** split comparison |
+| Ranking 4–6 models by ONE benchmark | **s06** bar chart |
 | "Everyone thinks X — actually it's Y" | **s07** strikethrough reveal |
 | "Go try it" / call to action / demo | **s08** browser CTA |
-| Showing a real website (artificialanalysis, etc.) | **s09** analytics mockup |
+| Showing a real leaderboard or analytics site | **s09** analytics mockup |
 | Teaching: wrong way vs right way | **s10** vague vs clear |
 | One model works everywhere / integrations | **s11** hub-and-spoke |
-| Dense multi-benchmark result card | **s13** benchmark dense |
+| One model scored across MULTIPLE benchmarks | **s13** benchmark dense |
 | Headline words punching in one by one | **s14** kinetic words |
+
+**Key distinction — s06 vs s13:**
+- Use **s06** (bar chart) when ranking several models on a single benchmark (e.g., "these 5 models on MMLU")
+- Use **s13** (benchmark dense) when showing one model's scores across many benchmarks at once (e.g., "Model X scored 92 on MMLU, 88 on HumanEval, 94 on MATH...")
 
 **Edge cases:**
 - If the script mentions a number AND context cards → s02 beats s12
@@ -135,19 +147,28 @@ Use the narrative function of each scene to pick its template. When two template
 
 ## STEP 5 — WRITE EVERY SCENE
 
-Write each scene as a complete, self-contained HTML file. Base it on the matching sample template — keep the structure, enhance the content with real data from your URL research.
+**Starting point:** Copy the full HTML of the matching sample file as your starting point. Do not write from scratch. Then:
+1. Replace ALL product-specific content — model names, numbers, benchmark names, text — with content from the script and URLs
+2. Keep the entire HTML/CSS/JS structure intact
+3. Enhance with the density rules below
 
 ### Non-negotiable rules (every scene, no exceptions)
 
 **Code structure:**
-- Root div must have: `data-composition-id`, `data-width="1920"`, `data-height="1080"`, `data-duration`
+- Root div must have: `data-composition-id="scene-[NN]-[slug]"`, `data-width="1920"`, `data-height="1080"`, `data-duration="[seconds]"`
+  - Example: `data-composition-id="scene-01-bold-intro"` for scene 1
+- GSAP CDN: `<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>`
+- Root selector in JS:
+  ```js
+  const root = document.querySelector('[data-composition-id="scene-01-bold-intro"]');
+  ```
 - Timeline: `const tl = gsap.timeline({ paused: true })`
-- Registration: `window.__timelines = window.__timelines || {}; window.__timelines["id"] = tl;`
+- Registration: `window.__timelines = window.__timelines || {}; window.__timelines["scene-01-bold-intro"] = tl;`
 - Auto-play: `if (!window.__hfEngine) setTimeout(() => tl.play(), 200);`
 - Zero `Math.random()`, `Date.now()`, or network fetches — everything deterministic
 - Particle positions are hardcoded integers, not calculated randomly
 
-**Visual density (every scene must have all of these):**
+**Visual density (every dark-background scene must have all of these):**
 - [ ] Animated background — canvas dot grid or moving line grid
 - [ ] 16–28 floating particles — hardcoded `left/top` positions, CSS float animation
 - [ ] Continuous scan line — sweeps full width or full height, `repeat: -1`
@@ -159,11 +180,16 @@ Write each scene as a complete, self-contained HTML file. Base it on the matchin
 - [ ] Scene-specific extra layer — whatever makes THIS template unique (orbit, bars, checklist, etc.)
 
 **Exception — light-background templates (s06, s08, s09):**
-These scenes use light backgrounds (#ededf8, #f5f5ff, #f5f5f5). Do NOT add dark cyber particles, neon corner brackets, or heavy scan lines to these — it makes them look broken. Instead:
-- Particles: use dark-accent color at low opacity (e.g. `rgba(85,51,221,0.12)`)
-- Scan line: use a very subtle gradient overlay, not a bright neon line
-- Corner brackets: optional — only if they read cleanly on light bg
-- Keep the UI feeling like a real professional website or browser, not a sci-fi HUD
+These scenes use light backgrounds (#ededf8, #f5f5ff, #f5f5f5). Do NOT add dark cyber particles, neon corner brackets, or heavy scan lines — it breaks the professional UI look. Instead:
+- Particles: use dark-accent color at very low opacity (`rgba(85,51,221,0.10)`)
+- Scan line: subtle gradient overlay only, not a bright neon stripe
+- Corner brackets: omit or use accent color at 15% opacity
+- Keep it looking like a real website or browser — not a sci-fi HUD
+- Text on light backgrounds: always dark text. Never put white text on these scenes.
+
+**Text legibility — always:**
+- Dark backgrounds (s01–s05, s07, s10–s14): use white or light-accent text
+- Light backgrounds (s06, s08, s09): use dark or accent text — never white
 
 **Color palette — never change these:**
 | Template | Background | Primary accent |
@@ -185,14 +211,14 @@ These scenes use light backgrounds (#ededf8, #f5f5ff, #f5f5f5). Do NOT add dark 
 
 **Data rules:**
 - Every number on screen must come from a URL you fetched — no invented stats
-- If you can't find a number in a URL, use a clearly approximate value and flag it in a comment
+- If you can't find a number in a URL, write `<!-- UNVERIFIED: assumed [value] -->` and flag it in the intelligence report
 - Model names, benchmark names, dates — exact spelling from source
-- If a claim is not in the script or a URL you fetched, do not invent it. Write a `<!-- UNVERIFIED: [what you assumed] -->` comment and flag it in your intelligence report
+- If a claim is not in the script or a fetched URL, do not put it on screen
 
 **Code completeness — no shortcuts:**
-- Write every HTML, CSS, and JS line completely. Never use `// ... same as s01`, `/* rest of styles unchanged */`, `<!-- repeat pattern above -->`, or any other placeholder
-- Every file must be 100% standalone and runnable without referencing another file
-- If generating 8+ scenes feels long — keep going. Complete output is the only acceptable output
+- Write every HTML, CSS, and JS line completely. Never use `// ... same as s01`, `/* rest unchanged */`, `<!-- repeat above -->`, or any placeholder
+- Every file must be 100% standalone — runnable by opening it directly in a browser with no other files
+- If generating 8+ scenes feels long — keep going. Stopping early is not acceptable
 
 ---
 
@@ -214,17 +240,20 @@ Between every pair of scenes, choose a HyperShader transition:
 | `swirl-vortex` | Energetic topic switch |
 | `gravitational-lens` | This is important, weight, impact |
 | `ripple-waves` | Smooth, flowing transition |
+| `ridged-burn` | Intense, burning reveal, high-contrast switch |
+| `thermal-distortion` | Technical depth, data heat, benchmark intensity |
 
 ---
 
 ## STEP 7 — ASSEMBLE AND DELIVER
 
+**Output directory:** Create all files in a new folder named after the video slug, e.g. `/qwen-37-max/` or `/gemini-25-pro/`. Scene files go inside that folder. index.html goes at the root of that folder.
+
 Deliver in this exact order, with no interruptions:
 
 ### A. Intelligence report (before any code)
-A brief structured summary of what you found in the URLs:
 ```
-SCRIPT: [N] scenes identified
+SCRIPT: [N] scenes identified | estimated total duration: [X]s
 URLS PROCESSED:
   - [url1] → [what you extracted]
   - [url2] → [what you extracted]
@@ -234,52 +263,93 @@ WARNINGS: [any numbers you couldn't verify / URLs you couldn't access]
 
 ### B. Scene plan
 ```
-| # | Template | Duration | Content | Transition out |
-|---|----------|----------|---------|----------------|
+| # | Template | Duration | Content summary | Transition out |
+|---|----------|----------|-----------------|----------------|
 | 01 | s14 | 6s | "Not a chatbot. An agent engine." | glitch |
 | 02 | s07 | 9s | Strikethrough "just a chatbot" → autonomous agent | flash-through-white |
 ...
 ```
 One sentence of rationale per scene below the table.
 
-### C. All HTML files
-One complete file per scene. Name them: `s01-[slug].html`, `s02-[slug].html`, etc.
-Every file is self-contained and plays in a plain browser.
+### C. All HTML scene files
+One complete file per scene. Name them: `scene-01-[slug].html`, `scene-02-[slug].html`, etc.
+Every file is self-contained and plays in a plain browser with no dependencies.
 
 ### D. index.html
-Final assembled composition. Cumulative `data-start` values calculated from scene durations.
-Include HyperShader transition declarations between scenes.
+Final assembled composition. Use this exact structure:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[Video Title]</title>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+</head>
+<body style="margin:0;background:#000;overflow:hidden;">
+  <div
+    data-composition-id="main"
+    data-width="1920"
+    data-height="1080"
+    data-duration="[TOTAL_SECONDS]"
+  >
+    <div class="clip" data-track-index="0" data-start="0"    data-duration="[S1_DUR]"  data-transition-out="glitch">
+      <!-- inline or iframe: scene-01-[slug].html content -->
+    </div>
+    <div class="clip" data-track-index="0" data-start="[S1_DUR]" data-duration="[S2_DUR]" data-transition-out="flash-through-white">
+      <!-- scene-02 -->
+    </div>
+    <!-- ... one clip per scene, data-start is cumulative sum of all previous durations -->
+  </div>
+  <script>
+    window.__timelines = window.__timelines || {};
+    const tl = gsap.timeline({ paused: true });
+    window.__timelines["main"] = tl;
+    if (!window.__hfEngine) setTimeout(() => tl.play(), 200);
+  </script>
+</body>
+</html>
+```
+
+`data-start` values are cumulative. If scene 1 is 6s and scene 2 is 9s, scene 3 starts at `data-start="15"`.
 
 ---
 
 ## STEP 8 — SELF-CHECK (do not skip)
 
-Before you output a single HTML file, mentally verify:
+After writing all files, before delivering, verify every item:
 
 **Data integrity:**
 - [ ] Every number on screen came from a fetched URL, not invented
 - [ ] Model names spell exactly as in source
 - [ ] Benchmark names are exact (SWE-Bench Verified, not "SWE bench")
+- [ ] All UNVERIFIED values are flagged in comments and in the intelligence report
 
 **Technical correctness:**
-- [ ] Every scene has `data-composition-id`, `data-width`, `data-height`, `data-duration`
-- [ ] Every timeline is paused + registered on `window.__timelines`
+- [ ] Every scene has `data-composition-id="scene-NN-slug"`, `data-width`, `data-height`, `data-duration`
+- [ ] Every file has the GSAP CDN script tag (cdn.jsdelivr.net/npm/gsap@3.14.2)
+- [ ] `root` is defined via `document.querySelector('[data-composition-id="..."]')` before any `root.querySelector()` call
+- [ ] Every timeline is `paused: true` and registered on `window.__timelines`
 - [ ] Auto-play fallback present on every file
 - [ ] Zero `Math.random()` or `Date.now()` calls
+- [ ] No placeholder comments like `// same as above`
 
 **Visual density:**
-- [ ] Every scene has a canvas grid background
-- [ ] Every scene has 16+ particles with hardcoded positions
+- [ ] Every dark-bg scene has a canvas grid background
+- [ ] Every dark-bg scene has 16+ particles with hardcoded positions
 - [ ] Every scene has a top bar + bottom bar
-- [ ] Every scene has corner brackets
-- [ ] Every scene has a scan line
-- [ ] Every scene has 3+ `repeat: -1` loops
+- [ ] Every dark-bg scene has corner brackets
+- [ ] Every dark-bg scene has a scan line
+- [ ] Every dark-bg scene has 3+ `repeat: -1` loops
+- [ ] Light-bg scenes (s06/s08/s09) keep professional UI look — no heavy cyber overlays
 
 **Scene selection quality:**
 - [ ] No two consecutive scenes use the same template
 - [ ] Opening scene is high visual impact (s01, s07, s12, or s14)
 - [ ] Closing scene is CTA (s08)
 - [ ] Every template choice matches the narrative function of that segment
+- [ ] Total duration is between 45 and 90 seconds
 
 If any box is unchecked, fix it before delivering.
 
@@ -287,17 +357,17 @@ If any box is unchecked, fix it before delivering.
 
 ## HOW TO RESPOND WHEN GIVEN A SCRIPT + URLS
 
-Do not ask clarifying questions. Do not ask for approval. Execute this sequence:
+Do not ask clarifying questions. Do not ask for approval at any point. Execute this sequence:
 
-1. Fetch all sample files from GitHub
-2. Fetch every URL provided
-3. Show the intelligence report
-4. Show the scene plan + rationale
-5. Write every HTML file
+1. Fetch CLAUDE.md and all 14 sample files from GitHub
+2. Fetch every URL the user provided — identify what each one is
+3. Output the intelligence report
+4. Output the scene plan + rationale
+5. Write every HTML scene file (complete, no shortcuts)
 6. Write index.html
 7. Done
 
-The only time you pause is if a URL returns an error. State the error in one line and continue with what you have.
+The only time you pause is if a URL returns a hard error. State the error in one line and continue with what you have.
 
 ---
 
@@ -320,6 +390,11 @@ If you look at your scene and any region is static and empty — add something t
 
 Copy these patterns exactly. Do not invent new ones.
 
+**Root selector (always first in the script block):**
+```js
+const root = document.querySelector('[data-composition-id="scene-01-bold-intro"]');
+```
+
 **Moving grid (canvas):**
 ```js
 const canvas = root.querySelector('.mv-grid');
@@ -338,7 +413,7 @@ for (let y = 0; y <= 1080; y += 80) {
 **Scan line sweep:**
 ```js
 tl.fromTo('.scan', { left: '-4px' }, { left: '1924px', duration: 9, ease: 'none', repeat: -1 }, 0);
-// or for horizontal:
+// or vertical:
 tl.fromTo('.scan', { top: '-4px' }, { top: '1084px', duration: 8, ease: 'none', repeat: -1 }, 0);
 ```
 
@@ -372,6 +447,37 @@ tl.to(dummy, {
 **Simultaneous bars (not sequential):**
 ```js
 tl.to('.bar1', { width: '97%', duration: 0.8, ease: 'power2.out' }, 1.3);
-tl.to('.bar2', { width: '91%', duration: 0.8, ease: 'power2.out' }, 1.35);  // offset by only 0.05s
+tl.to('.bar2', { width: '91%', duration: 0.8, ease: 'power2.out' }, 1.35);  // offset by 0.05s only
 tl.to('.bar3', { width: '85%', duration: 0.8, ease: 'power2.out' }, 1.40);
+```
+
+**Full scene boilerplate (the minimum skeleton every file must have):**
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    /* all styles here */
+  </style>
+</head>
+<body style="margin:0;overflow:hidden;">
+  <div data-composition-id="scene-01-bold-intro" data-width="1920" data-height="1080" data-duration="10"
+       style="position:relative;width:1920px;height:1080px;background:#1a1a2e;overflow:hidden;">
+    <canvas class="mv-grid" style="position:absolute;inset:0;"></canvas>
+    <!-- scene content -->
+  </div>
+  <script>
+    const root = document.querySelector('[data-composition-id="scene-01-bold-intro"]');
+    // canvas grid setup
+    // DOM element creation
+    const tl = gsap.timeline({ paused: true });
+    // all tl.fromTo / tl.to calls
+    window.__timelines = window.__timelines || {};
+    window.__timelines["scene-01-bold-intro"] = tl;
+    if (!window.__hfEngine) setTimeout(() => tl.play(), 200);
+  </script>
+</body>
+</html>
 ```

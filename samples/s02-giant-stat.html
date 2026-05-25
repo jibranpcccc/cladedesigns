@@ -17,10 +17,21 @@
   SCENE TYPE: Dramatic Single Stat / Lone Hero Number
   BACKGROUND: Very dark navy-purple #120820
   USE WHEN: One shocking number that needs to land hard — hours, loops, tasks
-  CURSOR: Crosshair (+) — shown in the Qwen video for these intense scenes
-  DURATION: 12–18s
-  FROM QWEN VIDEO: "35 HOURS, ALONE" scene (frames 210s–228s)
-  MOTION: Number glows into existence → label appears below → stat cards float in from right one by one
+  CURSOR: Crosshair
+  DURATION: 14s
+  ANIMATION LAYERS (simultaneous):
+    - 20 purple particles drifting (CSS, fixed positions)
+    - Vertical scan line sweeping left→right (CSS)
+    - 3 concentric glow rings — each pulses at different rate (CSS)
+    - SVG circle draws around the number area
+    - Number counts UP 0→35 while un-blurring simultaneously
+    - HOURS / ALONE label slides up word by word
+    - "No human in the loop." fades in
+    - Cards fly in from right with stagger, then float up/down continuously
+    - Card "0" glows red continuously
+    - Moving crosshair cursor across the stat
+    - Continuous glow pulse on "35"
+    - Bottom detail line fades up last
 -->
 
 <div
@@ -29,13 +40,53 @@
   data-height="1080"
   data-duration="14"
 >
-  <!-- Radial glow behind number -->
-  <div class="glow-ring"></div>
+
+  <!-- Particles (20 fixed positions) -->
+  <div class="particles">
+    <div class="pt" style="left:60px;top:150px;--d:7s;--dl:0s"></div>
+    <div class="pt" style="left:200px;top:500px;--d:9s;--dl:1.3s"></div>
+    <div class="pt" style="left:380px;top:80px;--d:6s;--dl:0.5s"></div>
+    <div class="pt" style="left:500px;top:880px;--d:8s;--dl:2.2s"></div>
+    <div class="pt" style="left:660px;top:300px;--d:7.5s;--dl:0.9s"></div>
+    <div class="pt" style="left:820px;top:960px;--d:10s;--dl:1.7s"></div>
+    <div class="pt" style="left:1040px;top:60px;--d:6.5s;--dl:3.1s"></div>
+    <div class="pt" style="left:1180px;top:480px;--d:8.5s;--dl:0.4s"></div>
+    <div class="pt" style="left:1340px;top:800px;--d:9.5s;--dl:2.4s"></div>
+    <div class="pt" style="left:1500px;top:180px;--d:7.2s;--dl:1.1s"></div>
+    <div class="pt" style="left:1660px;top:640px;--d:8.8s;--dl:2.8s"></div>
+    <div class="pt" style="left:1840px;top:380px;--d:6.2s;--dl:0.7s"></div>
+    <div class="pt" style="left:140px;top:720px;--d:9.2s;--dl:3.6s"></div>
+    <div class="pt" style="left:440px;top:440px;--d:7.8s;--dl:2.9s"></div>
+    <div class="pt" style="left:740px;top:680px;--d:8.2s;--dl:1.4s"></div>
+    <div class="pt" style="left:920px;top:140px;--d:6.8s;--dl:0.2s"></div>
+    <div class="pt" style="left:1100px;top:840px;--d:9.8s;--dl:1.9s"></div>
+    <div class="pt" style="left:1260px;top:260px;--d:7.4s;--dl:2.6s"></div>
+    <div class="pt" style="left:1420px;top:940px;--d:8.6s;--dl:0.8s"></div>
+    <div class="pt" style="left:1760px;top:760px;--d:9.0s;--dl:2.1s"></div>
+  </div>
+
+  <!-- Vertical scan line -->
+  <div class="scan-line"></div>
+
+  <!-- 3 concentric glow rings (CSS pulsing) -->
+  <div class="glow-ring gr1"></div>
+  <div class="glow-ring gr2"></div>
+  <div class="glow-ring gr3"></div>
+
+  <!-- SVG circle that draws around the number -->
+  <svg class="orbit-svg" viewBox="0 0 1920 1080" preserveAspectRatio="none">
+    <circle class="orbit-circle" cx="760" cy="480" r="340"
+      fill="none" stroke="rgba(160,60,255,0.25)" stroke-width="1.5"
+      stroke-dasharray="2136" stroke-dashoffset="2136"/>
+  </svg>
 
   <!-- Center stat -->
   <div class="center-stat">
-    <div class="big-number">35</div>
-    <div class="stat-label">HOURS, ALONE</div>
+    <div class="big-number">0</div>
+    <div class="stat-label">
+      <span class="sl-w1">HOURS,</span>
+      <span class="sl-w2">ALONE</span>
+    </div>
     <div class="stat-sub">No human in the loop.</div>
   </div>
 
@@ -55,6 +106,15 @@
     </div>
   </div>
 
+  <!-- Moving crosshair cursor -->
+  <div class="crosshair">
+    <div class="ch-h"></div>
+    <div class="ch-v"></div>
+  </div>
+
+  <!-- Bottom detail line -->
+  <div class="bottom-detail">Qwen 3.7 Max · 35-hour autonomous coding session · zero interruptions</div>
+
   <style>
     [data-composition-id="s02-giant-stat"] {
       width: 1920px;
@@ -66,25 +126,88 @@
       cursor: crosshair;
     }
 
-    /* Glow ring */
+    /* ── Particles ── */
+    [data-composition-id="s02-giant-stat"] .pt {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: rgba(160,60,255,0.55);
+      animation: pt-float var(--d) var(--dl) ease-in-out infinite alternate;
+    }
+    @keyframes pt-float {
+      from { transform: translateY(0) scale(1); opacity: 0.2; }
+      to   { transform: translateY(-35px) scale(2); opacity: 0.7; }
+    }
+
+    /* ── Vertical scan line ── */
+    [data-composition-id="s02-giant-stat"] .scan-line {
+      position: absolute;
+      top: 0; left: -3px;
+      width: 3px; height: 100%;
+      background: linear-gradient(
+        transparent, rgba(160,60,255,0.0) 15%,
+        rgba(160,60,255,0.45) 50%,
+        rgba(160,60,255,0.0) 85%, transparent
+      );
+      animation: scan-sweep 9s linear infinite;
+    }
+    @keyframes scan-sweep {
+      from { left: -3px; }
+      to   { left: 1923px; }
+    }
+
+    /* ── Glow rings ── */
     [data-composition-id="s02-giant-stat"] .glow-ring {
       position: absolute;
       left: 50%;
       top: 50%;
-      width: 700px;
-      height: 700px;
-      transform: translate(-50%, -50%);
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(160, 60, 255, 0.18) 0%, transparent 70%);
+      transform: translate(-50%, -50%);
       opacity: 0;
     }
+    [data-composition-id="s02-giant-stat"] .gr1 {
+      width: 560px; height: 560px;
+      background: radial-gradient(circle, rgba(160,60,255,0.22) 0%, transparent 70%);
+      animation: glow-pulse1 2.0s ease-in-out infinite alternate;
+    }
+    [data-composition-id="s02-giant-stat"] .gr2 {
+      width: 800px; height: 800px;
+      background: radial-gradient(circle, rgba(160,60,255,0.10) 0%, transparent 70%);
+      animation: glow-pulse2 2.8s ease-in-out infinite alternate;
+    }
+    [data-composition-id="s02-giant-stat"] .gr3 {
+      width: 1100px; height: 1100px;
+      background: radial-gradient(circle, rgba(160,60,255,0.05) 0%, transparent 70%);
+      animation: glow-pulse3 3.6s ease-in-out infinite alternate;
+    }
+    @keyframes glow-pulse1 {
+      from { opacity: 0.15; transform: translate(-50%,-50%) scale(0.92); }
+      to   { opacity: 0.6;  transform: translate(-50%,-50%) scale(1.06); }
+    }
+    @keyframes glow-pulse2 {
+      from { opacity: 0.10; transform: translate(-50%,-50%) scale(0.96); }
+      to   { opacity: 0.4;  transform: translate(-50%,-50%) scale(1.04); }
+    }
+    @keyframes glow-pulse3 {
+      from { opacity: 0.05; transform: translate(-50%,-50%) scale(0.98); }
+      to   { opacity: 0.25; transform: translate(-50%,-50%) scale(1.02); }
+    }
 
-    /* Center stat */
+    /* ── SVG orbit circle ── */
+    [data-composition-id="s02-giant-stat"] .orbit-svg {
+      position: absolute;
+      inset: 0;
+      width: 1920px; height: 1080px;
+      pointer-events: none;
+    }
+
+    /* ── Center stat ── */
     [data-composition-id="s02-giant-stat"] .center-stat {
       position: absolute;
       left: 50%;
       top: 50%;
-      transform: translate(-50%, -50%);
+      transform: translate(-55%, -50%);
       text-align: center;
     }
 
@@ -94,11 +217,14 @@
       color: #ffffff;
       line-height: 0.9;
       opacity: 0;
-      filter: blur(20px);
+      filter: blur(24px);
       letter-spacing: -0.04em;
     }
 
     [data-composition-id="s02-giant-stat"] .stat-label {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
       font-size: 64px;
       font-weight: 700;
       color: rgba(255,255,255,0.5);
@@ -106,100 +232,202 @@
       text-transform: uppercase;
       font-family: "Inter", sans-serif;
       margin-top: 10px;
+    }
+    [data-composition-id="s02-giant-stat"] .sl-w1,
+    [data-composition-id="s02-giant-stat"] .sl-w2 {
+      display: inline-block;
       opacity: 0;
-      transform: translateY(20px);
     }
 
     [data-composition-id="s02-giant-stat"] .stat-sub {
       font-size: 28px;
       color: rgba(255,255,255,0.3);
       font-family: "Inter", sans-serif;
-      font-weight: 400;
       margin-top: 16px;
       opacity: 0;
+      letter-spacing: 0.04em;
     }
 
-    /* Floating cards */
+    /* ── Cards ── */
     [data-composition-id="s02-giant-stat"] .cards {
       position: absolute;
-      right: 120px;
+      right: 100px;
       top: 50%;
       transform: translateY(-50%);
       display: flex;
       flex-direction: column;
       gap: 20px;
     }
-
     [data-composition-id="s02-giant-stat"] .card {
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.12);
       border-radius: 20px;
-      padding: 28px 40px;
-      min-width: 280px;
+      padding: 28px 44px;
+      min-width: 300px;
       opacity: 0;
-      transform: translateX(80px);
     }
-
     [data-composition-id="s02-giant-stat"] .card-val {
       font-size: 64px;
       font-weight: 900;
       color: #ffffff;
       line-height: 1;
     }
-
-    [data-composition-id="s02-giant-stat"] .card-val.card-red {
-      color: #ff4444;
-    }
-
+    [data-composition-id="s02-giant-stat"] .card-val.card-red { color: #ff4444; }
     [data-composition-id="s02-giant-stat"] .card-desc {
-      font-size: 22px;
+      font-size: 20px;
       color: rgba(255,255,255,0.45);
       font-family: "Inter", sans-serif;
       font-weight: 500;
       margin-top: 6px;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.12em;
+    }
+
+    /* ── Crosshair cursor ── */
+    [data-composition-id="s02-giant-stat"] .crosshair {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      top: 460px;
+      left: 400px;
+      opacity: 0;
+      pointer-events: none;
+    }
+    [data-composition-id="s02-giant-stat"] .ch-h {
+      position: absolute;
+      top: 50%; left: 0;
+      width: 100%; height: 1.5px;
+      background: rgba(255,255,255,0.6);
+      transform: translateY(-50%);
+    }
+    [data-composition-id="s02-giant-stat"] .ch-v {
+      position: absolute;
+      left: 50%; top: 0;
+      width: 1.5px; height: 100%;
+      background: rgba(255,255,255,0.6);
+      transform: translateX(-50%);
+    }
+
+    /* ── Bottom detail ── */
+    [data-composition-id="s02-giant-stat"] .bottom-detail {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 18px;
+      font-family: "Inter", sans-serif;
+      color: rgba(255,255,255,0.2);
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+      opacity: 0;
     }
   </style>
 
   <script>
     (function () {
-      const S = '[data-composition-id="s02-giant-stat"]';
+      const S  = '[data-composition-id="s02-giant-stat"]';
       const tl = gsap.timeline({ paused: true });
 
-      // Glow ring pulses in
-      tl.to(`${S} .glow-ring`, { opacity: 1, duration: 1.2, ease: "power2.out" }, 0);
+      /* ── CSS animations start immediately (particles, scan, glow rings) ── */
 
-      // Number un-blurs and appears
-      tl.to(`${S} .big-number`, { opacity: 1, filter: "blur(0px)", duration: 1.0, ease: "power3.out" }, 0.3);
+      /* ── 0.0s: Glow rings fade in (all 3 simultaneously, CSS handles pulsing after) ── */
+      tl.fromTo(`${S} .gr1`, { opacity: 0 }, { opacity: 1, duration: 1.0, ease: "power2.out" }, 0);
+      tl.fromTo(`${S} .gr2`, { opacity: 0 }, { opacity: 1, duration: 1.4, ease: "power2.out" }, 0.1);
+      tl.fromTo(`${S} .gr3`, { opacity: 0 }, { opacity: 1, duration: 1.8, ease: "power2.out" }, 0.2);
 
-      // Label fades up
-      tl.to(`${S} .stat-label`, { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, 1.0);
-      tl.to(`${S} .stat-sub`,   { opacity: 1, duration: 0.5, ease: "power2.out" }, 1.6);
+      /* ── 0.3s: SVG orbit circle draws around number ── */
+      tl.to(`${S} .orbit-circle`, {
+        strokeDashoffset: 0, duration: 2.0, ease: "power1.inOut"
+      }, 0.3);
 
-      // Cards stagger in from right
-      tl.to(`${S} .card`, {
-        opacity: 1, x: 0,
-        duration: 0.6,
-        stagger: 0.2,
-        ease: "power2.out"
-      }, 2.0);
+      /* ── 0.5s: Number appears — blur fades AND count-up run simultaneously ── */
+      tl.to(`${S} .big-number`, {
+        opacity: 1, filter: "blur(0px)", duration: 1.2, ease: "power3.out"
+      }, 0.5);
 
-      // Subtle glow pulse loop (after the main reveal)
-      gsap.to(`${S} .glow-ring`, {
-        opacity: 0.4,
-        scale: 1.08,
-        duration: 2.5,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-        delay: 1.5
-      });
+      const numEl = document.querySelector(`${S} .big-number`);
+      const dummy = { v: 0 };
+      tl.to(dummy, {
+        v: 35,
+        duration: 1.6,
+        ease: "power2.out",
+        onUpdate: () => { if (numEl) numEl.textContent = Math.round(dummy.v); }
+      }, 0.5);
+
+      /* ── 1.4s: Label words slide up separately ── */
+      tl.fromTo(`${S} .sl-w1`,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
+        1.4
+      );
+      tl.fromTo(`${S} .sl-w2`,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
+        1.65
+      );
+
+      /* ── 2.0s: Sub-line fades ── */
+      tl.fromTo(`${S} .stat-sub`,
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.55, ease: "power2.out" },
+        2.0
+      );
+
+      /* ── 2.4s: Cards fly in from right with stagger ── */
+      tl.fromTo(`${S} .card`,
+        { opacity: 0, x: 90 },
+        { opacity: 1, x: 0, duration: 0.65, stagger: 0.2, ease: "power2.out" },
+        2.4
+      );
+
+      /* ── 2.0s: Crosshair appears and moves ── */
+      tl.to(`${S} .crosshair`, { opacity: 1, duration: 0.25 }, 2.0);
+      tl.to(`${S} .crosshair`, { left: 780, top: 390, duration: 1.4, ease: "power1.inOut" }, 2.2);
+      tl.to(`${S} .crosshair`, { left: 640, top: 510, duration: 1.0, ease: "power1.inOut" }, 3.9);
+      tl.to(`${S} .crosshair`, { left: 860, top: 440, duration: 1.2, ease: "power1.inOut" }, 5.2);
+
+      /* ── 3.8s: Bottom detail fades up ── */
+      tl.fromTo(`${S} .bottom-detail`,
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
+        3.8
+      );
+
+      /* ─────── CONTINUOUS LOOPS ─────── */
+
+      /* "35" text glow pulse */
+      tl.to(`${S} .big-number`, {
+        textShadow: "0 0 80px rgba(160,60,255,0.85), 0 0 160px rgba(160,60,255,0.35)",
+        duration: 1.8, repeat: -1, yoyo: true, ease: "sine.inOut"
+      }, 1.8);
+
+      /* Cards float up/down after appearing */
+      tl.to(`${S} .c1`, {
+        y: -10, duration: 2.2, repeat: -1, yoyo: true, ease: "sine.inOut"
+      }, 3.2);
+      tl.to(`${S} .c2`, {
+        y: -8, duration: 2.6, repeat: -1, yoyo: true, ease: "sine.inOut"
+      }, 3.5);
+      tl.to(`${S} .c3`, {
+        y: -12, duration: 2.0, repeat: -1, yoyo: true, ease: "sine.inOut"
+      }, 3.8);
+
+      /* Card "0" red glow pulse */
+      tl.to(`${S} .card-red`, {
+        textShadow: "0 0 30px rgba(255,68,68,0.9)",
+        duration: 1.0, repeat: -1, yoyo: true, ease: "sine.inOut"
+      }, 3.6);
+
+      /* c3 card border glow (danger accent) */
+      tl.to(`${S} .c3`, {
+        borderColor: "rgba(255,68,68,0.4)",
+        boxShadow: "0 0 24px rgba(255,68,68,0.15)",
+        duration: 1.2, repeat: -1, yoyo: true, ease: "sine.inOut"
+      }, 3.8);
 
       window.__timelines = window.__timelines || {};
       window.__timelines["s02-giant-stat"] = tl;
-        // Auto-play when viewed directly in browser (engine controls in HyperFrames)
-        if (!window.__hfEngine) setTimeout(() => tl.play(), 200);
+      if (!window.__hfEngine) setTimeout(() => tl.play(), 200);
     })();
   </script>
 </div>

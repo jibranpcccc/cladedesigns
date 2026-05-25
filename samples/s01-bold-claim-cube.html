@@ -17,9 +17,20 @@
   SCENE TYPE: Bold Product Launch / Flagship Claim
   BACKGROUND: Dark charcoal-navy #1a1a2e
   USE WHEN: Introducing the main subject, announcing a #1 ranking, flagship moment
-  CURSOR: White arrow (no cursor div needed — use CSS cursor: default on body)
-  DURATION: 8–12s
-  FROM QWEN VIDEO: "New Flagship Drop" scene (frames 006s–027s)
+  DURATION: 10s
+  ANIMATION LAYERS (simultaneous):
+    - Moving dot-grid background (CSS, always drifting)
+    - 16 orange/purple particles floating (CSS)
+    - Top accent line wipes across at 0s
+    - Corner brackets snap in (4 corners)
+    - Eyebrow slides from left
+    - "#1" drops from top with glow, then pulses forever
+    - "NEW" / "FLAGSHIP" / "DROP" stagger in separately
+    - 3 cube orbit rings expand, outer ring spins
+    - Cube face glows pulse continuously
+    - 3 pills each slide from different offset with stagger
+    - Pills border glows after landing
+    - Bottom mini-stats row fades up
 -->
 
 <div
@@ -29,15 +40,52 @@
   data-duration="10"
 >
 
-  <!-- 3D Rotating Cube (right side) -->
-  <div class="cube-wrap">
-    <div class="cube">
-      <div class="face front"></div>
-      <div class="face back"></div>
-      <div class="face left"></div>
-      <div class="face right"></div>
-      <div class="face top"></div>
-      <div class="face bottom"></div>
+  <!-- Layer: animated grid -->
+  <div class="bg-grid"></div>
+
+  <!-- Layer: floating particles (16 fixed positions) -->
+  <div class="particles">
+    <div class="pt" style="left:80px;top:90px;--d:7s;--dl:0s;--c:rgba(255,107,53,0.5)"></div>
+    <div class="pt" style="left:220px;top:400px;--d:9s;--dl:1.4s;--c:rgba(140,100,255,0.5)"></div>
+    <div class="pt" style="left:380px;top:180px;--d:6s;--dl:0.6s;--c:rgba(255,107,53,0.4)"></div>
+    <div class="pt" style="left:560px;top:860px;--d:8s;--dl:2.2s;--c:rgba(140,100,255,0.4)"></div>
+    <div class="pt" style="left:740px;top:260px;--d:7.5s;--dl:0.9s;--c:rgba(255,107,53,0.5)"></div>
+    <div class="pt" style="left:920px;top:940px;--d:10s;--dl:1.8s;--c:rgba(140,100,255,0.3)"></div>
+    <div class="pt" style="left:1060px;top:70px;--d:6.5s;--dl:3.1s;--c:rgba(255,107,53,0.4)"></div>
+    <div class="pt" style="left:1180px;top:480px;--d:8.4s;--dl:0.3s;--c:rgba(140,100,255,0.5)"></div>
+    <div class="pt" style="left:1380px;top:800px;--d:9.2s;--dl:2.0s;--c:rgba(255,107,53,0.3)"></div>
+    <div class="pt" style="left:1520px;top:160px;--d:7.8s;--dl:0.5s;--c:rgba(140,100,255,0.4)"></div>
+    <div class="pt" style="left:1660px;top:600px;--d:8.6s;--dl:2.6s;--c:rgba(255,107,53,0.5)"></div>
+    <div class="pt" style="left:1820px;top:340px;--d:6.4s;--dl:1.1s;--c:rgba(140,100,255,0.3)"></div>
+    <div class="pt" style="left:160px;top:680px;--d:9.6s;--dl:3.5s;--c:rgba(255,107,53,0.4)"></div>
+    <div class="pt" style="left:480px;top:520px;--d:7.2s;--dl:2.8s;--c:rgba(140,100,255,0.5)"></div>
+    <div class="pt" style="left:820px;top:740px;--d:8.2s;--dl:1.5s;--c:rgba(255,107,53,0.3)"></div>
+    <div class="pt" style="left:1720px;top:860px;--d:6.8s;--dl:0.8s;--c:rgba(140,100,255,0.4)"></div>
+  </div>
+
+  <!-- Top accent line -->
+  <div class="top-line"></div>
+
+  <!-- Corner brackets -->
+  <div class="corner corner-tl"></div>
+  <div class="corner corner-tr"></div>
+  <div class="corner corner-bl"></div>
+  <div class="corner corner-br"></div>
+
+  <!-- 3D Rotating Cube (right side) with orbit rings -->
+  <div class="cube-scene">
+    <div class="cube-glow"></div>
+    <div class="cube-orbit-ring cor1"></div>
+    <div class="cube-orbit-ring cor2"></div>
+    <div class="cube-wrap">
+      <div class="cube">
+        <div class="face front"></div>
+        <div class="face back"></div>
+        <div class="face left"></div>
+        <div class="face right"></div>
+        <div class="face top"></div>
+        <div class="face bottom"></div>
+      </div>
     </div>
   </div>
 
@@ -46,12 +94,39 @@
     <div class="eyebrow">INTRODUCING</div>
     <div class="headline-row">
       <span class="big-number">#1</span>
-      <span class="big-title">NEW FLAGSHIP<br>DROP</span>
+      <div class="title-words">
+        <span class="tw tw-new">NEW</span>
+        <span class="tw tw-flag">FLAGSHIP</span>
+        <span class="tw tw-drop">DROP</span>
+      </div>
     </div>
     <div class="pills">
-      <div class="pill">🏆 Top of every major leaderboard</div>
-      <div class="pill">⚡ 10× faster reasoning than GPT-4o</div>
-      <div class="pill">🔓 Open weights arriving late summer</div>
+      <div class="pill p1">🏆 Top of every major leaderboard</div>
+      <div class="pill p2">⚡ 10× faster reasoning than GPT-4o</div>
+      <div class="pill p3">🔓 Open weights arriving late summer</div>
+    </div>
+  </div>
+
+  <!-- Bottom stats bar -->
+  <div class="bottom-bar">
+    <div class="bb-item bbi1">
+      <div class="bb-val">151</div>
+      <div class="bb-key">Models ranked</div>
+    </div>
+    <div class="bb-div"></div>
+    <div class="bb-item bbi2">
+      <div class="bb-val">57</div>
+      <div class="bb-key">Intelligence score</div>
+    </div>
+    <div class="bb-div"></div>
+    <div class="bb-item bbi3">
+      <div class="bb-val">131K</div>
+      <div class="bb-key">Context window</div>
+    </div>
+    <div class="bb-div"></div>
+    <div class="bb-item bbi4">
+      <div class="bb-val">6 wks</div>
+      <div class="bb-key">Avg release cadence</div>
     </div>
   </div>
 
@@ -65,66 +140,174 @@
       overflow: hidden;
     }
 
-    /* ── 3D Cube ── */
-    [data-composition-id="s01-bold-claim-cube"] .cube-wrap {
+    /* ── Background grid ── */
+    [data-composition-id="s01-bold-claim-cube"] .bg-grid {
       position: absolute;
-      right: 240px;
-      top: 50%;
-      width: 320px;
-      height: 320px;
-      transform: translateY(-50%);
-      perspective: 900px;
-      opacity: 0;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(100,120,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(100,120,255,0.05) 1px, transparent 1px);
+      background-size: 80px 80px;
+      animation: grid-move 20s linear infinite;
+    }
+    @keyframes grid-move {
+      from { background-position: 0 0; }
+      to   { background-position: 80px 80px; }
     }
 
+    /* ── Particles ── */
+    [data-composition-id="s01-bold-claim-cube"] .pt {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--c);
+      animation: pt-float var(--d) var(--dl) ease-in-out infinite alternate;
+    }
+    @keyframes pt-float {
+      from { transform: translateY(0) scale(1); opacity: 0.2; }
+      to   { transform: translateY(-40px) scale(2); opacity: 0.8; }
+    }
+
+    /* ── Top accent line ── */
+    [data-composition-id="s01-bold-claim-cube"] .top-line {
+      position: absolute;
+      top: 0; left: 0;
+      width: 0; height: 4px;
+      background: linear-gradient(90deg, #ff6b35, rgba(255,107,53,0.2), transparent);
+    }
+
+    /* ── Corner brackets ── */
+    [data-composition-id="s01-bold-claim-cube"] .corner {
+      position: absolute;
+      width: 48px;
+      height: 48px;
+      opacity: 0;
+    }
+    [data-composition-id="s01-bold-claim-cube"] .corner-tl {
+      top: 32px; left: 32px;
+      border-top: 2px solid rgba(255,107,53,0.5);
+      border-left: 2px solid rgba(255,107,53,0.5);
+    }
+    [data-composition-id="s01-bold-claim-cube"] .corner-tr {
+      top: 32px; right: 32px;
+      border-top: 2px solid rgba(255,107,53,0.5);
+      border-right: 2px solid rgba(255,107,53,0.5);
+    }
+    [data-composition-id="s01-bold-claim-cube"] .corner-bl {
+      bottom: 32px; left: 32px;
+      border-bottom: 2px solid rgba(255,107,53,0.5);
+      border-left: 2px solid rgba(255,107,53,0.5);
+    }
+    [data-composition-id="s01-bold-claim-cube"] .corner-br {
+      bottom: 32px; right: 32px;
+      border-bottom: 2px solid rgba(255,107,53,0.5);
+      border-right: 2px solid rgba(255,107,53,0.5);
+    }
+
+    /* ── Cube scene ── */
+    [data-composition-id="s01-bold-claim-cube"] .cube-scene {
+      position: absolute;
+      right: 180px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 480px;
+      height: 480px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Cube background glow */
+    [data-composition-id="s01-bold-claim-cube"] .cube-glow {
+      position: absolute;
+      width: 480px;
+      height: 480px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(140,100,255,0.2) 0%, transparent 70%);
+      opacity: 0;
+      animation: cube-glow-pulse 2.5s ease-in-out infinite alternate;
+    }
+    @keyframes cube-glow-pulse {
+      from { opacity: 0.15; transform: scale(0.95); }
+      to   { opacity: 0.45; transform: scale(1.08); }
+    }
+
+    /* Orbit rings around cube */
+    [data-composition-id="s01-bold-claim-cube"] .cube-orbit-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(140,100,255,0.25);
+      opacity: 0;
+    }
+    [data-composition-id="s01-bold-claim-cube"] .cor1 {
+      width: 380px; height: 380px;
+      animation: ring-spin 8s linear infinite;
+      border-style: dashed;
+    }
+    [data-composition-id="s01-bold-claim-cube"] .cor2 {
+      width: 480px; height: 480px;
+      animation: ring-spin 14s linear infinite reverse;
+      border-color: rgba(255,107,53,0.15);
+    }
+    @keyframes ring-spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    [data-composition-id="s01-bold-claim-cube"] .cube-wrap {
+      width: 300px;
+      height: 300px;
+      perspective: 900px;
+      opacity: 0;
+      position: relative;
+      z-index: 1;
+    }
     [data-composition-id="s01-bold-claim-cube"] .cube {
-      width: 320px;
-      height: 320px;
+      width: 300px;
+      height: 300px;
       position: relative;
       transform-style: preserve-3d;
       transform: rotateX(-18deg) rotateY(0deg);
     }
-
     [data-composition-id="s01-bold-claim-cube"] .face {
       position: absolute;
-      width: 320px;
-      height: 320px;
-      border: 1.5px solid rgba(140, 100, 255, 0.55);
-      background: rgba(120, 80, 255, 0.07);
+      width: 300px;
+      height: 300px;
+      border: 1.5px solid rgba(140,100,255,0.6);
+      background: rgba(120,80,255,0.06);
     }
-
-    [data-composition-id="s01-bold-claim-cube"] .face.front  { transform: translateZ(160px); }
-    [data-composition-id="s01-bold-claim-cube"] .face.back   { transform: rotateY(180deg) translateZ(160px); }
-    [data-composition-id="s01-bold-claim-cube"] .face.left   { transform: rotateY(-90deg) translateZ(160px); }
-    [data-composition-id="s01-bold-claim-cube"] .face.right  { transform: rotateY(90deg) translateZ(160px); }
-    [data-composition-id="s01-bold-claim-cube"] .face.top    { transform: rotateX(90deg) translateZ(160px); }
-    [data-composition-id="s01-bold-claim-cube"] .face.bottom { transform: rotateX(-90deg) translateZ(160px); }
+    [data-composition-id="s01-bold-claim-cube"] .face.front  { transform: translateZ(150px); }
+    [data-composition-id="s01-bold-claim-cube"] .face.back   { transform: rotateY(180deg) translateZ(150px); }
+    [data-composition-id="s01-bold-claim-cube"] .face.left   { transform: rotateY(-90deg) translateZ(150px); }
+    [data-composition-id="s01-bold-claim-cube"] .face.right  { transform: rotateY(90deg) translateZ(150px); }
+    [data-composition-id="s01-bold-claim-cube"] .face.top    { transform: rotateX(90deg) translateZ(150px); }
+    [data-composition-id="s01-bold-claim-cube"] .face.bottom { transform: rotateX(-90deg) translateZ(150px); }
 
     /* ── Content ── */
     [data-composition-id="s01-bold-claim-cube"] .content {
       position: absolute;
-      left: 120px;
+      left: 100px;
       top: 50%;
       transform: translateY(-50%);
     }
 
     [data-composition-id="s01-bold-claim-cube"] .eyebrow {
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 700;
-      letter-spacing: 0.25em;
+      letter-spacing: 0.28em;
       color: rgba(255,255,255,0.35);
       font-family: "Inter", sans-serif;
       text-transform: uppercase;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       opacity: 0;
-      transform: translateY(16px);
     }
 
     [data-composition-id="s01-bold-claim-cube"] .headline-row {
       display: flex;
       align-items: flex-start;
-      gap: 24px;
-      margin-bottom: 56px;
+      gap: 20px;
+      margin-bottom: 48px;
       line-height: 0.95;
     }
 
@@ -132,33 +315,39 @@
       font-size: 200px;
       font-weight: 900;
       color: #ff6b35;
-      opacity: 0;
-      transform: translateY(50px);
       display: block;
       line-height: 1;
+      opacity: 0;
     }
 
-    [data-composition-id="s01-bold-claim-cube"] .big-title {
-      font-size: 96px;
+    [data-composition-id="s01-bold-claim-cube"] .title-words {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      padding-top: 16px;
+    }
+    [data-composition-id="s01-bold-claim-cube"] .tw {
+      font-size: 90px;
       font-weight: 900;
       color: #ffffff;
-      opacity: 0;
-      transform: translateY(50px);
-      display: block;
       line-height: 1.05;
+      display: block;
+      opacity: 0;
+    }
+    [data-composition-id="s01-bold-claim-cube"] .tw-drop {
+      color: rgba(255,255,255,0.45);
     }
 
     [data-composition-id="s01-bold-claim-cube"] .pills {
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 12px;
     }
-
     [data-composition-id="s01-bold-claim-cube"] .pill {
       display: inline-flex;
       align-items: center;
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.13);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
       border-radius: 100px;
       padding: 14px 30px;
       font-size: 26px;
@@ -167,38 +356,165 @@
       font-weight: 500;
       width: fit-content;
       opacity: 0;
-      transform: translateX(-30px);
+    }
+
+    /* ── Bottom bar ── */
+    [data-composition-id="s01-bold-claim-cube"] .bottom-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0; right: 0;
+      display: flex;
+      align-items: stretch;
+      border-top: 1px solid rgba(255,107,53,0.15);
+    }
+    [data-composition-id="s01-bold-claim-cube"] .bb-item {
+      flex: 1;
+      text-align: center;
+      padding: 22px 0 26px;
+      opacity: 0;
+    }
+    [data-composition-id="s01-bold-claim-cube"] .bb-div {
+      width: 1px;
+      background: rgba(255,255,255,0.06);
+    }
+    [data-composition-id="s01-bold-claim-cube"] .bb-val {
+      font-size: 36px;
+      font-weight: 900;
+      color: #ff6b35;
+    }
+    [data-composition-id="s01-bold-claim-cube"] .bb-key {
+      font-size: 15px;
+      color: rgba(255,255,255,0.3);
+      font-family: "Inter", sans-serif;
+      margin-top: 4px;
+      letter-spacing: 0.06em;
     }
   </style>
 
   <script>
     (function () {
-      const S = '[data-composition-id="s01-bold-claim-cube"]';
+      const S  = '[data-composition-id="s01-bold-claim-cube"]';
       const tl = gsap.timeline({ paused: true });
 
-      // Cube fades in then spins forever
-      tl.to(`${S} .cube-wrap`, { opacity: 1, duration: 1, ease: "power2.out" }, 0.4);
+      /* ── Ambient: cube spins forever (outside timeline — starts immediately) ── */
       gsap.to(`${S} .cube`, { rotationY: 360, duration: 9, repeat: -1, ease: "none" });
 
-      // Eyebrow
-      tl.to(`${S} .eyebrow`, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0.2);
+      /* ── 0.0s: Top accent line wipes across ── */
+      tl.to(`${S} .top-line`, { width: 1920, duration: 0.9, ease: "power2.inOut" }, 0);
 
-      // Big number + title
-      tl.to(`${S} .big-number`, { opacity: 1, y: 0, duration: 0.75, ease: "power2.out" }, 0.55);
-      tl.to(`${S} .big-title`,  { opacity: 1, y: 0, duration: 0.75, ease: "power2.out" }, 0.7);
+      /* ── 0.2s: Corner brackets snap in (all 4 simultaneously) ── */
+      tl.fromTo(`${S} .corner`,
+        { opacity: 0, scale: 0.5 },
+        { opacity: 1, scale: 1, duration: 0.35, stagger: 0.06, ease: "back.out(2)" },
+        0.2
+      );
 
-      // Pills stagger in
-      tl.to(`${S} .pill`, {
-        opacity: 1, x: 0,
-        duration: 0.5,
-        stagger: 0.14,
-        ease: "power2.out"
+      /* ── 0.3s: Eyebrow slides from left ── */
+      tl.fromTo(`${S} .eyebrow`,
+        { opacity: 0, x: -40 },
+        { opacity: 1, x: 0, duration: 0.55, ease: "power2.out" },
+        0.3
+      );
+
+      /* ── 0.5s: Cube wrap + orbit rings appear simultaneously ── */
+      tl.fromTo(`${S} .cube-wrap`,
+        { opacity: 0, scale: 0.7 },
+        { opacity: 1, scale: 1, duration: 0.7, ease: "back.out(1.4)" },
+        0.5
+      );
+      tl.fromTo(`${S} .cor1`,
+        { opacity: 0, scale: 0.6 },
+        { opacity: 1, scale: 1, duration: 0.65, ease: "power2.out" },
+        0.6
+      );
+      tl.fromTo(`${S} .cor2`,
+        { opacity: 0, scale: 0.6 },
+        { opacity: 1, scale: 1, duration: 0.7, ease: "power2.out" },
+        0.75
+      );
+
+      /* ── 0.6s: "#1" slams down from top ── */
+      tl.fromTo(`${S} .big-number`,
+        { opacity: 0, y: -80 },
+        { opacity: 1, y: 0, duration: 0.65, ease: "power3.out" },
+        0.6
+      );
+
+      /* ── 0.9s: Title words stagger in — each unique ── */
+      tl.fromTo(`${S} .tw-new`,
+        { opacity: 0, x: -60 },
+        { opacity: 1, x: 0, duration: 0.45, ease: "power2.out" },
+        0.9
+      );
+      tl.fromTo(`${S} .tw-flag`,
+        { opacity: 0, y: 40 },
+        { opacity: 1, y: 0, duration: 0.45, ease: "back.out(1.5)" },
+        1.08
+      );
+      tl.fromTo(`${S} .tw-drop`,
+        { opacity: 0, x: 60 },
+        { opacity: 1, x: 0, duration: 0.45, ease: "power2.out" },
+        1.26
+      );
+
+      /* ── 1.5s: Pills slide in from different offsets ── */
+      tl.fromTo(`${S} .p1`,
+        { opacity: 0, x: -50 },
+        { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" },
+        1.5
+      );
+      tl.fromTo(`${S} .p2`,
+        { opacity: 0, x: -70 },
+        { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" },
+        1.68
+      );
+      tl.fromTo(`${S} .p3`,
+        { opacity: 0, x: -90 },
+        { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" },
+        1.86
+      );
+
+      /* ── 2.4s: Bottom stats stagger up ── */
+      tl.fromTo(`${S} .bb-item`,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.45, stagger: 0.09, ease: "power2.out" },
+        2.4
+      );
+
+      /* ─────── CONTINUOUS LOOPS ─────── */
+
+      /* "#1" glow pulses after landing */
+      tl.to(`${S} .big-number`, {
+        textShadow: "0 0 60px rgba(255,107,53,0.9), 0 0 120px rgba(255,107,53,0.4)",
+        duration: 1.4, repeat: -1, yoyo: true, ease: "sine.inOut"
       }, 1.4);
+
+      /* "NEW" glow */
+      tl.to(`${S} .tw-new`, {
+        textShadow: "0 0 20px rgba(255,255,255,0.4)",
+        duration: 1.8, repeat: -1, yoyo: true, ease: "sine.inOut"
+      }, 1.8);
+
+      /* Pill 1 border glow */
+      tl.to(`${S} .p1`, {
+        borderColor: "rgba(255,107,53,0.4)",
+        boxShadow: "0 0 16px rgba(255,107,53,0.15)",
+        duration: 1.2, repeat: -1, yoyo: true, ease: "sine.inOut"
+      }, 2.2);
+
+      /* Top line subtle opacity pulse */
+      tl.to(`${S} .top-line`, {
+        opacity: 0.5, duration: 2.0, repeat: -1, yoyo: true, ease: "sine.inOut"
+      }, 2.0);
+
+      /* Corner brackets pulse */
+      tl.to(`${S} .corner`, {
+        opacity: 0.5, duration: 1.6, repeat: -1, yoyo: true, ease: "sine.inOut"
+      }, 2.0);
 
       window.__timelines = window.__timelines || {};
       window.__timelines["s01-bold-claim-cube"] = tl;
-        // Auto-play when viewed directly in browser (engine controls in HyperFrames)
-        if (!window.__hfEngine) setTimeout(() => tl.play(), 200);
+      if (!window.__hfEngine) setTimeout(() => tl.play(), 200);
     })();
   </script>
 </div>

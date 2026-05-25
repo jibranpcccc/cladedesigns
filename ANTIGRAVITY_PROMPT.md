@@ -57,35 +57,59 @@ Do not proceed to Step 2 until you have read all 14 samples + CLAUDE.md.
 
 ---
 
-## STEP 2 — PROCESS EVERY URL THE USER GAVE YOU
+## STEP 2 — DEEP RESEARCH (not just user URLs)
 
-The user gives URLs without labels. You must figure out what each URL is and extract everything useful from it.
+Your job is to know everything about the topic before building anything. The URLs the user gave are the STARTING point, not the limit.
+
+### 2a. Process every URL the user gave
 
 **YouTube / video URLs:**
 - You cannot watch YouTube videos — do not try
 - Fetch the page; read the title, description, and any transcript/caption/subtitle text in the page source
-- Extract from that text: topic, key claims, model/product names, numbers mentioned, energy level
-- Numbers mentioned in YouTube transcripts are reference data — use them if they match URLs you also fetched
+- Extract: topic, key claims, model/product names, numbers mentioned, energy level
 
-**Data website URLs** (artificialanalysis.ai, huggingface.co, openrouter.ai, lmarena.ai, etc.):
-- Fetch the page
-- Extract every number, ranking, score, and model name you can find
-- These are your authoritative data sources — use these exact numbers in charts and bars
-- Never invent benchmark scores — only use numbers you fetched from a URL
+**Data website URLs** (artificialanalysis.ai, huggingface.co, openrouter.ai, lmarena.ai):
+- Fetch the page and extract every number, ranking, score, and model name
+- These are authoritative — use these exact numbers in charts and bars
 
 **Screenshot / image URLs:**
 - Fetch and analyze visually
-- Ask yourself: does this look like a real screen recording, or a designed concept?
-  - **Real recording**: slight imperfection, real browser/OS chrome, compression artifacts, standard aspect ratios (16:9, etc.), UI elements at normal web densities
-  - **Designed concept**: pixel-perfect layout, unusually high element density, things that couldn't exist in a real single-screen recording, photoshop-level crispness
-- Real images → extract exact data values, text, numbers — these are ground truth
-- Concept/idealized images → extract desired visual style, density, and layout ideas ONLY — do NOT use numbers from these as facts
+- Real recording (browser chrome, compression artifacts) → ground truth, extract exact values
+- Designed concept (pixel-perfect, impossible density) → style reference only, don't use its numbers
 
-**Documentation / blog post / announcement URLs:**
-- Extract feature names, version numbers, capability descriptions, benchmark claims, quotes
-- Use these for scene content: capability tags, step card text, strikethrough claims, timeline milestones
+**Documentation / blog / announcement URLs:**
+- Extract feature names, version numbers, capability claims, benchmark names, quotes
 
-**When you can't access a URL:** Say so in one line, state what you assumed, and continue.
+### 2b. Proactive research — fill the gaps the user didn't give you
+
+After processing user URLs, ask yourself: **does the script reference anything I don't have visual or factual data for?**
+
+For every product, model, company, or interface mentioned in the script that you don't already have data for:
+1. **Search the web** for the official site, documentation, and recent benchmarks
+2. **Search for screenshots** of the actual UI if the script references one — "OpenAI ChatGPT interface", "Claude artifact", "Cursor IDE", "Gemini app", "DeepSeek chat"
+3. **Find the brand's real colors** — hex codes for their primary, accent, and background colors. Use their actual brand identity, not generic
+4. **Find the brand's real font** — Inter, Söhne, Geist, SF Pro — whatever they actually use
+5. **Find the actual logo** — a CSS recreation or SVG path is fine
+
+Treat this as if you are a video director planning a shoot — gather every reference image and fact before the cameras roll.
+
+### 2c. When a visual is needed but no screenshot exists — RECREATE IT
+
+This is critical. If the script says "ChatGPT's interface" or "OpenAI's pricing page" or "the Anthropic console" and you don't have a real screenshot, **you build a pixel-perfect recreation in HTML/CSS using the real brand's actual colors, fonts, and layout.**
+
+This is allowed and encouraged. The visual must match the script exactly — if recreating gets you there cleaner than hunting for a screenshot, recreate.
+
+Examples of legitimate recreations:
+- A fake but accurate ChatGPT chat interface (dark grey #212121, Söhne font, the actual sidebar layout)
+- A fake but accurate OpenAI pricing page (white bg, real OpenAI brand colors, real plan names like Free/Plus/Pro)
+- A fake but accurate Claude.ai interface (cream bg, Tiempos font, the actual artifact panel layout)
+- A fake but accurate VS Code / Cursor editor with syntax-highlighted code
+- A fake but accurate analytics dashboard, leaderboard, GitHub repo page, Stripe checkout
+- A fake but accurate iPhone/Android app screen if the script references mobile
+
+The numbers/text inside the recreation must still come from real sources — the LAYOUT and STYLE is recreated, the DATA is real.
+
+**When you can't access a URL:** Say so in one line, state what you found via search instead, and continue.
 
 ---
 
@@ -214,8 +238,41 @@ Every scene must contain graphics that ILLUSTRATE what the script specifically d
 | "blueprint", "architecture", "schema" | CSS grid or SVG schematic with labeled nodes |
 | "connected", "integrated", "everywhere" | Hub-and-spoke diagram with animated connection lines |
 | "before/after", "old way/new way" | Split or strikethrough reveal with contrast |
+| Any specific product UI ("ChatGPT", "Cursor", "Stripe") | Recreate the real interface in HTML/CSS — see "UI recreation" below |
 
 Build the scene around that hero graphic. Everything else (background, particles, bars, scan line) is ambient support.
+
+### UI recreation — when the script references a real product
+
+When the script mentions a specific real-world interface, you build it from scratch with the real brand's actual design. Do not approximate. Use exactly:
+- The brand's **real hex colors** (researched in Step 2b)
+- The brand's **real font stack** (Inter, Söhne, Tiempos, Geist, SF Pro, etc.)
+- The brand's **real layout patterns** — sidebar widths, header heights, button shapes
+- The brand's **real iconography** — recreate logos in SVG or CSS
+- The brand's **real microcopy** — exact button labels ("Continue with Google"), exact menu items
+
+Common interfaces you will need to recreate well:
+- **ChatGPT** — `#212121` dark / `#ffffff` light, Söhne font, sidebar 260px, user msg bubble vs assistant flat
+- **Claude.ai** — `#faf9f5` cream, Tiempos serif headlines + Styrene sans, right-side artifact panel
+- **Cursor / VS Code** — `#1e1e1e` bg, JetBrains Mono / Fira Code font, file tree left, syntax-highlighted code
+- **Browser window chrome** — macOS traffic lights or Chrome tabs, URL bar with padlock icon, real URL
+- **Stripe checkout** — `#635bff` purple, Inter font, the actual payment form layout
+- **GitHub** — `#0d1117` dark / `#ffffff` light, Mona Sans font, real file tree and code view
+- **Analytics dashboard** — recharts-style line graphs, real-looking metric cards
+- **Mobile app screen** — iPhone notch + status bar, real app navigation patterns
+
+**The text and numbers inside the recreation are still real** — pulled from the script or Step 2 research. Only the LAYOUT and STYLE is being recreated.
+
+### Visual quality bar — non-negotiable
+
+The HTML you produce is the deliverable. The bar is **agency-level production design, not coding-bootcamp output**.
+
+- Every alignment is intentional — no elements floating off-grid
+- Every spacing is consistent — define a spacing scale (4, 8, 12, 16, 24, 32, 48, 64) and stick to it
+- Every text size follows a type scale — no random px values
+- Every gradient, shadow, and glow has a purpose — not "decoration"
+- Every animation has an ease — `power2.out` for entering, `sine.inOut` for loops, `back.out(2)` for impactful pops — never linear unless it's a continuous loop
+- If you would be embarrassed to show it to a senior designer, it isn't done
 
 ### True word-by-word synchronization — mandatory
 
@@ -466,6 +523,13 @@ After writing all files, before delivering, verify every item:
 - [ ] Every template choice matches the narrative function of that segment
 - [ ] Total duration is between 45 and 90 seconds
 
+**Visual quality (the bar):**
+- [ ] Every scene's hero element is what the script describes — not a generic stat card swapped in
+- [ ] Every UI recreation uses the real brand's actual colors, font, and layout (researched, not guessed)
+- [ ] Every alignment is intentional, every spacing follows a consistent scale
+- [ ] Every animation uses a proper ease — no linear easing on entrance reveals
+- [ ] You would not be embarrassed to show this to a senior designer
+
 **Audio sync (word-to-word):**
 - [ ] Every scene has a word timing table pasted as a comment at the top of its `<script>` block
 - [ ] Every text element on screen is wired to a specific word's timestamp
@@ -484,14 +548,16 @@ Do not ask clarifying questions. Do not ask for approval at any point. Execute t
 
 1. Fetch CLAUDE.md and all 14 sample files from GitHub
 2. Fetch every URL the user provided — identify what each one is
-3. Output the intelligence report
-4. Output the scene plan + rationale
-5. Output the word timing table for every scene
-6. Write every HTML scene file (complete, no shortcuts, every animation wired to a word timestamp)
-7. Write index.html
-8. Done
+3. **Proactively research** — search the web for every product/brand/interface the script references that wasn't covered by user URLs; collect real brand colors, fonts, layouts, screenshots
+4. For every UI the script references → decide: real screenshot available, or recreate from scratch using real brand identity?
+5. Output the intelligence report (including everything you researched, not just user URLs)
+6. Output the scene plan + rationale
+7. Output the word timing table for every scene
+8. Write every HTML scene file (complete, no shortcuts, every animation wired to a word timestamp, UI recreations pixel-perfect to the real brand)
+9. Write index.html
+10. Done
 
-The only time you pause is if a URL returns a hard error. State the error in one line and continue with what you have.
+The only time you pause is if a URL returns a hard error. State the error in one line, search for an alternative, and continue.
 
 ---
 

@@ -231,6 +231,8 @@
 
       window.__timelines = window.__timelines || {};
       window.__timelines["s05-split-cards"] = tl;
+        // Auto-play when viewed directly in browser (engine controls in HyperFrames)
+        if (!window.__hfEngine) setTimeout(() => tl.play(), 200);
     })();
   </script>
 </div>

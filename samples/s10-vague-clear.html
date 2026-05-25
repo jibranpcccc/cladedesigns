@@ -219,6 +219,7 @@
 
       window.__timelines = window.__timelines || {};
       window.__timelines["s10-vague-clear"] = tl;
+        if (!window.__hfEngine) setTimeout(() => tl.play(), 200);
     })();
   </script>
 </div>

@@ -302,6 +302,8 @@
 
       window.__timelines = window.__timelines || {};
       window.__timelines["s09-analytics-mockup"] = tl;
+        // Auto-play when viewed directly in browser (engine controls in HyperFrames)
+        if (!window.__hfEngine) setTimeout(() => tl.play(), 200);
     })();
   </script>
 </div>

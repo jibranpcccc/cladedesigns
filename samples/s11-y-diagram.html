@@ -235,6 +235,7 @@
 
       window.__timelines = window.__timelines || {};
       window.__timelines["s11-y-diagram"] = tl;
+        if (!window.__hfEngine) setTimeout(() => tl.play(), 200);
     })();
   </script>
 </div>

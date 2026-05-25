@@ -45,12 +45,13 @@ Do NOT try to parse the GitHub commits HTML page — just re-fetch the files dir
 
 ## STEP 1 — READ THE CODEBASE (every session, before anything else)
 
-Fetch and fully read every URL in the sample library above. You need to internalize:
-- Every background color and accent color per template
-- Every CSS class name and animation pattern
-- Every GSAP timeline structure
-- What each template looks like and what narrative purpose it serves
-- The exact GSAP CDN tag used: `<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>`
+Fetch and fully read every URL in the sample library above. You need to extract:
+- The background color and accent color for each template — you will use these exact values
+- The GSAP animation patterns (scan line, glow loop, count-up, bar fill, particles) — you will reuse these patterns
+- The narrative purpose each template serves — you will use this for scene selection
+- The exact GSAP CDN tag: `<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>`
+
+**What the samples are NOT:** They are not templates to copy. Their HTML structure was built for different content. You will build new HTML from scratch for every scene — using only the colors, animation patterns, and energy you learned from the samples.
 
 Do not proceed to Step 2 until you have read all 14 samples + CLAUDE.md.
 
@@ -191,11 +192,40 @@ Use the narrative function of each scene to pick its template. When two template
 
 ## STEP 5 — WRITE EVERY SCENE
 
-**Starting point:** Copy the full HTML of the matching sample file as your starting point. Do not write from scratch. Then:
-1. Replace ALL product-specific content — model names, numbers, benchmark names, text — with content from the script and URLs
-2. Keep the entire HTML/CSS/JS structure intact
-3. Enhance with the density rules below
-4. **Wire every animation to the word timing table from Step 3.5** — see "Audio sync" rules below
+**The sample files taught you visual style, color palettes, and GSAP patterns. That is all they are for. Do not copy their HTML. Do not use them as a starting point. Build every scene from scratch around the script.**
+
+For each scene, answer these three questions before writing a single line of HTML:
+1. **What specific visual does this script line describe?** If it says "a lock", build a lock. If it says "a crossed-out link", build a crossed-out link. If it says "a checkmark appearing", build a checkmark. The hero element of the scene is always the thing the script is talking about — not a generic stat card or orbit ring.
+2. **What is the template's visual language?** Use that template's background color, accent color, and animation energy. Nothing else from it.
+3. **What are the exact word timestamps?** Every element enters at the moment its word is spoken.
+
+### Custom story graphics — mandatory
+
+Every scene must contain graphics that ILLUSTRATE what the script specifically describes. These are not decoration — they ARE the scene:
+
+| Script says | Build this |
+|---|---|
+| "crossed out", "eliminated", "removed" | CSS element with animated `text-decoration: line-through` sweeping across |
+| "checkmark", "approved", "verified", "done" | SVG or CSS checkmark that stamps in (`scale 0→1`, `back.out(2)`) |
+| "lock", "secure", "protected", "encrypted" | CSS/SVG padlock icon with shackle, animated closed |
+| "steps", "process", "workflow" | Numbered step cards appearing one at a time |
+| "faster", "speed", "milliseconds" | Animated counter or speed gauge |
+| "ranking", "scored", "benchmark" | Bars or numbers that fill/count to the real value |
+| "blueprint", "architecture", "schema" | CSS grid or SVG schematic with labeled nodes |
+| "connected", "integrated", "everywhere" | Hub-and-spoke diagram with animated connection lines |
+| "before/after", "old way/new way" | Split or strikethrough reveal with contrast |
+
+Build the scene around that hero graphic. Everything else (background, particles, bars, scan line) is ambient support.
+
+### True word-by-word synchronization — mandatory
+
+Every element that appears on screen must enter at the exact timestamp of the word that introduces it. Use the word timing table from Step 3.5. This is not optional — it is the entire point.
+
+- "Qwen" is spoken → model name appears at that exact second
+- "scored" is spoken → result panel slides in at that exact second  
+- "ninety-four" is spoken → number counts up starting at that exact second
+- "Verified" is spoken → checkmark stamps at that exact second
+- The audience should feel the visuals are reacting to the voice, not playing alongside it
 
 ### Non-negotiable rules (every scene, no exceptions)
 

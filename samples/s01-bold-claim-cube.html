@@ -558,6 +558,40 @@
       tl.to(`${S} .corner`, {
         opacity: 0.45, duration: 1.6, repeat: -1, yoyo: true, ease: "sine.inOut" }, 2.0);
 
+      /* Extra: model version chip + live session counter */
+      const s01style = document.createElement('style');
+      s01style.textContent = `@keyframes s01dot{0%,100%{opacity:1}50%{opacity:0.2}}`;
+      document.head.appendChild(s01style);
+
+      const verChip = document.createElement('div');
+      verChip.style.cssText = 'position:absolute;top:58px;right:40px;background:rgba(255,107,53,0.1);border:1px solid rgba(255,107,53,0.25);border-radius:100px;padding:5px 16px;font-size:13px;font-family:Inter,sans-serif;font-weight:700;letter-spacing:0.1em;color:rgba(255,107,53,0.7);z-index:20;opacity:0;';
+      verChip.textContent = 'Qwen3-235B-A22B · v3.7-Max';
+      document.querySelector(S).appendChild(verChip);
+      tl.to(verChip, {opacity:1,duration:0.4}, 0.2);
+
+      /* Session uptime counter (hours:minutes counting up) */
+      const uptime = document.createElement('div');
+      uptime.style.cssText = 'position:absolute;bottom:60px;right:40px;font-size:14px;font-family:JetBrains Mono,monospace;font-weight:700;color:rgba(255,107,53,0.5);letter-spacing:0.08em;z-index:20;opacity:0;display:flex;align-items:center;gap:6px;';
+      uptime.innerHTML = '<span style="width:6px;height:6px;border-radius:50%;background:rgba(255,107,53,0.5);animation:s01dot 1.1s ease-in-out infinite;"></span><span class="up-txt">SESSION: 00:00</span>';
+      document.querySelector(S).appendChild(uptime);
+      tl.to(uptime, {opacity:1,duration:0.3}, 2.0);
+      let secs = 0;
+      const uptimeTick = setInterval(() => {
+        secs++;
+        const m = String(Math.floor(secs/60)).padStart(2,'0');
+        const s2 = String(secs%60).padStart(2,'0');
+        const el = uptime.querySelector('.up-txt');
+        if (el) el.textContent = `SESSION: ${m}:${s2}`;
+        if (secs > 3600) clearInterval(uptimeTick);
+      }, 1000);
+
+      /* Confidence score badge */
+      const confBadge = document.createElement('div');
+      confBadge.style.cssText = 'position:absolute;top:120px;right:40px;background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.2);border-radius:10px;padding:8px 18px;text-align:center;z-index:20;opacity:0;';
+      confBadge.innerHTML = '<div style="font-size:26px;font-weight:900;color:#ff6b35;font-family:Space Grotesk,sans-serif;">99.2%</div><div style="font-size:11px;font-family:Inter,sans-serif;color:rgba(255,107,53,0.5);letter-spacing:0.08em;margin-top:2px;">CONFIDENCE</div>';
+      document.querySelector(S).appendChild(confBadge);
+      tl.fromTo(confBadge,{opacity:0,scale:0.8},{opacity:1,scale:1,duration:0.4,ease:'back.out(1.5)'},2.5);
+
       window.__timelines = window.__timelines || {};
       window.__timelines["s01-bold-claim-cube"] = tl;
       if (!window.__hfEngine) setTimeout(() => tl.play(), 200);

@@ -373,6 +373,41 @@
       tl.to(`${S} .vs-badge`,   {borderColor:"rgba(255,255,255,0.35)",       duration:1.2,repeat:-1,yoyo:true,ease:"sine.inOut"}, 2.2);
       tl.to(`${S} .corner`,     {opacity:0.45,                               duration:1.8,repeat:-1,yoyo:true,ease:"sine.inOut"}, 3.0);
 
+      /* Extra: WINNER banner on left card + COST LEADER on right */
+      const s05style = document.createElement('style');
+      s05style.textContent = `.s05-win{position:absolute;font-size:13px;font-family:Inter,sans-serif;font-weight:700;letter-spacing:0.1em;padding:5px 14px;border-radius:20px;opacity:0;z-index:30;}`;
+      document.head.appendChild(s05style);
+
+      const winBadge = document.createElement('div');
+      winBadge.className = 's05-win';
+      winBadge.style.cssText = 'position:absolute;top:100px;left:180px;background:rgba(77,255,145,0.15);border:1px solid rgba(77,255,145,0.4);color:#4dff91;z-index:30;opacity:0;font-size:16px;font-family:Inter,sans-serif;font-weight:700;letter-spacing:0.12em;padding:7px 20px;border-radius:100px;';
+      winBadge.innerHTML = '★ WINNER · CODING';
+      document.querySelector(S).appendChild(winBadge);
+      tl.fromTo(winBadge,{opacity:0,scale:0.7},{opacity:1,scale:1,duration:0.4,ease:'back.out(2)'},2.3);
+      tl.to(winBadge,{boxShadow:'0 0 20px rgba(77,255,145,0.4)',duration:1.4,repeat:-1,yoyo:true,ease:'sine.inOut'},2.8);
+
+      const costBadge = document.createElement('div');
+      costBadge.style.cssText = 'position:absolute;top:100px;right:180px;background:rgba(255,187,51,0.12);border:1px solid rgba(255,187,51,0.35);color:rgba(255,187,51,0.8);z-index:30;opacity:0;font-size:16px;font-family:Inter,sans-serif;font-weight:700;letter-spacing:0.1em;padding:7px 20px;border-radius:100px;';
+      costBadge.textContent = '💰 COST LEADER';
+      document.querySelector(S).appendChild(costBadge);
+      tl.fromTo(costBadge,{opacity:0,scale:0.7},{opacity:1,scale:1,duration:0.4,ease:'back.out(2)'},2.5);
+
+      /* Trend lines (mini animated sparklines as canvas) */
+      ['left:140px;top:910px;', 'right:140px;top:910px;'].forEach((pos, i) => {
+        const cvs = document.createElement('canvas');
+        cvs.width = 120; cvs.height = 28;
+        cvs.style.cssText = `position:absolute;${pos}opacity:0;z-index:20;`;
+        document.querySelector(S).appendChild(cvs);
+        const c = cvs.getContext('2d');
+        const pts = i === 0 ? [8,12,9,14,11,16,13,18,14,20,16,22,18,24] : [18,14,16,12,14,10,12,10,11,10,12,11,10,12];
+        c.beginPath();
+        pts.forEach((v,j)=>{ j===0?c.moveTo(j*9,28-v):c.lineTo(j*9,28-v); });
+        c.strokeStyle = i===0?'rgba(77,255,145,0.7)':'rgba(255,187,51,0.7)';
+        c.lineWidth = 2;
+        c.stroke();
+        tl.to(cvs, {opacity:1, duration:0.4}, 3.0);
+      });
+
       window.__timelines = window.__timelines || {};
       window.__timelines["s05-split-cards"] = tl;
       if (!window.__hfEngine) setTimeout(() => tl.play(), 200);

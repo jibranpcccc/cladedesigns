@@ -522,6 +522,32 @@
         opacity: 0.25, duration: 1.5, repeat: -1, yoyo: true, ease: 'sine.inOut'
       }, 2.0);
 
+      /* Extra: AI response text appears after prompt is typed */
+      const aiResp = document.createElement('div');
+      aiResp.style.cssText = 'margin-top:24px;padding:18px 24px;background:rgba(85,51,221,0.05);border:1px solid rgba(85,51,221,0.12);border-radius:12px;font-family:JetBrains Mono,monospace;font-size:20px;color:rgba(26,26,46,0.75);line-height:1.7;opacity:0;min-height:52px;';
+      const aiLabel = document.createElement('div');
+      aiLabel.style.cssText = 'font-size:13px;font-family:Inter,sans-serif;font-weight:700;color:rgba(85,51,221,0.5);letter-spacing:0.1em;margin-bottom:8px;';
+      aiLabel.textContent = 'QWEN 3.7-MAX RESPONSE';
+      aiResp.appendChild(aiLabel);
+      const aiText = document.createElement('div');
+      aiText.style.cssText = 'font-family:Inter,sans-serif;font-size:20px;color:rgba(26,26,46,0.7);line-height:1.6;';
+      aiResp.appendChild(aiText);
+      root.querySelector('.chat-area').appendChild(aiResp);
+
+      const responseStr = 'Running your workflow now... ✓ Identified 3 bottlenecks. ✓ Suggested optimizations applied.';
+      const responseT = doneT + 0.8;
+      tl.to(aiResp, {opacity:1, duration:0.4}, responseT);
+      for (let i = 0; i < responseStr.length; i++) {
+        ((ch, t) => tl.call(() => { aiText.textContent += ch; }, [], t))(responseStr[i], responseT + 0.4 + i * 0.03);
+      }
+
+      /* Session stats row at bottom of tips panel */
+      const statRow = document.createElement('div');
+      statRow.style.cssText = 'margin-top:auto;padding-top:16px;border-top:1px solid rgba(85,51,221,0.1);display:flex;gap:16px;opacity:0;';
+      statRow.innerHTML = '<div style="text-align:center;flex:1"><div style="font-size:20px;font-weight:900;color:#5533dd">4.2s</div><div style="font-size:11px;font-family:Inter,sans-serif;color:rgba(26,26,46,0.35);letter-spacing:0.08em">AVG RESPONSE</div></div><div style="text-align:center;flex:1"><div style="font-size:20px;font-weight:900;color:#5533dd">99.9%</div><div style="font-size:11px;font-family:Inter,sans-serif;color:rgba(26,26,46,0.35);letter-spacing:0.08em">UPTIME</div></div>';
+      root.querySelector('.tips-panel').appendChild(statRow);
+      tl.to(statRow, {opacity:1, duration:0.4}, 2.0);
+
       window.__timelines = window.__timelines || {};
       window.__timelines["s08-browser-cta"] = tl;
       if (!window.__hfEngine) setTimeout(() => tl.play(), 200);

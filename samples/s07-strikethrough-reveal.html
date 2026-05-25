@@ -418,6 +418,41 @@
         opacity: 0.25, duration: 1.6, repeat: -1, yoyo: true, ease: 'sine.inOut'
       }, 2.0);
 
+      /* Extra: AGENTIC MODE status + model info chip */
+      const s07style = document.createElement('style');
+      s07style.textContent = `@keyframes s07sdot{0%,100%{opacity:1}50%{opacity:0.2}}`;
+      document.head.appendChild(s07style);
+
+      const statusBar = document.createElement('div');
+      statusBar.style.cssText = 'position:absolute;bottom:60px;right:140px;background:rgba(124,252,96,0.08);border:1px solid rgba(124,252,96,0.2);border-radius:10px;padding:10px 20px;font-size:14px;font-family:Inter,sans-serif;font-weight:700;letter-spacing:0.1em;color:rgba(124,252,96,0.65);display:flex;align-items:center;gap:10px;z-index:20;opacity:0;';
+      statusBar.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:#7cfc60;animation:s07sdot 1.1s ease-in-out infinite;flex-shrink:0;"></span>AGENTIC MODE: ONLINE';
+      root.appendChild(statusBar);
+      tl.to(statusBar, {opacity:1, duration:0.4}, 4.0);
+
+      /* Floating model chip */
+      const chipEl = document.createElement('div');
+      chipEl.style.cssText = 'position:absolute;top:58px;right:140px;background:rgba(124,252,96,0.06);border:1px solid rgba(124,252,96,0.15);border-radius:100px;padding:5px 14px;font-size:13px;font-family:Inter,sans-serif;font-weight:700;letter-spacing:0.08em;color:rgba(124,252,96,0.5);z-index:20;opacity:0;';
+      chipEl.textContent = 'Qwen 3.7-Max · Thinking Mode · 128K';
+      root.appendChild(chipEl);
+      tl.to(chipEl, {opacity:1, duration:0.4}, 0.3);
+
+      /* Three orbiting item labels (counter-rotated text under emojis) */
+      const itemLabels = [['Files','📁'], ['Search','🔍'], ['Code','💻'], ['Web','🌐']];
+      itemLabels.forEach(([label], i) => {
+        const el = document.createElement('div');
+        el.style.cssText = `position:absolute;font-size:11px;font-family:Inter,sans-serif;font-weight:700;color:rgba(124,252,96,0.5);letter-spacing:0.05em;opacity:0;z-index:20;white-space:nowrap;`;
+        // Position near orbit area bottom
+        const angles = [0, 90, 180, 270];
+        const r = 160;
+        const cx = 1550, cy = 540;
+        const rad = angles[i] * Math.PI / 180;
+        el.style.left = (cx + Math.cos(rad)*r - 20) + 'px';
+        el.style.top  = (cy + Math.sin(rad)*r + 22) + 'px';
+        el.textContent = label;
+        root.appendChild(el);
+        tl.to(el, {opacity:1, duration:0.3}, 2.0 + i * 0.2);
+      });
+
       window.__timelines = window.__timelines || {};
       window.__timelines["s07-strikethrough"] = tl;
       if (!window.__hfEngine) setTimeout(() => tl.play(), 200);

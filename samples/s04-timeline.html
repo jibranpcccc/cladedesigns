@@ -397,6 +397,32 @@
       tl.to(`${S} .mc-now`, {boxShadow:"0 0 24px rgba(0,212,255,0.2)",duration:1.4,repeat:-1,yoyo:true,ease:"sine.inOut"}, 3.2);
       tl.to(`${S} .corner`, {opacity:0.45,duration:1.8,repeat:-1,yoyo:true,ease:"sine.inOut"}, 3.0);
 
+      /* Extra: version chips above timeline dots + RECORD PACE badge */
+      const s04style = document.createElement('style');
+      s04style.textContent = `.s04-ver{position:absolute;font-size:14px;font-family:Inter,sans-serif;font-weight:700;letter-spacing:0.08em;color:rgba(0,212,255,0.7);background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);border-radius:20px;padding:3px 10px;opacity:0;z-index:20;}
+.s04-rec{position:absolute;top:58px;right:40px;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.22);border-radius:10px;padding:8px 18px;font-size:13px;font-family:Inter,sans-serif;font-weight:700;letter-spacing:0.1em;color:rgba(0,212,255,0.7);z-index:20;opacity:0;}`;
+      document.head.appendChild(s04style);
+
+      /* Version tags — positioned just above the 5 dots on the timeline */
+      const verTags = ['v3.5','v3.6','v3.6+','v3.7','v3.8?'];
+      const verX = [230, 490, 750, 1010, 1270];
+      verTags.forEach((ver, i) => {
+        const el = document.createElement('div');
+        el.className = 's04-ver';
+        el.style.cssText += `left:${verX[i]-24}px;top:240px;`;
+        el.textContent = ver;
+        document.querySelector(S).appendChild(el);
+        tl.to(el, {opacity:1,duration:0.3}, 1.1 + i * 0.34);
+      });
+
+      /* Record pace badge */
+      const rec = document.createElement('div');
+      rec.className = 's04-rec';
+      rec.textContent = '⚡ FASTEST CYCLE IN AI HISTORY';
+      document.querySelector(S).appendChild(rec);
+      tl.fromTo(rec, {opacity:0,scale:0.8}, {opacity:1,scale:1,duration:0.4,ease:'back.out(1.7)'}, 3.5);
+      tl.to(rec, {boxShadow:'0 0 20px rgba(0,212,255,0.3)',duration:1.4,repeat:-1,yoyo:true,ease:'sine.inOut'}, 4.0);
+
       window.__timelines = window.__timelines || {};
       window.__timelines["s04-timeline"] = tl;
       if (!window.__hfEngine) setTimeout(() => tl.play(), 200);

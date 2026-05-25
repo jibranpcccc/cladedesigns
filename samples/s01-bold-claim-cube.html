@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=1920, height=1080" />
   <title>Sample: Bold Claim + 3D Rotating Cube</title>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;900&family=Inter:wght@400;500;600;700&display=block" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=block" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -12,27 +12,6 @@
   </style>
 </head>
 <body>
-
-<!--
-  SCENE TYPE: Bold Product Launch / Flagship Claim
-  BACKGROUND: Dark charcoal-navy #1a1a2e
-  USE WHEN: Introducing the main subject, announcing a #1 ranking, flagship moment
-  DURATION: 10s
-  ANIMATION LAYERS (simultaneous):
-    - Moving dot-grid background (CSS, always drifting)
-    - 16 orange/purple particles floating (CSS)
-    - Top accent line wipes across at 0s
-    - Corner brackets snap in (4 corners)
-    - Eyebrow slides from left
-    - "#1" drops from top with glow, then pulses forever
-    - "NEW" / "FLAGSHIP" / "DROP" stagger in separately
-    - 3 cube orbit rings expand, outer ring spins
-    - Cube face glows pulse continuously
-    - 3 pills each slide from different offset with stagger
-    - Pills border glows after landing
-    - Bottom mini-stats row fades up
--->
-
 <div
   data-composition-id="s01-bold-claim-cube"
   data-width="1920"
@@ -40,10 +19,10 @@
   data-duration="10"
 >
 
-  <!-- Layer: animated grid -->
+  <!-- Moving dot-grid background -->
   <div class="bg-grid"></div>
 
-  <!-- Layer: floating particles (16 fixed positions) -->
+  <!-- 20 orange/purple floating particles -->
   <div class="particles">
     <div class="pt" style="left:80px;top:90px;--d:7s;--dl:0s;--c:rgba(255,107,53,0.5)"></div>
     <div class="pt" style="left:220px;top:400px;--d:9s;--dl:1.4s;--c:rgba(140,100,255,0.5)"></div>
@@ -61,22 +40,95 @@
     <div class="pt" style="left:480px;top:520px;--d:7.2s;--dl:2.8s;--c:rgba(140,100,255,0.5)"></div>
     <div class="pt" style="left:820px;top:740px;--d:8.2s;--dl:1.5s;--c:rgba(255,107,53,0.3)"></div>
     <div class="pt" style="left:1720px;top:860px;--d:6.8s;--dl:0.8s;--c:rgba(140,100,255,0.4)"></div>
+    <div class="pt" style="left:640px;top:140px;--d:9.0s;--dl:2.3s;--c:rgba(255,107,53,0.4)"></div>
+    <div class="pt" style="left:1300px;top:920px;--d:7.3s;--dl:0.4s;--c:rgba(140,100,255,0.3)"></div>
+    <div class="pt" style="left:1800px;top:660px;--d:8.0s;--dl:1.9s;--c:rgba(255,107,53,0.5)"></div>
+    <div class="pt" style="left:320px;top:960px;--d:6.1s;--dl:3.3s;--c:rgba(140,100,255,0.4)"></div>
   </div>
 
-  <!-- Top accent line -->
+  <!-- Horizontal scan line (sweeps left→right) -->
+  <div class="scan-h"></div>
+
+  <!-- Top accent line (full width wipe) -->
   <div class="top-line"></div>
 
-  <!-- Corner brackets -->
+  <!-- Corner brackets (all 4) -->
   <div class="corner corner-tl"></div>
   <div class="corner corner-tr"></div>
   <div class="corner corner-bl"></div>
   <div class="corner corner-br"></div>
 
-  <!-- 3D Rotating Cube (right side) with orbit rings -->
+  <!-- Top-right: LIVE badge -->
+  <div class="live-badge"><span class="live-dot"></span>LIVE</div>
+
+  <!-- Top-right: model name chip -->
+  <div class="model-chip">Qwen 3.7 Max · artificialanalysis.ai</div>
+
+  <!-- Radial glow behind #1 -->
+  <div class="number-glow"></div>
+
+  <!-- Right vertical accent line -->
+  <div class="right-accent"></div>
+
+  <!-- ═══ MAIN CONTENT (left side) ═══ -->
+  <div class="content">
+    <div class="eyebrow">INTRODUCING</div>
+    <div class="headline-row">
+      <span class="big-number">#1</span>
+      <div class="title-words">
+        <span class="tw tw-new">NEW</span>
+        <span class="tw tw-flag">FLAGSHIP</span>
+        <span class="tw tw-drop">DROP</span>
+      </div>
+    </div>
+
+    <!-- Pills -->
+    <div class="pills">
+      <div class="pill p1">
+        <span class="pill-text">🏆 Top of every major leaderboard</span>
+        <div class="pill-bar-wrap"><div class="pill-bar pb1"></div></div>
+      </div>
+      <div class="pill p2">
+        <span class="pill-text">⚡ 10× faster reasoning than GPT-4o</span>
+        <div class="pill-bar-wrap"><div class="pill-bar pb2"></div></div>
+      </div>
+      <div class="pill p3">
+        <span class="pill-text">🔓 Open weights arriving late summer</span>
+        <div class="pill-bar-wrap"><div class="pill-bar pb3"></div></div>
+      </div>
+    </div>
+
+    <!-- Mini benchmark score row (below pills) -->
+    <div class="score-row">
+      <div class="sc-item sci1">
+        <div class="sc-val">93.4</div>
+        <div class="sc-key">MMLU %</div>
+      </div>
+      <div class="sc-item sci2">
+        <div class="sc-val">87.2</div>
+        <div class="sc-key">HumanEval %</div>
+      </div>
+      <div class="sc-item sci3">
+        <div class="sc-val">97.1</div>
+        <div class="sc-key">MATH-500 %</div>
+      </div>
+      <div class="sc-item sci4">
+        <div class="sc-val">57/100</div>
+        <div class="sc-key">Intelligence Idx</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CUBE SCENE (right side) ═══ -->
   <div class="cube-scene">
     <div class="cube-glow"></div>
     <div class="cube-orbit-ring cor1"></div>
     <div class="cube-orbit-ring cor2"></div>
+    <div class="cube-orbit-ring cor3"></div>
+    <!-- Orbiting dot on cor2 ring -->
+    <div class="cube-orbit-dot-wrap">
+      <div class="cube-orbit-dot"></div>
+    </div>
     <div class="cube-wrap">
       <div class="cube">
         <div class="face front"></div>
@@ -89,78 +141,73 @@
     </div>
   </div>
 
-  <!-- Text content (left side) -->
-  <div class="content">
-    <div class="eyebrow">INTRODUCING</div>
-    <div class="headline-row">
-      <span class="big-number">#1</span>
-      <div class="title-words">
-        <span class="tw tw-new">NEW</span>
-        <span class="tw tw-flag">FLAGSHIP</span>
-        <span class="tw tw-drop">DROP</span>
-      </div>
+  <!-- Achievement badges (right side, around cube) -->
+  <div class="achieve-row">
+    <div class="ab ab1"><div class="ab-rank">#1</div><div class="ab-cat">MMLU</div></div>
+    <div class="ab ab2"><div class="ab-rank">#2</div><div class="ab-cat">HumanEval</div></div>
+    <div class="ab ab3"><div class="ab-rank">#1</div><div class="ab-cat">MATH-500</div></div>
+  </div>
+
+  <!-- Mini leaderboard (far right, below cube) -->
+  <div class="mini-leader">
+    <div class="ml-title">INTELLIGENCE RANKING</div>
+    <div class="ml-row mlr1 mlr-highlight">
+      <span class="ml-pos">01</span>
+      <span class="ml-name">Qwen 3.7-Max</span>
+      <span class="ml-score">57</span>
     </div>
-    <div class="pills">
-      <div class="pill p1">🏆 Top of every major leaderboard</div>
-      <div class="pill p2">⚡ 10× faster reasoning than GPT-4o</div>
-      <div class="pill p3">🔓 Open weights arriving late summer</div>
+    <div class="ml-row mlr2">
+      <span class="ml-pos">02</span>
+      <span class="ml-name">Claude 3.7 Sonnet</span>
+      <span class="ml-score">55</span>
+    </div>
+    <div class="ml-row mlr3">
+      <span class="ml-pos">03</span>
+      <span class="ml-name">GPT-4o</span>
+      <span class="ml-score">52</span>
+    </div>
+    <div class="ml-row mlr4">
+      <span class="ml-pos">04</span>
+      <span class="ml-name">Gemini 1.5 Pro</span>
+      <span class="ml-score">50</span>
     </div>
   </div>
 
-  <!-- Bottom stats bar -->
+  <!-- Bottom bar (4 stats) -->
   <div class="bottom-bar">
-    <div class="bb-item bbi1">
-      <div class="bb-val">151</div>
-      <div class="bb-key">Models ranked</div>
-    </div>
+    <div class="bb-item bbi1"><div class="bb-val">151</div><div class="bb-key">Models ranked</div></div>
     <div class="bb-div"></div>
-    <div class="bb-item bbi2">
-      <div class="bb-val">57</div>
-      <div class="bb-key">Intelligence score</div>
-    </div>
+    <div class="bb-item bbi2"><div class="bb-val">57</div><div class="bb-key">Intelligence score</div></div>
     <div class="bb-div"></div>
-    <div class="bb-item bbi3">
-      <div class="bb-val">131K</div>
-      <div class="bb-key">Context window</div>
-    </div>
+    <div class="bb-item bbi3"><div class="bb-val">131K</div><div class="bb-key">Context window</div></div>
     <div class="bb-div"></div>
-    <div class="bb-item bbi4">
-      <div class="bb-val">6 wks</div>
-      <div class="bb-key">Avg release cadence</div>
-    </div>
+    <div class="bb-item bbi4"><div class="bb-val">$2.50</div><div class="bb-key">Input / M tokens</div></div>
+    <div class="bb-div"></div>
+    <div class="bb-item bbi5"><div class="bb-val">6 wks</div><div class="bb-key">Release cadence</div></div>
   </div>
 
   <style>
     [data-composition-id="s01-bold-claim-cube"] {
-      width: 1920px;
-      height: 1080px;
+      width: 1920px; height: 1080px;
       background: #1a1a2e;
       font-family: "Space Grotesk", sans-serif;
-      position: relative;
-      overflow: hidden;
+      position: relative; overflow: hidden;
     }
 
-    /* ── Background grid ── */
+    /* ── Grid ── */
     [data-composition-id="s01-bold-claim-cube"] .bg-grid {
-      position: absolute;
-      inset: 0;
+      position: absolute; inset: 0;
       background-image:
         linear-gradient(rgba(100,120,255,0.05) 1px, transparent 1px),
         linear-gradient(90deg, rgba(100,120,255,0.05) 1px, transparent 1px);
       background-size: 80px 80px;
       animation: grid-move 20s linear infinite;
     }
-    @keyframes grid-move {
-      from { background-position: 0 0; }
-      to   { background-position: 80px 80px; }
-    }
+    @keyframes grid-move { from { background-position: 0 0; } to { background-position: 80px 80px; } }
 
     /* ── Particles ── */
     [data-composition-id="s01-bold-claim-cube"] .pt {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
+      position: absolute; width: 4px; height: 4px; border-radius: 50%;
       background: var(--c);
       animation: pt-float var(--d) var(--dl) ease-in-out infinite alternate;
     }
@@ -169,226 +216,257 @@
       to   { transform: translateY(-40px) scale(2); opacity: 0.8; }
     }
 
-    /* ── Top accent line ── */
+    /* ── Scan line (left→right) ── */
+    [data-composition-id="s01-bold-claim-cube"] .scan-h {
+      position: absolute; top: 0; left: -3px;
+      width: 3px; height: 100%;
+      background: linear-gradient(transparent, rgba(255,107,53,0.0) 15%, rgba(255,107,53,0.35) 50%, rgba(255,107,53,0.0) 85%, transparent);
+      animation: scan-h 7s linear infinite;
+    }
+    @keyframes scan-h { from { left: -3px; } to { left: 1923px; } }
+
+    /* ── Top line ── */
     [data-composition-id="s01-bold-claim-cube"] .top-line {
-      position: absolute;
-      top: 0; left: 0;
+      position: absolute; top: 0; left: 0;
       width: 0; height: 4px;
-      background: linear-gradient(90deg, #ff6b35, rgba(255,107,53,0.2), transparent);
+      background: linear-gradient(90deg, #ff6b35, rgba(255,107,53,0.3), transparent);
     }
 
     /* ── Corner brackets ── */
     [data-composition-id="s01-bold-claim-cube"] .corner {
-      position: absolute;
-      width: 48px;
-      height: 48px;
+      position: absolute; width: 48px; height: 48px; opacity: 0;
+    }
+    [data-composition-id="s01-bold-claim-cube"] .corner-tl { top:32px; left:32px; border-top:2px solid rgba(255,107,53,0.5); border-left:2px solid rgba(255,107,53,0.5); }
+    [data-composition-id="s01-bold-claim-cube"] .corner-tr { top:32px; right:32px; border-top:2px solid rgba(255,107,53,0.5); border-right:2px solid rgba(255,107,53,0.5); }
+    [data-composition-id="s01-bold-claim-cube"] .corner-bl { bottom:32px; left:32px; border-bottom:2px solid rgba(255,107,53,0.5); border-left:2px solid rgba(255,107,53,0.5); }
+    [data-composition-id="s01-bold-claim-cube"] .corner-br { bottom:32px; right:32px; border-bottom:2px solid rgba(255,107,53,0.5); border-right:2px solid rgba(255,107,53,0.5); }
+
+    /* ── LIVE badge ── */
+    [data-composition-id="s01-bold-claim-cube"] .live-badge {
+      position: absolute; top: 40px; right: 220px;
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,107,53,0.12);
+      border: 1px solid rgba(255,107,53,0.35);
+      border-radius: 100px; padding: 8px 18px;
+      font-size: 16px; font-weight: 700; font-family: "Inter", sans-serif;
+      letter-spacing: 0.12em; color: #ff6b35;
       opacity: 0;
     }
-    [data-composition-id="s01-bold-claim-cube"] .corner-tl {
-      top: 32px; left: 32px;
-      border-top: 2px solid rgba(255,107,53,0.5);
-      border-left: 2px solid rgba(255,107,53,0.5);
+    [data-composition-id="s01-bold-claim-cube"] .live-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #ff6b35;
+      animation: blink 1s ease-in-out infinite alternate;
     }
-    [data-composition-id="s01-bold-claim-cube"] .corner-tr {
-      top: 32px; right: 32px;
-      border-top: 2px solid rgba(255,107,53,0.5);
-      border-right: 2px solid rgba(255,107,53,0.5);
+    @keyframes blink { from { opacity: 1; } to { opacity: 0.2; } }
+
+    /* ── Model chip ── */
+    [data-composition-id="s01-bold-claim-cube"] .model-chip {
+      position: absolute; top: 40px; right: 440px;
+      font-size: 18px; font-family: "Inter", sans-serif;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 0.04em;
+      opacity: 0;
     }
-    [data-composition-id="s01-bold-claim-cube"] .corner-bl {
-      bottom: 32px; left: 32px;
-      border-bottom: 2px solid rgba(255,107,53,0.5);
-      border-left: 2px solid rgba(255,107,53,0.5);
+
+    /* ── Number glow (behind #1) ── */
+    [data-composition-id="s01-bold-claim-cube"] .number-glow {
+      position: absolute;
+      top: 50%; left: 260px;
+      transform: translateY(-50%);
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,107,53,0.2) 0%, transparent 70%);
+      opacity: 0;
     }
-    [data-composition-id="s01-bold-claim-cube"] .corner-br {
-      bottom: 32px; right: 32px;
-      border-bottom: 2px solid rgba(255,107,53,0.5);
-      border-right: 2px solid rgba(255,107,53,0.5);
+
+    /* ── Right vertical accent ── */
+    [data-composition-id="s01-bold-claim-cube"] .right-accent {
+      position: absolute; top: 60px; right: 60px;
+      width: 1px; height: 0;
+      background: linear-gradient(transparent, rgba(255,107,53,0.3), transparent);
+    }
+
+    /* ── Main content ── */
+    [data-composition-id="s01-bold-claim-cube"] .content {
+      position: absolute; left: 100px; top: 50%;
+      transform: translateY(-50%);
+    }
+    [data-composition-id="s01-bold-claim-cube"] .eyebrow {
+      font-size: 22px; font-weight: 700; letter-spacing: 0.28em;
+      color: rgba(255,255,255,0.35); font-family: "Inter", sans-serif;
+      text-transform: uppercase; margin-bottom: 16px; opacity: 0;
+    }
+    [data-composition-id="s01-bold-claim-cube"] .headline-row {
+      display: flex; align-items: flex-start; gap: 20px;
+      margin-bottom: 36px; line-height: 0.95;
+    }
+    [data-composition-id="s01-bold-claim-cube"] .big-number {
+      font-size: 200px; font-weight: 900; color: #ff6b35;
+      display: block; line-height: 1; opacity: 0;
+    }
+    [data-composition-id="s01-bold-claim-cube"] .title-words {
+      display: flex; flex-direction: column; gap: 0; padding-top: 16px;
+    }
+    [data-composition-id="s01-bold-claim-cube"] .tw {
+      font-size: 90px; font-weight: 900; color: #ffffff;
+      line-height: 1.05; display: block; opacity: 0;
+    }
+    [data-composition-id="s01-bold-claim-cube"] .tw-drop { color: rgba(255,255,255,0.4); }
+
+    /* ── Pills ── */
+    [data-composition-id="s01-bold-claim-cube"] .pills { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+    [data-composition-id="s01-bold-claim-cube"] .pill {
+      display: flex; flex-direction: column; gap: 8px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px; padding: 14px 26px;
+      font-size: 24px; color: rgba(255,255,255,0.85);
+      font-family: "Inter", sans-serif; font-weight: 500;
+      width: fit-content; opacity: 0;
+    }
+    [data-composition-id="s01-bold-claim-cube"] .pill-bar-wrap {
+      width: 340px; height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px;
+    }
+    [data-composition-id="s01-bold-claim-cube"] .pill-bar { height: 100%; width: 0; border-radius: 2px; background: #ff6b35; }
+
+    /* ── Score row (below pills) ── */
+    [data-composition-id="s01-bold-claim-cube"] .score-row {
+      display: flex; gap: 0; opacity: 0;
+    }
+    [data-composition-id="s01-bold-claim-cube"] .sc-item {
+      padding: 12px 24px 12px 0; margin-right: 24px;
+      border-right: 1px solid rgba(255,255,255,0.08);
+    }
+    [data-composition-id="s01-bold-claim-cube"] .sc-item:last-child { border-right: none; }
+    [data-composition-id="s01-bold-claim-cube"] .sc-val {
+      font-size: 28px; font-weight: 900; color: #ff6b35;
+      font-family: "JetBrains Mono", monospace;
+    }
+    [data-composition-id="s01-bold-claim-cube"] .sc-key {
+      font-size: 13px; color: rgba(255,255,255,0.3);
+      font-family: "Inter", sans-serif; margin-top: 2px;
     }
 
     /* ── Cube scene ── */
     [data-composition-id="s01-bold-claim-cube"] .cube-scene {
-      position: absolute;
-      right: 180px;
-      top: 50%;
+      position: absolute; right: 100px; top: 50%;
       transform: translateY(-50%);
-      width: 480px;
-      height: 480px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 520px; height: 520px;
+      display: flex; align-items: center; justify-content: center;
     }
-
-    /* Cube background glow */
     [data-composition-id="s01-bold-claim-cube"] .cube-glow {
-      position: absolute;
-      width: 480px;
-      height: 480px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(140,100,255,0.2) 0%, transparent 70%);
-      opacity: 0;
+      position: absolute; width: 520px; height: 520px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(140,100,255,0.22) 0%, transparent 70%);
       animation: cube-glow-pulse 2.5s ease-in-out infinite alternate;
     }
     @keyframes cube-glow-pulse {
-      from { opacity: 0.15; transform: scale(0.95); }
-      to   { opacity: 0.45; transform: scale(1.08); }
+      from { opacity: 0.2; transform: scale(0.93); }
+      to   { opacity: 0.55; transform: scale(1.08); }
     }
-
-    /* Orbit rings around cube */
     [data-composition-id="s01-bold-claim-cube"] .cube-orbit-ring {
-      position: absolute;
-      border-radius: 50%;
-      border: 1px solid rgba(140,100,255,0.25);
-      opacity: 0;
+      position: absolute; border-radius: 50%; border: 1px solid rgba(140,100,255,0.2); opacity: 0;
     }
-    [data-composition-id="s01-bold-claim-cube"] .cor1 {
-      width: 380px; height: 380px;
-      animation: ring-spin 8s linear infinite;
-      border-style: dashed;
+    [data-composition-id="s01-bold-claim-cube"] .cor1 { width:240px;height:240px; border-style:dashed; animation:ring-spin 5s linear infinite; }
+    [data-composition-id="s01-bold-claim-cube"] .cor2 { width:380px;height:380px; animation:ring-spin 9s linear infinite; border-color:rgba(255,107,53,0.2); }
+    [data-composition-id="s01-bold-claim-cube"] .cor3 { width:520px;height:520px; animation:ring-spin 15s linear infinite reverse; border-color:rgba(140,100,255,0.1); }
+    @keyframes ring-spin { from{transform:rotate(0deg);}to{transform:rotate(360deg);} }
+
+    /* Orbiting dot on cor2 ring (380px diameter = 190px radius) */
+    [data-composition-id="s01-bold-claim-cube"] .cube-orbit-dot-wrap {
+      position: absolute; width:380px; height:380px; border-radius:50%;
+      animation: ring-spin 9s linear infinite; opacity: 0;
     }
-    [data-composition-id="s01-bold-claim-cube"] .cor2 {
-      width: 480px; height: 480px;
-      animation: ring-spin 14s linear infinite reverse;
-      border-color: rgba(255,107,53,0.15);
-    }
-    @keyframes ring-spin {
-      from { transform: rotate(0deg); }
-      to   { transform: rotate(360deg); }
+    [data-composition-id="s01-bold-claim-cube"] .cube-orbit-dot {
+      position: absolute; top:-7px; left:50%; transform:translateX(-50%);
+      width:14px; height:14px; border-radius:50%;
+      background:#ff6b35; box-shadow:0 0 18px rgba(255,107,53,0.9);
     }
 
     [data-composition-id="s01-bold-claim-cube"] .cube-wrap {
-      width: 300px;
-      height: 300px;
-      perspective: 900px;
-      opacity: 0;
-      position: relative;
-      z-index: 1;
+      width: 280px; height: 280px; perspective: 900px; opacity: 0; position: relative; z-index: 1;
     }
     [data-composition-id="s01-bold-claim-cube"] .cube {
-      width: 300px;
-      height: 300px;
-      position: relative;
-      transform-style: preserve-3d;
-      transform: rotateX(-18deg) rotateY(0deg);
+      width: 280px; height: 280px; position: relative;
+      transform-style: preserve-3d; transform: rotateX(-18deg) rotateY(0deg);
     }
     [data-composition-id="s01-bold-claim-cube"] .face {
-      position: absolute;
-      width: 300px;
-      height: 300px;
-      border: 1.5px solid rgba(140,100,255,0.6);
-      background: rgba(120,80,255,0.06);
+      position: absolute; width: 280px; height: 280px;
+      border: 1.5px solid rgba(140,100,255,0.6); background: rgba(120,80,255,0.06);
     }
-    [data-composition-id="s01-bold-claim-cube"] .face.front  { transform: translateZ(150px); }
-    [data-composition-id="s01-bold-claim-cube"] .face.back   { transform: rotateY(180deg) translateZ(150px); }
-    [data-composition-id="s01-bold-claim-cube"] .face.left   { transform: rotateY(-90deg) translateZ(150px); }
-    [data-composition-id="s01-bold-claim-cube"] .face.right  { transform: rotateY(90deg) translateZ(150px); }
-    [data-composition-id="s01-bold-claim-cube"] .face.top    { transform: rotateX(90deg) translateZ(150px); }
-    [data-composition-id="s01-bold-claim-cube"] .face.bottom { transform: rotateX(-90deg) translateZ(150px); }
+    [data-composition-id="s01-bold-claim-cube"] .face.front  { transform: translateZ(140px); }
+    [data-composition-id="s01-bold-claim-cube"] .face.back   { transform: rotateY(180deg) translateZ(140px); }
+    [data-composition-id="s01-bold-claim-cube"] .face.left   { transform: rotateY(-90deg) translateZ(140px); }
+    [data-composition-id="s01-bold-claim-cube"] .face.right  { transform: rotateY(90deg) translateZ(140px); }
+    [data-composition-id="s01-bold-claim-cube"] .face.top    { transform: rotateX(90deg) translateZ(140px); }
+    [data-composition-id="s01-bold-claim-cube"] .face.bottom { transform: rotateX(-90deg) translateZ(140px); }
 
-    /* ── Content ── */
-    [data-composition-id="s01-bold-claim-cube"] .content {
-      position: absolute;
-      left: 100px;
-      top: 50%;
-      transform: translateY(-50%);
+    /* ── Achievement badges ── */
+    [data-composition-id="s01-bold-claim-cube"] .achieve-row {
+      position: absolute; top: 108px; right: 80px;
+      display: flex; gap: 14px; opacity: 0;
+    }
+    [data-composition-id="s01-bold-claim-cube"] .ab {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,107,53,0.25);
+      border-radius: 12px; padding: 14px 22px; text-align: center;
+      opacity: 0; transform: translateY(-20px);
+    }
+    [data-composition-id="s01-bold-claim-cube"] .ab-rank {
+      font-size: 32px; font-weight: 900; color: #ff6b35; line-height: 1;
+    }
+    [data-composition-id="s01-bold-claim-cube"] .ab-cat {
+      font-size: 14px; color: rgba(255,255,255,0.4);
+      font-family: "Inter", sans-serif; margin-top: 4px;
+      letter-spacing: 0.06em;
     }
 
-    [data-composition-id="s01-bold-claim-cube"] .eyebrow {
-      font-size: 24px;
-      font-weight: 700;
-      letter-spacing: 0.28em;
-      color: rgba(255,255,255,0.35);
+    /* ── Mini leaderboard ── */
+    [data-composition-id="s01-bold-claim-cube"] .mini-leader {
+      position: absolute; bottom: 92px; right: 80px;
+      width: 400px; opacity: 0;
+    }
+    [data-composition-id="s01-bold-claim-cube"] .ml-title {
+      font-size: 14px; font-family: "Inter", sans-serif; font-weight: 700;
+      letter-spacing: 0.14em; color: rgba(255,255,255,0.25);
+      text-transform: uppercase; margin-bottom: 12px;
+    }
+    [data-composition-id="s01-bold-claim-cube"] .ml-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 14px; border-radius: 8px; margin-bottom: 4px;
+      opacity: 0; transform: translateX(20px);
+    }
+    [data-composition-id="s01-bold-claim-cube"] .mlr-highlight {
+      background: rgba(255,107,53,0.1);
+      border: 1px solid rgba(255,107,53,0.25);
+    }
+    [data-composition-id="s01-bold-claim-cube"] .ml-pos {
+      font-size: 16px; font-family: "JetBrains Mono", monospace;
+      color: rgba(255,255,255,0.3); width: 28px;
+    }
+    [data-composition-id="s01-bold-claim-cube"] .mlr-highlight .ml-pos { color: #ff6b35; }
+    [data-composition-id="s01-bold-claim-cube"] .ml-name {
+      flex: 1; font-size: 18px; color: rgba(255,255,255,0.6);
       font-family: "Inter", sans-serif;
-      text-transform: uppercase;
-      margin-bottom: 20px;
-      opacity: 0;
     }
-
-    [data-composition-id="s01-bold-claim-cube"] .headline-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 20px;
-      margin-bottom: 48px;
-      line-height: 0.95;
+    [data-composition-id="s01-bold-claim-cube"] .mlr-highlight .ml-name { color: #ffffff; font-weight: 700; }
+    [data-composition-id="s01-bold-claim-cube"] .ml-score {
+      font-size: 20px; font-weight: 700; color: rgba(255,255,255,0.4);
+      font-family: "JetBrains Mono", monospace;
     }
-
-    [data-composition-id="s01-bold-claim-cube"] .big-number {
-      font-size: 200px;
-      font-weight: 900;
-      color: #ff6b35;
-      display: block;
-      line-height: 1;
-      opacity: 0;
-    }
-
-    [data-composition-id="s01-bold-claim-cube"] .title-words {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      padding-top: 16px;
-    }
-    [data-composition-id="s01-bold-claim-cube"] .tw {
-      font-size: 90px;
-      font-weight: 900;
-      color: #ffffff;
-      line-height: 1.05;
-      display: block;
-      opacity: 0;
-    }
-    [data-composition-id="s01-bold-claim-cube"] .tw-drop {
-      color: rgba(255,255,255,0.45);
-    }
-
-    [data-composition-id="s01-bold-claim-cube"] .pills {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    [data-composition-id="s01-bold-claim-cube"] .pill {
-      display: inline-flex;
-      align-items: center;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 100px;
-      padding: 14px 30px;
-      font-size: 26px;
-      color: rgba(255,255,255,0.85);
-      font-family: "Inter", sans-serif;
-      font-weight: 500;
-      width: fit-content;
-      opacity: 0;
-    }
+    [data-composition-id="s01-bold-claim-cube"] .mlr-highlight .ml-score { color: #ff6b35; }
 
     /* ── Bottom bar ── */
     [data-composition-id="s01-bold-claim-cube"] .bottom-bar {
-      position: absolute;
-      bottom: 0;
-      left: 0; right: 0;
-      display: flex;
-      align-items: stretch;
+      position: absolute; bottom: 0; left: 0; right: 0;
+      display: flex; align-items: stretch;
       border-top: 1px solid rgba(255,107,53,0.15);
     }
     [data-composition-id="s01-bold-claim-cube"] .bb-item {
-      flex: 1;
-      text-align: center;
-      padding: 22px 0 26px;
-      opacity: 0;
+      flex: 1; text-align: center; padding: 18px 0 22px; opacity: 0;
     }
-    [data-composition-id="s01-bold-claim-cube"] .bb-div {
-      width: 1px;
-      background: rgba(255,255,255,0.06);
-    }
-    [data-composition-id="s01-bold-claim-cube"] .bb-val {
-      font-size: 36px;
-      font-weight: 900;
-      color: #ff6b35;
-    }
-    [data-composition-id="s01-bold-claim-cube"] .bb-key {
-      font-size: 15px;
-      color: rgba(255,255,255,0.3);
-      font-family: "Inter", sans-serif;
-      margin-top: 4px;
-      letter-spacing: 0.06em;
-    }
+    [data-composition-id="s01-bold-claim-cube"] .bb-div { width: 1px; background: rgba(255,255,255,0.06); }
+    [data-composition-id="s01-bold-claim-cube"] .bb-val { font-size: 32px; font-weight: 900; color: #ff6b35; }
+    [data-composition-id="s01-bold-claim-cube"] .bb-key { font-size: 13px; color: rgba(255,255,255,0.28); font-family: "Inter", sans-serif; margin-top: 3px; }
   </style>
 
   <script>
@@ -396,121 +474,89 @@
       const S  = '[data-composition-id="s01-bold-claim-cube"]';
       const tl = gsap.timeline({ paused: true });
 
-      /* ── Ambient: cube spins forever (outside timeline — starts immediately) ── */
+      /* ambient: cube spins forever */
       gsap.to(`${S} .cube`, { rotationY: 360, duration: 9, repeat: -1, ease: "none" });
 
-      /* ── 0.0s: Top accent line wipes across ── */
+      /* 0.0s — top line wipes */
       tl.to(`${S} .top-line`, { width: 1920, duration: 0.9, ease: "power2.inOut" }, 0);
 
-      /* ── 0.2s: Corner brackets snap in (all 4 simultaneously) ── */
+      /* 0.0s — right accent draws down simultaneously */
+      tl.to(`${S} .right-accent`, { height: 960, duration: 0.9, ease: "power2.out" }, 0);
+
+      /* 0.15s — corners snap in */
       tl.fromTo(`${S} .corner`,
         { opacity: 0, scale: 0.5 },
-        { opacity: 1, scale: 1, duration: 0.35, stagger: 0.06, ease: "back.out(2)" },
-        0.2
-      );
+        { opacity: 1, scale: 1, duration: 0.35, stagger: 0.05, ease: "back.out(2)" }, 0.15);
 
-      /* ── 0.3s: Eyebrow slides from left ── */
-      tl.fromTo(`${S} .eyebrow`,
-        { opacity: 0, x: -40 },
-        { opacity: 1, x: 0, duration: 0.55, ease: "power2.out" },
-        0.3
-      );
+      /* 0.2s — LIVE badge + model chip */
+      tl.fromTo(`${S} .live-badge`,  { opacity: 0, x: 20 }, { opacity: 1, x: 0, duration: 0.4, ease: "power2.out" }, 0.2);
+      tl.fromTo(`${S} .model-chip`,  { opacity: 0, x: 20 }, { opacity: 1, x: 0, duration: 0.4, ease: "power2.out" }, 0.3);
 
-      /* ── 0.5s: Cube wrap + orbit rings appear simultaneously ── */
-      tl.fromTo(`${S} .cube-wrap`,
-        { opacity: 0, scale: 0.7 },
-        { opacity: 1, scale: 1, duration: 0.7, ease: "back.out(1.4)" },
-        0.5
-      );
-      tl.fromTo(`${S} .cor1`,
-        { opacity: 0, scale: 0.6 },
-        { opacity: 1, scale: 1, duration: 0.65, ease: "power2.out" },
-        0.6
-      );
-      tl.fromTo(`${S} .cor2`,
-        { opacity: 0, scale: 0.6 },
-        { opacity: 1, scale: 1, duration: 0.7, ease: "power2.out" },
-        0.75
-      );
+      /* 0.3s — eyebrow slides in */
+      tl.fromTo(`${S} .eyebrow`, { opacity: 0, x: -40 }, { opacity: 1, x: 0, duration: 0.55, ease: "power2.out" }, 0.3);
 
-      /* ── 0.6s: "#1" slams down from top ── */
-      tl.fromTo(`${S} .big-number`,
-        { opacity: 0, y: -80 },
-        { opacity: 1, y: 0, duration: 0.65, ease: "power3.out" },
-        0.6
-      );
+      /* 0.5s — number glow behind #1 */
+      tl.fromTo(`${S} .number-glow`, { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power2.out" }, 0.5);
 
-      /* ── 0.9s: Title words stagger in — each unique ── */
-      tl.fromTo(`${S} .tw-new`,
-        { opacity: 0, x: -60 },
-        { opacity: 1, x: 0, duration: 0.45, ease: "power2.out" },
-        0.9
-      );
-      tl.fromTo(`${S} .tw-flag`,
-        { opacity: 0, y: 40 },
-        { opacity: 1, y: 0, duration: 0.45, ease: "back.out(1.5)" },
-        1.08
-      );
-      tl.fromTo(`${S} .tw-drop`,
-        { opacity: 0, x: 60 },
-        { opacity: 1, x: 0, duration: 0.45, ease: "power2.out" },
-        1.26
-      );
+      /* 0.55s — #1 slams down */
+      tl.fromTo(`${S} .big-number`, { opacity: 0, y: -80 }, { opacity: 1, y: 0, duration: 0.65, ease: "power3.out" }, 0.55);
 
-      /* ── 1.5s: Pills slide in from different offsets ── */
-      tl.fromTo(`${S} .p1`,
-        { opacity: 0, x: -50 },
-        { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" },
-        1.5
-      );
-      tl.fromTo(`${S} .p2`,
-        { opacity: 0, x: -70 },
-        { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" },
-        1.68
-      );
-      tl.fromTo(`${S} .p3`,
-        { opacity: 0, x: -90 },
-        { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" },
-        1.86
-      );
+      /* 0.5s — cube + rings appear simultaneously */
+      tl.fromTo(`${S} .cube-wrap`,          { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.7, ease: "back.out(1.4)" }, 0.5);
+      tl.fromTo(`${S} .cor1`,               { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.6, ease: "power2.out"    }, 0.6);
+      tl.fromTo(`${S} .cor2`,               { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.7, ease: "power2.out"    }, 0.7);
+      tl.fromTo(`${S} .cor3`,               { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.8, ease: "power2.out"    }, 0.8);
+      tl.fromTo(`${S} .cube-orbit-dot-wrap`,{ opacity: 0 },             { opacity: 1, duration: 0.5 }, 0.9);
 
-      /* ── 2.4s: Bottom stats stagger up ── */
+      /* 0.85s — title words stagger in with unique entries */
+      tl.fromTo(`${S} .tw-new`,  { opacity: 0, x: -60 }, { opacity: 1, x: 0, duration: 0.4, ease: "power2.out" }, 0.85);
+      tl.fromTo(`${S} .tw-flag`, { opacity: 0, y:  40 }, { opacity: 1, y: 0, duration: 0.45, ease: "back.out(1.5)" }, 1.02);
+      tl.fromTo(`${S} .tw-drop`, { opacity: 0, x:  60 }, { opacity: 1, x: 0, duration: 0.4, ease: "power2.out" }, 1.18);
+
+      /* 0.8s — achievement badges pop from top */
+      tl.fromTo(`${S} .ab`,
+        { opacity: 0, y: -20 },
+        { opacity: 1, y: 0, duration: 0.4, stagger: 0.12, ease: "back.out(1.8)" }, 0.8);
+
+      /* 1.4s — pills slide in with unique offsets */
+      tl.fromTo(`${S} .p1`, { opacity: 0, x: -50 }, { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 1.4);
+      tl.fromTo(`${S} .p2`, { opacity: 0, x: -70 }, { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 1.56);
+      tl.fromTo(`${S} .p3`, { opacity: 0, x: -90 }, { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 1.72);
+
+      /* 1.6s — pill score bars fill simultaneously after pills appear */
+      tl.to(`${S} .pb1`, { width: "97%", duration: 0.9, ease: "power2.out" }, 1.6);
+      tl.to(`${S} .pb2`, { width: "82%", duration: 0.9, ease: "power2.out" }, 1.65);
+      tl.to(`${S} .pb3`, { width: "68%", duration: 0.9, ease: "power2.out" }, 1.70);
+
+      /* 2.0s — score row fades up */
+      tl.fromTo(`${S} .score-row`, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.55, ease: "power2.out" }, 2.0);
+
+      /* 1.6s — mini leaderboard header + rows stagger in */
+      tl.fromTo(`${S} .mini-leader`, { opacity: 0 }, { opacity: 1, duration: 0.3 }, 1.6);
+      tl.fromTo(`${S} .ml-row`,
+        { opacity: 0, x: 20 },
+        { opacity: 1, x: 0, duration: 0.4, stagger: 0.1, ease: "power2.out" }, 1.7);
+
+      /* 2.5s — bottom stats stagger up */
       tl.fromTo(`${S} .bb-item`,
         { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.45, stagger: 0.09, ease: "power2.out" },
-        2.4
-      );
+        { opacity: 1, y: 0, duration: 0.45, stagger: 0.08, ease: "power2.out" }, 2.5);
 
-      /* ─────── CONTINUOUS LOOPS ─────── */
-
-      /* "#1" glow pulses after landing */
+      /* ── CONTINUOUS LOOPS ── */
       tl.to(`${S} .big-number`, {
         textShadow: "0 0 60px rgba(255,107,53,0.9), 0 0 120px rgba(255,107,53,0.4)",
-        duration: 1.4, repeat: -1, yoyo: true, ease: "sine.inOut"
-      }, 1.4);
-
-      /* "NEW" glow */
+        duration: 1.4, repeat: -1, yoyo: true, ease: "sine.inOut" }, 1.4);
+      tl.to(`${S} .number-glow`, {
+        opacity: 0.4, scale: 1.3, duration: 1.8, repeat: -1, yoyo: true, ease: "sine.inOut" }, 1.6);
       tl.to(`${S} .tw-new`, {
-        textShadow: "0 0 20px rgba(255,255,255,0.4)",
-        duration: 1.8, repeat: -1, yoyo: true, ease: "sine.inOut"
-      }, 1.8);
-
-      /* Pill 1 border glow */
+        textShadow: "0 0 20px rgba(255,255,255,0.4)", duration: 1.8, repeat: -1, yoyo: true, ease: "sine.inOut" }, 1.8);
       tl.to(`${S} .p1`, {
-        borderColor: "rgba(255,107,53,0.4)",
-        boxShadow: "0 0 16px rgba(255,107,53,0.15)",
-        duration: 1.2, repeat: -1, yoyo: true, ease: "sine.inOut"
-      }, 2.2);
-
-      /* Top line subtle opacity pulse */
-      tl.to(`${S} .top-line`, {
-        opacity: 0.5, duration: 2.0, repeat: -1, yoyo: true, ease: "sine.inOut"
-      }, 2.0);
-
-      /* Corner brackets pulse */
+        borderColor: "rgba(255,107,53,0.4)", boxShadow: "0 0 14px rgba(255,107,53,0.12)",
+        duration: 1.2, repeat: -1, yoyo: true, ease: "sine.inOut" }, 2.2);
+      tl.to(`${S} .mlr-highlight`, {
+        boxShadow: "0 0 20px rgba(255,107,53,0.2)", duration: 1.4, repeat: -1, yoyo: true, ease: "sine.inOut" }, 2.5);
       tl.to(`${S} .corner`, {
-        opacity: 0.5, duration: 1.6, repeat: -1, yoyo: true, ease: "sine.inOut"
-      }, 2.0);
+        opacity: 0.45, duration: 1.6, repeat: -1, yoyo: true, ease: "sine.inOut" }, 2.0);
 
       window.__timelines = window.__timelines || {};
       window.__timelines["s01-bold-claim-cube"] = tl;

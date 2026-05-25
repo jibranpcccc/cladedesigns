@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1920, height=1080" />
+  <title>Sample: Split Comparison Cards</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;900&family=Inter:wght@400;500;600;700&display=block" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 1920px; height: 1080px; overflow: hidden; background: #111820; }
+  </style>
+</head>
+<body>
+
+<!--
+  SCENE TYPE: Two-Way Comparison (You own vs You rent / Open vs Closed)
+  BACKGROUND: Dark navy #111820
+  USE WHEN: Showing a binary choice, two versions of a product, winner vs loser
+  CURSOR: White arrow, moves between cards
+  DURATION: 10–15s
+  FROM QWEN VIDEO: "One you own. One you borrow." scene (frames 420s–435s)
+  MOTION: Title + pill tag appear → left card slides in from left → right card slides from right
+           → left card gets green border glow → right card gets amber glow
+  KEY VISUAL: Left = forest green (safe/owned), Right = amber (PREVIEW ONLY / risky)
+-->
+
+<div
+  data-composition-id="s05-split-cards"
+  data-width="1920"
+  data-height="1080"
+  data-duration="12"
+>
+  <!-- Title -->
+  <div class="top-bar">
+    <h2 class="heading">One you <span class="own">own.</span> One you <span class="borrow">borrow.</span></h2>
+    <div class="pill-tag">KNOW THE DIFFERENCE BEFORE YOU BUILD</div>
+  </div>
+
+  <!-- Two cards -->
+  <div class="cards-row">
+    <!-- Left: Open weights / owned -->
+    <div class="card left-card">
+      <div class="card-badge badge-green">OPEN WEIGHTS</div>
+      <div class="lock-icon">🔒</div>
+      <div class="card-name">Qwen 3.6</div>
+      <div class="card-subtitle">Plus variant</div>
+      <ul class="card-facts">
+        <li>Download it. Run it. Own it.</li>
+        <li>$1.30 in / $7.80 out per M tokens</li>
+        <li>Available now on HuggingFace</li>
+        <li>No rate limits when self-hosted</li>
+      </ul>
+    </div>
+
+    <!-- Right: API preview only -->
+    <div class="card right-card">
+      <div class="card-badge badge-amber">PREVIEW ONLY</div>
+      <div class="lock-icon">⏳</div>
+      <div class="card-name">Qwen 3.7</div>
+      <div class="card-subtitle">Max variant</div>
+      <ul class="card-facts">
+        <li>API access only — for now</li>
+        <li>$2.50 in / $7.50 out per M tokens</li>
+        <li>Open weights: late summer 2025</li>
+        <li>Can't self-host yet</li>
+      </ul>
+    </div>
+  </div>
+
+  <style>
+    [data-composition-id="s05-split-cards"] {
+      width: 1920px;
+      height: 1080px;
+      background: #111820;
+      font-family: "Space Grotesk", sans-serif;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 140px;
+      gap: 50px;
+    }
+
+    /* Top bar */
+    [data-composition-id="s05-split-cards"] .top-bar {
+      text-align: center;
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+
+    [data-composition-id="s05-split-cards"] .heading {
+      font-size: 72px;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+
+    [data-composition-id="s05-split-cards"] .heading .own {
+      color: #4dff91;
+    }
+
+    [data-composition-id="s05-split-cards"] .heading .borrow {
+      color: #ffbb33;
+    }
+
+    [data-composition-id="s05-split-cards"] .pill-tag {
+      display: inline-block;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 100px;
+      padding: 10px 28px;
+      font-size: 20px;
+      font-family: "Inter", sans-serif;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.4);
+      text-transform: uppercase;
+    }
+
+    /* Cards row */
+    [data-composition-id="s05-split-cards"] .cards-row {
+      display: flex;
+      gap: 40px;
+      width: 100%;
+    }
+
+    [data-composition-id="s05-split-cards"] .card {
+      flex: 1;
+      border-radius: 28px;
+      padding: 50px 56px;
+      opacity: 0;
+    }
+
+    [data-composition-id="s05-split-cards"] .left-card {
+      background: rgba(20, 60, 30, 0.6);
+      border: 2px solid rgba(77, 255, 145, 0.3);
+      transform: translateX(-80px);
+    }
+
+    [data-composition-id="s05-split-cards"] .right-card {
+      background: rgba(60, 40, 10, 0.6);
+      border: 2px solid rgba(255, 187, 51, 0.3);
+      transform: translateX(80px);
+    }
+
+    [data-composition-id="s05-split-cards"] .card-badge {
+      display: inline-block;
+      border-radius: 8px;
+      padding: 6px 16px;
+      font-size: 18px;
+      font-family: "Inter", sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    [data-composition-id="s05-split-cards"] .badge-green {
+      background: rgba(77, 255, 145, 0.15);
+      color: #4dff91;
+    }
+
+    [data-composition-id="s05-split-cards"] .badge-amber {
+      background: rgba(255, 187, 51, 0.15);
+      color: #ffbb33;
+    }
+
+    [data-composition-id="s05-split-cards"] .lock-icon {
+      font-size: 52px;
+      margin-bottom: 16px;
+    }
+
+    [data-composition-id="s05-split-cards"] .card-name {
+      font-size: 64px;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1;
+    }
+
+    [data-composition-id="s05-split-cards"] .card-subtitle {
+      font-size: 26px;
+      color: rgba(255,255,255,0.4);
+      font-family: "Inter", sans-serif;
+      margin-bottom: 28px;
+      margin-top: 6px;
+    }
+
+    [data-composition-id="s05-split-cards"] .card-facts {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    [data-composition-id="s05-split-cards"] .card-facts li {
+      font-size: 24px;
+      color: rgba(255,255,255,0.65);
+      font-family: "Inter", sans-serif;
+      font-weight: 400;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    [data-composition-id="s05-split-cards"] .card-facts li::before {
+      content: "–";
+      position: absolute;
+      left: 0;
+      color: rgba(255,255,255,0.3);
+    }
+  </style>
+
+  <script>
+    (function () {
+      const S = '[data-composition-id="s05-split-cards"]';
+      const tl = gsap.timeline({ paused: true });
+
+      // Top bar drops in
+      tl.to(`${S} .top-bar`, { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, 0.2);
+
+      // Cards slide in from both sides simultaneously
+      tl.to(`${S} .left-card`,  { opacity: 1, x: 0, duration: 0.65, ease: "power2.out" }, 0.9);
+      tl.to(`${S} .right-card`, { opacity: 1, x: 0, duration: 0.65, ease: "power2.out" }, 1.0);
+
+      // Border glow intensifies on each card
+      tl.to(`${S} .left-card`,  { borderColor: "rgba(77,255,145,0.7)",  duration: 0.5 }, 1.8);
+      tl.to(`${S} .right-card`, { borderColor: "rgba(255,187,51,0.7)",  duration: 0.5 }, 2.0);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["s05-split-cards"] = tl;
+    })();
+  </script>
+</div>
+</body>
+</html>

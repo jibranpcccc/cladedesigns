@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1920, height=1080" />
+  <title>Sample: Number Count-Up + Orbit</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;900&family=Inter:wght@400;500;600;700&display=block" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 1920px; height: 1080px; overflow: hidden; background: #0a0a0a; }
+  </style>
+</head>
+<body>
+
+<!--
+  SCENE TYPE: Number Count-Up + Orbital Animation
+  BACKGROUND: Very dark black #0a0a0a
+  USE WHEN: A single shocking small number that means something big (weeks, months, attempts)
+  CURSOR: White arrow
+  DURATION: 10–14s
+  FROM QWEN VIDEO: "0→6 WEEKS BETWEEN JUMPS" scene (frames 489s–501s)
+  MOTION:
+    1. Giant number counts up from 0 to target value
+    2. Label text appears below
+    3. An orbiting dot traces a circular path around the number
+    4. Sub-context line fades in last
+  KEY VISUAL: Near-invisible background, giant white number is the ONLY thing on screen
+-->
+
+<div
+  data-composition-id="s12-count-orbit"
+  data-width="1920"
+  data-height="1080"
+  data-duration="12"
+>
+  <!-- Orbit ring (CSS animation) -->
+  <div class="orbit-ring">
+    <div class="orbit-dot"></div>
+  </div>
+
+  <!-- Center content -->
+  <div class="center-content">
+    <div class="count-number">0</div>
+    <div class="count-label">WEEKS BETWEEN JUMPS</div>
+    <div class="count-sub">Six weeks from Qwen 3.5 to 3.6 to 3.6+ to 3.7.<br>Every single time.</div>
+  </div>
+
+  <style>
+    [data-composition-id="s12-count-orbit"] {
+      width: 1920px;
+      height: 1080px;
+      background: #0a0a0a;
+      font-family: "Space Grotesk", sans-serif;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Orbit ring */
+    [data-composition-id="s12-count-orbit"] .orbit-ring {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 680px;
+      height: 680px;
+      transform: translate(-50%, -50%);
+      border: 1.5px solid rgba(255,255,255,0.08);
+      border-radius: 50%;
+      opacity: 0;
+      animation: orbit-spin 4s linear infinite;
+    }
+
+    @keyframes orbit-spin {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to   { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    [data-composition-id="s12-count-orbit"] .orbit-dot {
+      position: absolute;
+      top: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.6);
+      box-shadow: 0 0 12px rgba(255,255,255,0.5);
+    }
+
+    /* Center content */
+    [data-composition-id="s12-count-orbit"] .center-content {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    [data-composition-id="s12-count-orbit"] .count-number {
+      font-size: 400px;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 0.85;
+      letter-spacing: -0.04em;
+      opacity: 0;
+    }
+
+    [data-composition-id="s12-count-orbit"] .count-label {
+      font-size: 52px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      font-family: "Inter", sans-serif;
+      margin-top: 16px;
+      opacity: 0;
+    }
+
+    [data-composition-id="s12-count-orbit"] .count-sub {
+      font-size: 26px;
+      color: rgba(255,255,255,0.25);
+      font-family: "Inter", sans-serif;
+      font-weight: 400;
+      margin-top: 24px;
+      line-height: 1.6;
+      opacity: 0;
+    }
+  </style>
+
+  <script>
+    (function () {
+      const S      = '[data-composition-id="s12-count-orbit"]';
+      const numEl  = document.querySelector(`${S} .count-number`);
+      const tl     = gsap.timeline({ paused: true });
+
+      const TARGET = 6;
+
+      // Number appears
+      tl.to(`${S} .count-number`, { opacity: 1, duration: 0.4, ease: "power2.out" }, 0.3);
+
+      // Count up from 0 to TARGET
+      const dummy = { v: 0 };
+      tl.to(dummy, {
+        v: TARGET,
+        duration: 1.8,
+        ease: "power2.out",
+        onUpdate: () => { numEl.textContent = Math.round(dummy.v); }
+      }, 0.5);
+
+      // Label appears
+      tl.to(`${S} .count-label`, { opacity: 1, duration: 0.6, ease: "power2.out" }, 1.6);
+
+      // Orbit ring fades in
+      tl.to(`${S} .orbit-ring`, { opacity: 1, duration: 0.8, ease: "power2.out" }, 1.8);
+
+      // Sub context
+      tl.to(`${S} .count-sub`, { opacity: 1, duration: 0.6, ease: "power2.out" }, 2.6);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["s12-count-orbit"] = tl;
+    })();
+  </script>
+</div>
+</body>
+</html>

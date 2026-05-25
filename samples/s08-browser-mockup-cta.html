@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1920, height=1080" />
+  <title>Sample: Browser Mockup CTA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=block" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 1920px; height: 1080px; overflow: hidden; background: #f5f5ff; }
+  </style>
+</head>
+<body>
+
+<!--
+  SCENE TYPE: CTA / Closing Action Scene with Browser Mockup
+  BACKGROUND: Light lavender #f5f5ff
+  USE WHEN: End-of-video call to action, telling the viewer what to do next
+  CURSOR: White arrow at left, moves inside browser
+  DURATION: 15–20s
+  FROM QWEN VIDEO: "Don't wait. Just try it." scene (frames 504s–519s)
+  MOTION:
+    1. Title types/wipes in (top-left)
+    2. Browser chrome fades in
+    3. URL types into address bar (JetBrains Mono)
+    4. Prompt text types into chat area character by character
+    5. Three pill buttons pop in with stagger below the typed text
+  KEY VISUAL: macOS-style window chrome (red/yellow/green dots), light content inside
+-->
+
+<div
+  data-composition-id="s08-browser-cta"
+  data-width="1920"
+  data-height="1080"
+  data-duration="18"
+>
+  <!-- Top-left title -->
+  <div class="cta-title">
+    <h2 class="title-line">Don't wait. <em>Just try it.</em></h2>
+    <p class="title-sub">Open the chat and run one real task from your own work.</p>
+  </div>
+
+  <!-- Browser window mockup -->
+  <div class="browser-wrap">
+    <div class="browser-chrome">
+      <div class="traffic-lights">
+        <div class="dot dot-red"></div>
+        <div class="dot dot-yellow"></div>
+        <div class="dot dot-green"></div>
+      </div>
+      <div class="url-bar">
+        <span class="url-text"></span>
+      </div>
+    </div>
+    <div class="browser-content">
+      <div class="chat-area">
+        <p class="chat-prompt"></p>
+        <div class="chat-pills">
+          <span class="cpill cp1">your real task</span>
+          <span class="cpill cp2">not a toy demo</span>
+          <span class="cpill cp3">judge the output</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    [data-composition-id="s08-browser-cta"] {
+      width: 1920px;
+      height: 1080px;
+      background: #f5f5ff;
+      font-family: "Space Grotesk", sans-serif;
+      position: relative;
+      overflow: hidden;
+      padding: 80px 120px;
+    }
+
+    /* CTA title (top-left) */
+    [data-composition-id="s08-browser-cta"] .cta-title {
+      margin-bottom: 48px;
+      opacity: 0;
+    }
+
+    [data-composition-id="s08-browser-cta"] .title-line {
+      font-size: 80px;
+      font-weight: 900;
+      color: #1a1a2e;
+      line-height: 1.05;
+    }
+
+    [data-composition-id="s08-browser-cta"] .title-line em {
+      color: #5533dd;
+      font-style: italic;
+    }
+
+    [data-composition-id="s08-browser-cta"] .title-sub {
+      font-size: 28px;
+      color: rgba(26,26,46,0.5);
+      font-family: "Inter", sans-serif;
+      margin-top: 12px;
+    }
+
+    /* Browser window */
+    [data-composition-id="s08-browser-cta"] .browser-wrap {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 20px 80px rgba(85,51,221,0.15), 0 4px 20px rgba(0,0,0,0.08);
+      overflow: hidden;
+      max-width: 1400px;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    /* Chrome bar */
+    [data-composition-id="s08-browser-cta"] .browser-chrome {
+      background: #f0f0f5;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+
+    [data-composition-id="s08-browser-cta"] .traffic-lights {
+      display: flex;
+      gap: 8px;
+    }
+
+    [data-composition-id="s08-browser-cta"] .dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+    }
+
+    [data-composition-id="s08-browser-cta"] .dot-red    { background: #ff5f57; }
+    [data-composition-id="s08-browser-cta"] .dot-yellow { background: #ffbd2e; }
+    [data-composition-id="s08-browser-cta"] .dot-green  { background: #28c840; }
+
+    [data-composition-id="s08-browser-cta"] .url-bar {
+      flex: 1;
+      background: #ffffff;
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 8px;
+      padding: 8px 16px;
+    }
+
+    [data-composition-id="s08-browser-cta"] .url-text {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 20px;
+      color: #333;
+    }
+
+    /* Browser content area */
+    [data-composition-id="s08-browser-cta"] .browser-content {
+      padding: 60px 80px 80px;
+      min-height: 480px;
+    }
+
+    [data-composition-id="s08-browser-cta"] .chat-prompt {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 28px;
+      color: #1a1a2e;
+      line-height: 1.6;
+      margin-bottom: 36px;
+      min-height: 46px;
+    }
+
+    /* Chat pills */
+    [data-composition-id="s08-browser-cta"] .chat-pills {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    [data-composition-id="s08-browser-cta"] .cpill {
+      background: #f0eeff;
+      border: 1.5px solid rgba(85,51,221,0.2);
+      border-radius: 100px;
+      padding: 12px 28px;
+      font-size: 24px;
+      font-family: "Inter", sans-serif;
+      font-weight: 600;
+      color: #5533dd;
+      opacity: 0;
+      transform: scale(0.85);
+    }
+  </style>
+
+  <script>
+    (function () {
+      const S   = '[data-composition-id="s08-browser-cta"]';
+      const tl  = gsap.timeline({ paused: true });
+
+      const urlEl    = document.querySelector(`${S} .url-text`);
+      const promptEl = document.querySelector(`${S} .chat-prompt`);
+      const urlStr    = "chat.qwen.ai";
+      const promptStr = "Run my real workflow through Qwen 3.7…";
+
+      // CTA title fades in
+      tl.to(`${S} .cta-title`, { opacity: 1, duration: 0.7, ease: "power2.out" }, 0.2);
+
+      // Browser fades + rises
+      tl.to(`${S} .browser-wrap`, { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, 0.7);
+
+      // URL bar types
+      function typeText(el, str, startTime, charDuration) {
+        el.textContent = "";
+        for (let i = 0; i < str.length; i++) {
+          ((char, t) => {
+            tl.call(() => { el.textContent += char; }, [], t);
+          })(str[i], startTime + i * charDuration);
+        }
+      }
+
+      typeText(urlEl,    urlStr,    1.5, 0.06);
+      typeText(promptEl, promptStr, 3.0, 0.04);
+
+      // Pills pop in after typing
+      tl.to(`${S} .cpill`, {
+        opacity: 1, scale: 1,
+        duration: 0.35,
+        stagger: 0.12,
+        ease: "back.out(1.5)"
+      }, 3.0 + promptStr.length * 0.04 + 0.3);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["s08-browser-cta"] = tl;
+    })();
+  </script>
+</div>
+</body>
+</html>

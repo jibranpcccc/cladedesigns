@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1920, height=1080" />
+  <title>Sample: VAGUE vs CLEAR Two-Pane</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;900&family=Inter:wght@400;500;600;700&display=block" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 1920px; height: 1080px; overflow: hidden; background: #0d2010; }
+  </style>
+</head>
+<body>
+
+<!--
+  SCENE TYPE: VAGUE vs CLEAR / Wrong Way vs Right Way Teaching Slide
+  BACKGROUND: Dark forest green #0d2010
+  USE WHEN: Teaching a correct practice vs common mistake, dos and don'ts
+  CURSOR: Crosshair between cards, then white arrow
+  DURATION: 10–14s
+  FROM QWEN VIDEO: "Reasoning models want clear prompts." scene (frames 543s–555s)
+  MOTION: Title wipes → left (VAGUE) box slides from left → right (CLEAR) box from right
+          → cursor moves from VAGUE to CLEAR → bottom caption rises up
+  KEY VISUAL:
+    VAGUE box: dark red border + "✗" badge
+    CLEAR box: dark green border + "✓" badge
+    Bottom caption has multi-color words for emphasis
+-->
+
+<div
+  data-composition-id="s10-vague-clear"
+  data-width="1920"
+  data-height="1080"
+  data-duration="12"
+>
+  <!-- Title -->
+  <div class="scene-title">
+    Reasoning models want <em>clear prompts.</em>
+  </div>
+
+  <!-- Two panes -->
+  <div class="panes">
+    <!-- Left: VAGUE -->
+    <div class="pane vague-pane">
+      <div class="pane-badge badge-bad">✗ &nbsp;VAGUE</div>
+      <div class="pane-examples">
+        <div class="pane-ex">"Fix this."</div>
+        <div class="pane-ex">"Make it better."</div>
+        <div class="pane-ex">"Can you help?"</div>
+      </div>
+    </div>
+
+    <!-- Right: CLEAR -->
+    <div class="pane clear-pane">
+      <div class="pane-badge badge-good">✓ &nbsp;CLEAR</div>
+      <div class="pane-body">
+        Give it context, lay out exactly what you want,<br>
+        then let it work through the steps.
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom caption -->
+  <div class="bottom-caption">
+    <span class="bc-w">Vague prompts </span><span class="bc-r">waste</span><span class="bc-w"> the very thing </span><span class="bc-g">that makes these models good.</span>
+  </div>
+
+  <!-- Cursor element -->
+  <div class="cursor-dot"></div>
+
+  <style>
+    [data-composition-id="s10-vague-clear"] {
+      width: 1920px;
+      height: 1080px;
+      background: #0d2010;
+      font-family: "Space Grotesk", sans-serif;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      padding: 80px 120px;
+      gap: 50px;
+    }
+
+    /* Title */
+    [data-composition-id="s10-vague-clear"] .scene-title {
+      font-size: 72px;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1.1;
+      clip-path: inset(0 100% 0 0);
+    }
+
+    [data-composition-id="s10-vague-clear"] .scene-title em {
+      color: #b3ff66;
+      font-style: italic;
+    }
+
+    /* Two panes */
+    [data-composition-id="s10-vague-clear"] .panes {
+      display: flex;
+      gap: 40px;
+      flex: 1;
+    }
+
+    [data-composition-id="s10-vague-clear"] .pane {
+      flex: 1;
+      border-radius: 24px;
+      padding: 48px 56px;
+    }
+
+    [data-composition-id="s10-vague-clear"] .vague-pane {
+      background: rgba(180, 30, 30, 0.12);
+      border: 2px solid rgba(255, 80, 80, 0.35);
+      opacity: 0;
+      transform: translateX(-60px);
+    }
+
+    [data-composition-id="s10-vague-clear"] .clear-pane {
+      background: rgba(30, 120, 50, 0.15);
+      border: 2px solid rgba(80, 220, 100, 0.35);
+      opacity: 0;
+      transform: translateX(60px);
+    }
+
+    [data-composition-id="s10-vague-clear"] .pane-badge {
+      display: inline-flex;
+      align-items: center;
+      font-size: 22px;
+      font-family: "Inter", sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 30px;
+      padding: 8px 18px;
+      border-radius: 8px;
+    }
+
+    [data-composition-id="s10-vague-clear"] .badge-bad {
+      background: rgba(255, 80, 80, 0.15);
+      color: #ff5050;
+    }
+
+    [data-composition-id="s10-vague-clear"] .badge-good {
+      background: rgba(80, 220, 100, 0.15);
+      color: #50dc64;
+    }
+
+    [data-composition-id="s10-vague-clear"] .pane-examples {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    [data-composition-id="s10-vague-clear"] .pane-ex {
+      font-size: 34px;
+      color: rgba(255,255,255,0.55);
+      font-family: "JetBrains Mono", "Inter", monospace;
+    }
+
+    [data-composition-id="s10-vague-clear"] .pane-body {
+      font-size: 32px;
+      color: rgba(255,255,255,0.8);
+      font-family: "Inter", sans-serif;
+      font-weight: 400;
+      line-height: 1.7;
+    }
+
+    /* Bottom caption */
+    [data-composition-id="s10-vague-clear"] .bottom-caption {
+      font-size: 38px;
+      line-height: 1.4;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    [data-composition-id="s10-vague-clear"] .bc-w { color: rgba(255,255,255,0.7); }
+    [data-composition-id="s10-vague-clear"] .bc-r { color: #ff5050; font-weight: 700; }
+    [data-composition-id="s10-vague-clear"] .bc-g { color: #b3ff66; font-weight: 700; }
+
+    /* Cursor dot */
+    [data-composition-id="s10-vague-clear"] .cursor-dot {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.7);
+      pointer-events: none;
+      opacity: 0;
+      top: 500px;
+      left: 400px;
+      box-shadow: 0 0 8px rgba(255,255,255,0.5);
+    }
+  </style>
+
+  <script>
+    (function () {
+      const S  = '[data-composition-id="s10-vague-clear"]';
+      const tl = gsap.timeline({ paused: true });
+
+      // Title wipes in
+      tl.to(`${S} .scene-title`, { clipPath: "inset(0 0% 0 0)", duration: 1.0, ease: "power2.inOut" }, 0.1);
+
+      // Panes slide in from both sides
+      tl.to(`${S} .vague-pane`, { opacity: 1, x: 0, duration: 0.65, ease: "power2.out" }, 0.9);
+      tl.to(`${S} .clear-pane`, { opacity: 1, x: 0, duration: 0.65, ease: "power2.out" }, 1.05);
+
+      // Cursor appears on VAGUE side, then moves to CLEAR
+      tl.to(`${S} .cursor-dot`, { opacity: 1, duration: 0.2 }, 2.0);
+      tl.to(`${S} .cursor-dot`, { left: 1100, top: 500, duration: 1.2, ease: "power2.inOut" }, 2.4);
+      tl.to(`${S} .cursor-dot`, { opacity: 0, duration: 0.2 }, 3.8);
+
+      // CLEAR border glows brighter after cursor arrives
+      tl.to(`${S} .clear-pane`, { borderColor: "rgba(80,220,100,0.8)", duration: 0.4 }, 3.2);
+
+      // Bottom caption rises
+      tl.to(`${S} .bottom-caption`, { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, 4.0);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["s10-vague-clear"] = tl;
+    })();
+  </script>
+</div>
+</body>
+</html>

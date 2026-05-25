@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1920, height=1080" />
+  <title>Sample: Bold Claim + 3D Rotating Cube</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;900&family=Inter:wght@400;500;600;700&display=block" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 1920px; height: 1080px; overflow: hidden; background: #1a1a2e; }
+  </style>
+</head>
+<body>
+
+<!--
+  SCENE TYPE: Bold Product Launch / Flagship Claim
+  BACKGROUND: Dark charcoal-navy #1a1a2e
+  USE WHEN: Introducing the main subject, announcing a #1 ranking, flagship moment
+  CURSOR: White arrow (no cursor div needed — use CSS cursor: default on body)
+  DURATION: 8–12s
+  FROM QWEN VIDEO: "New Flagship Drop" scene (frames 006s–027s)
+-->
+
+<div
+  data-composition-id="s01-bold-claim-cube"
+  data-width="1920"
+  data-height="1080"
+  data-duration="10"
+>
+
+  <!-- 3D Rotating Cube (right side) -->
+  <div class="cube-wrap">
+    <div class="cube">
+      <div class="face front"></div>
+      <div class="face back"></div>
+      <div class="face left"></div>
+      <div class="face right"></div>
+      <div class="face top"></div>
+      <div class="face bottom"></div>
+    </div>
+  </div>
+
+  <!-- Text content (left side) -->
+  <div class="content">
+    <div class="eyebrow">INTRODUCING</div>
+    <div class="headline-row">
+      <span class="big-number">#1</span>
+      <span class="big-title">NEW FLAGSHIP<br>DROP</span>
+    </div>
+    <div class="pills">
+      <div class="pill">🏆 Top of every major leaderboard</div>
+      <div class="pill">⚡ 10× faster reasoning than GPT-4o</div>
+      <div class="pill">🔓 Open weights arriving late summer</div>
+    </div>
+  </div>
+
+  <style>
+    [data-composition-id="s01-bold-claim-cube"] {
+      width: 1920px;
+      height: 1080px;
+      background: #1a1a2e;
+      font-family: "Space Grotesk", sans-serif;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ── 3D Cube ── */
+    [data-composition-id="s01-bold-claim-cube"] .cube-wrap {
+      position: absolute;
+      right: 240px;
+      top: 50%;
+      width: 320px;
+      height: 320px;
+      transform: translateY(-50%);
+      perspective: 900px;
+      opacity: 0;
+    }
+
+    [data-composition-id="s01-bold-claim-cube"] .cube {
+      width: 320px;
+      height: 320px;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateX(-18deg) rotateY(0deg);
+    }
+
+    [data-composition-id="s01-bold-claim-cube"] .face {
+      position: absolute;
+      width: 320px;
+      height: 320px;
+      border: 1.5px solid rgba(140, 100, 255, 0.55);
+      background: rgba(120, 80, 255, 0.07);
+    }
+
+    [data-composition-id="s01-bold-claim-cube"] .face.front  { transform: translateZ(160px); }
+    [data-composition-id="s01-bold-claim-cube"] .face.back   { transform: rotateY(180deg) translateZ(160px); }
+    [data-composition-id="s01-bold-claim-cube"] .face.left   { transform: rotateY(-90deg) translateZ(160px); }
+    [data-composition-id="s01-bold-claim-cube"] .face.right  { transform: rotateY(90deg) translateZ(160px); }
+    [data-composition-id="s01-bold-claim-cube"] .face.top    { transform: rotateX(90deg) translateZ(160px); }
+    [data-composition-id="s01-bold-claim-cube"] .face.bottom { transform: rotateX(-90deg) translateZ(160px); }
+
+    /* ── Content ── */
+    [data-composition-id="s01-bold-claim-cube"] .content {
+      position: absolute;
+      left: 120px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    [data-composition-id="s01-bold-claim-cube"] .eyebrow {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      color: rgba(255,255,255,0.35);
+      font-family: "Inter", sans-serif;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      opacity: 0;
+      transform: translateY(16px);
+    }
+
+    [data-composition-id="s01-bold-claim-cube"] .headline-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 24px;
+      margin-bottom: 56px;
+      line-height: 0.95;
+    }
+
+    [data-composition-id="s01-bold-claim-cube"] .big-number {
+      font-size: 200px;
+      font-weight: 900;
+      color: #ff6b35;
+      opacity: 0;
+      transform: translateY(50px);
+      display: block;
+      line-height: 1;
+    }
+
+    [data-composition-id="s01-bold-claim-cube"] .big-title {
+      font-size: 96px;
+      font-weight: 900;
+      color: #ffffff;
+      opacity: 0;
+      transform: translateY(50px);
+      display: block;
+      line-height: 1.05;
+    }
+
+    [data-composition-id="s01-bold-claim-cube"] .pills {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    [data-composition-id="s01-bold-claim-cube"] .pill {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 100px;
+      padding: 14px 30px;
+      font-size: 26px;
+      color: rgba(255,255,255,0.85);
+      font-family: "Inter", sans-serif;
+      font-weight: 500;
+      width: fit-content;
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+  </style>
+
+  <script>
+    (function () {
+      const S = '[data-composition-id="s01-bold-claim-cube"]';
+      const tl = gsap.timeline({ paused: true });
+
+      // Cube fades in then spins forever
+      tl.to(`${S} .cube-wrap`, { opacity: 1, duration: 1, ease: "power2.out" }, 0.4);
+      gsap.to(`${S} .cube`, { rotationY: 360, duration: 9, repeat: -1, ease: "none" });
+
+      // Eyebrow
+      tl.to(`${S} .eyebrow`, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0.2);
+
+      // Big number + title
+      tl.to(`${S} .big-number`, { opacity: 1, y: 0, duration: 0.75, ease: "power2.out" }, 0.55);
+      tl.to(`${S} .big-title`,  { opacity: 1, y: 0, duration: 0.75, ease: "power2.out" }, 0.7);
+
+      // Pills stagger in
+      tl.to(`${S} .pill`, {
+        opacity: 1, x: 0,
+        duration: 0.5,
+        stagger: 0.14,
+        ease: "power2.out"
+      }, 1.4);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["s01-bold-claim-cube"] = tl;
+    })();
+  </script>
+</div>
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1920, height=1080" />
+  <title>Sample: Animated Timeline / Roadmap</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;900&family=Inter:wght@400;500;600;700&display=block" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 1920px; height: 1080px; overflow: hidden; background: #0a1628; }
+  </style>
+</head>
+<body>
+
+<!--
+  SCENE TYPE: Timeline / Roadmap / Release Cadence
+  BACKGROUND: Dark navy #0a1628
+  USE WHEN: Showing a sequence of events over time, versioning history, what's coming
+  CURSOR: White arrow
+  DURATION: 8–12s
+  FROM QWEN VIDEO: "Release Cadence" scene (frames 123s–129s)
+  MOTION: Title fades → horizontal cyan line draws left→right → dots pop at each milestone → labels fade up
+  NOTE: Future/uncertain items use dashed line and "?" suffix
+-->
+
+<div
+  data-composition-id="s04-timeline"
+  data-width="1920"
+  data-height="1080"
+  data-duration="10"
+>
+  <!-- Title -->
+  <div class="title-block">
+    <div class="eyebrow">RELEASE CADENCE</div>
+    <h2 class="heading">Six weeks between jumps.<br><em>Every time.</em></h2>
+  </div>
+
+  <!-- Timeline SVG -->
+  <div class="timeline-wrap">
+    <svg class="tl-svg" viewBox="0 0 1600 200" preserveAspectRatio="xMidYMid meet">
+      <!-- Solid line -->
+      <line class="tl-line" x1="80" y1="80" x2="1300" y2="80"
+            stroke="#00d4ff" stroke-width="3" stroke-linecap="round"/>
+      <!-- Dashed future line -->
+      <line class="tl-dashed" x1="1300" y1="80" x2="1520" y2="80"
+            stroke="#00d4ff" stroke-width="3" stroke-dasharray="12 8"
+            stroke-linecap="round" opacity="0.4"/>
+
+      <!-- Milestone dots -->
+      <circle class="dot d1" cx="80"   cy="80" r="10" fill="#00d4ff"/>
+      <circle class="dot d2" cx="430"  cy="80" r="10" fill="#00d4ff"/>
+      <circle class="dot d3" cx="780"  cy="80" r="10" fill="#00d4ff"/>
+      <circle class="dot d4" cx="1130" cy="80" r="10" fill="#00d4ff"/>
+      <circle class="dot d5" cx="1520" cy="80" r="8"  fill="none" stroke="#00d4ff" stroke-width="2.5" opacity="0.5"/>
+
+      <!-- Labels above dots -->
+      <text class="lbl l1" x="80"   y="46" text-anchor="middle" fill="white" font-family="Inter" font-size="22" font-weight="700">Qwen 3.5</text>
+      <text class="lbl l2" x="430"  y="46" text-anchor="middle" fill="white" font-family="Inter" font-size="22" font-weight="700">Qwen 3.6</text>
+      <text class="lbl l3" x="780"  y="46" text-anchor="middle" fill="white" font-family="Inter" font-size="22" font-weight="700">Qwen 3.6+</text>
+      <text class="lbl l4" x="1130" y="46" text-anchor="middle" fill="#00d4ff" font-family="Inter" font-size="22" font-weight="700">Qwen 3.7 ← NOW</text>
+      <text class="lbl l5" x="1520" y="46" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-family="Inter" font-size="22" font-weight="700">OW? ←SUMMER?</text>
+
+      <!-- Dates below dots -->
+      <text class="date da1" x="80"   y="120" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-family="Inter" font-size="18">Jan 2025</text>
+      <text class="date da2" x="430"  y="120" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-family="Inter" font-size="18">Feb 2025</text>
+      <text class="date da3" x="780"  y="120" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-family="Inter" font-size="18">Mar 2025</text>
+      <text class="date da4" x="1130" y="120" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-family="Inter" font-size="18">May 2025</text>
+      <text class="date da5" x="1520" y="120" text-anchor="middle" fill="rgba(255,255,255,0.2)"  font-family="Inter" font-size="18">Late Summer</text>
+    </svg>
+  </div>
+
+  <style>
+    [data-composition-id="s04-timeline"] {
+      width: 1920px;
+      height: 1080px;
+      background: #0a1628;
+      font-family: "Space Grotesk", sans-serif;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 160px;
+      gap: 80px;
+    }
+
+    [data-composition-id="s04-timeline"] .eyebrow {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      color: #00d4ff;
+      font-family: "Inter", sans-serif;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+      opacity: 0;
+    }
+
+    [data-composition-id="s04-timeline"] .heading {
+      font-size: 80px;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1.1;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    [data-composition-id="s04-timeline"] .heading em {
+      color: #00d4ff;
+      font-style: italic;
+    }
+
+    [data-composition-id="s04-timeline"] .timeline-wrap {
+      width: 100%;
+    }
+
+    [data-composition-id="s04-timeline"] .tl-svg {
+      width: 100%;
+      height: 200px;
+      overflow: visible;
+    }
+
+    /* Start everything invisible */
+    [data-composition-id="s04-timeline"] .tl-line,
+    [data-composition-id="s04-timeline"] .tl-dashed { opacity: 0; }
+    [data-composition-id="s04-timeline"] .dot  { opacity: 0; transform-origin: center; transform-box: fill-box; }
+    [data-composition-id="s04-timeline"] .lbl  { opacity: 0; }
+    [data-composition-id="s04-timeline"] .date { opacity: 0; }
+  </style>
+
+  <script>
+    (function () {
+      const S = '[data-composition-id="s04-timeline"]';
+      const svg = document.querySelector(`${S} .tl-svg`);
+      const tl  = gsap.timeline({ paused: true });
+
+      // Title block
+      tl.to(`${S} .eyebrow`,  { opacity: 1, duration: 0.5, ease: "power2.out" }, 0.1);
+      tl.to(`${S} .heading`,  { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, 0.3);
+
+      // Draw solid line (clip via strokeDashoffset)
+      const solidLine = svg.querySelector('.tl-line');
+      const lineLen   = 1220; // x2 - x1
+      solidLine.style.strokeDasharray  = lineLen;
+      solidLine.style.strokeDashoffset = lineLen;
+      tl.to(solidLine, { opacity: 1, strokeDashoffset: 0, duration: 1.4, ease: "power2.inOut" }, 1.0);
+
+      // Dashed future segment fades in after
+      tl.to(`${S} .tl-dashed`, { opacity: 0.4, duration: 0.4, ease: "power2.out" }, 2.2);
+
+      // Dots pop in at each milestone
+      const dotTimes = [1.2, 1.55, 1.9, 2.25, 2.6];
+      document.querySelectorAll(`${S} .dot`).forEach((dot, i) => {
+        gsap.set(dot, { scale: 0 });
+        tl.to(dot, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(2)" }, dotTimes[i]);
+      });
+
+      // Labels and dates stagger in after their dot
+      document.querySelectorAll(`${S} .lbl`).forEach((lbl, i) => {
+        tl.to(lbl, { opacity: 1, duration: 0.3, ease: "power2.out" }, dotTimes[i] + 0.15);
+      });
+      document.querySelectorAll(`${S} .date`).forEach((d, i) => {
+        tl.to(d, { opacity: 1, duration: 0.3, ease: "power2.out" }, dotTimes[i] + 0.25);
+      });
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["s04-timeline"] = tl;
+    })();
+  </script>
+</div>
+</body>
+</html>

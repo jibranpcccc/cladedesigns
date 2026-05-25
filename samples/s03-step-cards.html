@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1920, height=1080" />
+  <title>Sample: Step Cards Fly In</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;900&family=Inter:wght@400;500;600;700&display=block" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 1920px; height: 1080px; overflow: hidden; background: #1e2235; }
+  </style>
+</head>
+<body>
+
+<!--
+  SCENE TYPE: Sequential Step List / "How it happened" breakdown
+  BACKGROUND: Dark charcoal #1e2235
+  USE WHEN: Explaining a sequence of events, a process, a playbook, steps taken
+  CURSOR: White arrow
+  DURATION: 6–10s
+  FROM QWEN VIDEO: "The Stealth Playbook" scene (frames 030s–036s)
+  MOTION: Title fades in from left → numbered cards fly in from right with 0.15s stagger
+-->
+
+<div
+  data-composition-id="s03-step-cards"
+  data-width="1920"
+  data-height="1080"
+  data-duration="8"
+>
+  <!-- Scene title (left column) -->
+  <div class="scene-title">
+    <div class="label">THE PLAYBOOK</div>
+    <h2 class="heading">How they<br>pulled it off</h2>
+  </div>
+
+  <!-- Step cards (right column, fly in from right) -->
+  <div class="cards-col">
+    <div class="step-card sc1">
+      <div class="step-num">01</div>
+      <div class="step-body">
+        <div class="step-title">Ship quietly</div>
+        <div class="step-desc">No press release. No X thread. Just a model card and an API key.</div>
+      </div>
+    </div>
+    <div class="step-card sc2">
+      <div class="step-num">02</div>
+      <div class="step-body">
+        <div class="step-title">Let benchmarks speak</div>
+        <div class="step-desc">Seeded lmarena the same day. Let the numbers do the announcement.</div>
+      </div>
+    </div>
+    <div class="step-card sc3">
+      <div class="step-num">03</div>
+      <div class="step-body">
+        <div class="step-title">Open the API</div>
+        <div class="step-desc">Priced to win adoption before open weights land later this summer.</div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    [data-composition-id="s03-step-cards"] {
+      width: 1920px;
+      height: 1080px;
+      background: #1e2235;
+      font-family: "Space Grotesk", sans-serif;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      padding: 0 120px;
+      gap: 80px;
+    }
+
+    /* Left title block */
+    [data-composition-id="s03-step-cards"] .scene-title {
+      flex: 0 0 480px;
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+
+    [data-composition-id="s03-step-cards"] .label {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      color: rgba(255,255,255,0.3);
+      font-family: "Inter", sans-serif;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    [data-composition-id="s03-step-cards"] .heading {
+      font-size: 88px;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1.0;
+    }
+
+    /* Cards column */
+    [data-composition-id="s03-step-cards"] .cards-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    [data-composition-id="s03-step-cards"] .step-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 32px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 34px 40px;
+      opacity: 0;
+      transform: translateX(100px);
+    }
+
+    [data-composition-id="s03-step-cards"] .step-num {
+      font-size: 56px;
+      font-weight: 900;
+      color: rgba(255,107,53,0.7);
+      line-height: 1;
+      flex-shrink: 0;
+      min-width: 80px;
+    }
+
+    [data-composition-id="s03-step-cards"] .step-title {
+      font-size: 36px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    [data-composition-id="s03-step-cards"] .step-desc {
+      font-size: 24px;
+      color: rgba(255,255,255,0.5);
+      font-family: "Inter", sans-serif;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+  </style>
+
+  <script>
+    (function () {
+      const S = '[data-composition-id="s03-step-cards"]';
+      const tl = gsap.timeline({ paused: true });
+
+      // Title slides in from left
+      tl.to(`${S} .scene-title`, { opacity: 1, x: 0, duration: 0.7, ease: "power2.out" }, 0.1);
+
+      // Cards fly in from right, staggered
+      tl.to(`${S} .step-card`, {
+        opacity: 1,
+        x: 0,
+        duration: 0.55,
+        stagger: 0.16,
+        ease: "power2.out"
+      }, 0.4);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["s03-step-cards"] = tl;
+    })();
+  </script>
+</div>
+</body>
+</html>

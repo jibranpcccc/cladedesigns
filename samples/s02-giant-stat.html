@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1920, height=1080" />
+  <title>Sample: Giant Stat + Floating Cards</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;900&family=Inter:wght@400;500;600;700&display=block" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 1920px; height: 1080px; overflow: hidden; background: #120820; }
+  </style>
+</head>
+<body>
+
+<!--
+  SCENE TYPE: Dramatic Single Stat / Lone Hero Number
+  BACKGROUND: Very dark navy-purple #120820
+  USE WHEN: One shocking number that needs to land hard — hours, loops, tasks
+  CURSOR: Crosshair (+) — shown in the Qwen video for these intense scenes
+  DURATION: 12–18s
+  FROM QWEN VIDEO: "35 HOURS, ALONE" scene (frames 210s–228s)
+  MOTION: Number glows into existence → label appears below → stat cards float in from right one by one
+-->
+
+<div
+  data-composition-id="s02-giant-stat"
+  data-width="1920"
+  data-height="1080"
+  data-duration="14"
+>
+  <!-- Radial glow behind number -->
+  <div class="glow-ring"></div>
+
+  <!-- Center stat -->
+  <div class="center-stat">
+    <div class="big-number">35</div>
+    <div class="stat-label">HOURS, ALONE</div>
+    <div class="stat-sub">No human in the loop.</div>
+  </div>
+
+  <!-- Floating detail cards (fly in from right) -->
+  <div class="cards">
+    <div class="card c1">
+      <div class="card-val">1,000+</div>
+      <div class="card-desc">tool calls made</div>
+    </div>
+    <div class="card c2">
+      <div class="card-val">35+</div>
+      <div class="card-desc">files written</div>
+    </div>
+    <div class="card c3">
+      <div class="card-val card-red">0</div>
+      <div class="card-desc">human nudges</div>
+    </div>
+  </div>
+
+  <style>
+    [data-composition-id="s02-giant-stat"] {
+      width: 1920px;
+      height: 1080px;
+      background: #120820;
+      font-family: "Space Grotesk", sans-serif;
+      position: relative;
+      overflow: hidden;
+      cursor: crosshair;
+    }
+
+    /* Glow ring */
+    [data-composition-id="s02-giant-stat"] .glow-ring {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 700px;
+      height: 700px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(160, 60, 255, 0.18) 0%, transparent 70%);
+      opacity: 0;
+    }
+
+    /* Center stat */
+    [data-composition-id="s02-giant-stat"] .center-stat {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    [data-composition-id="s02-giant-stat"] .big-number {
+      font-size: 380px;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 0.9;
+      opacity: 0;
+      filter: blur(20px);
+      letter-spacing: -0.04em;
+    }
+
+    [data-composition-id="s02-giant-stat"] .stat-label {
+      font-size: 64px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      font-family: "Inter", sans-serif;
+      margin-top: 10px;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    [data-composition-id="s02-giant-stat"] .stat-sub {
+      font-size: 28px;
+      color: rgba(255,255,255,0.3);
+      font-family: "Inter", sans-serif;
+      font-weight: 400;
+      margin-top: 16px;
+      opacity: 0;
+    }
+
+    /* Floating cards */
+    [data-composition-id="s02-giant-stat"] .cards {
+      position: absolute;
+      right: 120px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    [data-composition-id="s02-giant-stat"] .card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 20px;
+      padding: 28px 40px;
+      min-width: 280px;
+      opacity: 0;
+      transform: translateX(80px);
+    }
+
+    [data-composition-id="s02-giant-stat"] .card-val {
+      font-size: 64px;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1;
+    }
+
+    [data-composition-id="s02-giant-stat"] .card-val.card-red {
+      color: #ff4444;
+    }
+
+    [data-composition-id="s02-giant-stat"] .card-desc {
+      font-size: 22px;
+      color: rgba(255,255,255,0.45);
+      font-family: "Inter", sans-serif;
+      font-weight: 500;
+      margin-top: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+  </style>
+
+  <script>
+    (function () {
+      const S = '[data-composition-id="s02-giant-stat"]';
+      const tl = gsap.timeline({ paused: true });
+
+      // Glow ring pulses in
+      tl.to(`${S} .glow-ring`, { opacity: 1, duration: 1.2, ease: "power2.out" }, 0);
+
+      // Number un-blurs and appears
+      tl.to(`${S} .big-number`, { opacity: 1, filter: "blur(0px)", duration: 1.0, ease: "power3.out" }, 0.3);
+
+      // Label fades up
+      tl.to(`${S} .stat-label`, { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, 1.0);
+      tl.to(`${S} .stat-sub`,   { opacity: 1, duration: 0.5, ease: "power2.out" }, 1.6);
+
+      // Cards stagger in from right
+      tl.to(`${S} .card`, {
+        opacity: 1, x: 0,
+        duration: 0.6,
+        stagger: 0.2,
+        ease: "power2.out"
+      }, 2.0);
+
+      // Subtle glow pulse loop (after the main reveal)
+      gsap.to(`${S} .glow-ring`, {
+        opacity: 0.4,
+        scale: 1.08,
+        duration: 2.5,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+        delay: 1.5
+      });
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["s02-giant-stat"] = tl;
+    })();
+  </script>
+</div>
+</body>
+</html>

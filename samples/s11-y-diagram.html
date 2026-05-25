@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1920, height=1080" />
+  <title>Sample: Y-Diagram / Hub-and-Spoke</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;900&family=Inter:wght@400;500;600;700&display=block" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 1920px; height: 1080px; overflow: hidden; background: #111218; }
+  </style>
+</head>
+<body>
+
+<!--
+  SCENE TYPE: Hub-and-Spoke / "Same core, multiple uses" Diagram
+  BACKGROUND: Very dark charcoal #111218
+  USE WHEN: One product connects to multiple use cases, tools, or ecosystems
+  CURSOR: White arrow, then crosshair as it highlights spokes
+  DURATION: 12–16s
+  FROM QWEN VIDEO: "Same model, any stack." scene (frames 246s–270s)
+  MOTION:
+    1. Title fades in
+    2. Dashed lines draw outward from center (SVG strokeDashoffset)
+    3. Center "hub" box scales in
+    4. Satellite cards fade in at each spoke tip with stagger
+    5. Cursor moves along each spoke, highlighting
+  KEY VISUAL: Center box = coral/accent, satellite boxes = dark muted, dashed connector lines
+-->
+
+<div
+  data-composition-id="s11-y-diagram"
+  data-width="1920"
+  data-height="1080"
+  data-duration="14"
+>
+
+  <!-- Title (top) -->
+  <div class="diag-title">
+    Same model. <em>Any stack.</em>
+  </div>
+  <div class="diag-sub">Drop it in wherever you work. It adapts.</div>
+
+  <!-- SVG for dashed connector lines -->
+  <svg class="connector-svg" viewBox="0 0 1920 800" preserveAspectRatio="xMidYMid meet">
+    <!-- Center point approx (960, 400) -->
+    <!-- Left spoke -->
+    <line class="spoke sp1" x1="960" y1="400" x2="320"  y2="300"
+          stroke="rgba(255,120,80,0.5)" stroke-width="2.5" stroke-dasharray="10 6"/>
+    <!-- Right-top spoke -->
+    <line class="spoke sp2" x1="960" y1="400" x2="1600" y2="260"
+          stroke="rgba(255,120,80,0.5)" stroke-width="2.5" stroke-dasharray="10 6"/>
+    <!-- Right-bottom spoke -->
+    <line class="spoke sp3" x1="960" y1="400" x2="1600" y2="560"
+          stroke="rgba(255,120,80,0.5)" stroke-width="2.5" stroke-dasharray="10 6"/>
+    <!-- Bottom spoke -->
+    <line class="spoke sp4" x1="960" y1="400" x2="660"  y2="640"
+          stroke="rgba(255,120,80,0.5)" stroke-width="2.5" stroke-dasharray="10 6"/>
+  </svg>
+
+  <!-- Center hub -->
+  <div class="hub-box">
+    <div class="hub-label">Your Model</div>
+    <div class="hub-name">Qwen 3.7</div>
+  </div>
+
+  <!-- Satellite cards -->
+  <div class="sat-card sc-tl">
+    <div class="sat-icon">🤖</div>
+    <div class="sat-title">Claude Code</div>
+    <div class="sat-desc">Agentic coding workflows</div>
+  </div>
+  <div class="sat-card sc-tr-top">
+    <div class="sat-icon">⌨️</div>
+    <div class="sat-title">Qwen Code</div>
+    <div class="sat-desc">Native IDE integration</div>
+  </div>
+  <div class="sat-card sc-tr-bot">
+    <div class="sat-icon">🔌</div>
+    <div class="sat-title">OpenAI SDK</div>
+    <div class="sat-desc">Drop-in compatible API</div>
+  </div>
+  <div class="sat-card sc-bl">
+    <div class="sat-icon">🏠</div>
+    <div class="sat-title">Self-hosted</div>
+    <div class="sat-desc">On your own infra</div>
+  </div>
+
+  <style>
+    [data-composition-id="s11-y-diagram"] {
+      width: 1920px;
+      height: 1080px;
+      background: #111218;
+      font-family: "Space Grotesk", sans-serif;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Title */
+    [data-composition-id="s11-y-diagram"] .diag-title {
+      position: absolute;
+      top: 80px;
+      left: 120px;
+      font-size: 72px;
+      font-weight: 900;
+      color: #ffffff;
+      opacity: 0;
+    }
+
+    [data-composition-id="s11-y-diagram"] .diag-title em {
+      color: #ff7850;
+      font-style: italic;
+    }
+
+    [data-composition-id="s11-y-diagram"] .diag-sub {
+      position: absolute;
+      top: 180px;
+      left: 120px;
+      font-size: 28px;
+      font-family: "Inter", sans-serif;
+      color: rgba(255,255,255,0.4);
+      opacity: 0;
+    }
+
+    /* SVG connectors */
+    [data-composition-id="s11-y-diagram"] .connector-svg {
+      position: absolute;
+      top: 140px;
+      left: 0;
+      width: 1920px;
+      height: 800px;
+      pointer-events: none;
+    }
+
+    [data-composition-id="s11-y-diagram"] .spoke {
+      stroke-dashoffset: 800;
+    }
+
+    /* Hub box */
+    [data-composition-id="s11-y-diagram"] .hub-box {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background: #ff7850;
+      border-radius: 20px;
+      padding: 28px 48px;
+      text-align: center;
+      min-width: 220px;
+    }
+
+    [data-composition-id="s11-y-diagram"] .hub-label {
+      font-size: 18px;
+      font-family: "Inter", sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 6px;
+    }
+
+    [data-composition-id="s11-y-diagram"] .hub-name {
+      font-size: 42px;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1;
+    }
+
+    /* Satellite cards */
+    [data-composition-id="s11-y-diagram"] .sat-card {
+      position: absolute;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      padding: 26px 34px;
+      min-width: 240px;
+      opacity: 0;
+      transform: scale(0.8);
+    }
+
+    [data-composition-id="s11-y-diagram"] .sc-tl     { top: 300px; left: 120px; }
+    [data-composition-id="s11-y-diagram"] .sc-tr-top { top: 220px; right: 100px; }
+    [data-composition-id="s11-y-diagram"] .sc-tr-bot { top: 500px; right: 100px; }
+    [data-composition-id="s11-y-diagram"] .sc-bl     { top: 680px; left: 340px; }
+
+    [data-composition-id="s11-y-diagram"] .sat-icon {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+
+    [data-composition-id="s11-y-diagram"] .sat-title {
+      font-size: 30px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+
+    [data-composition-id="s11-y-diagram"] .sat-desc {
+      font-size: 20px;
+      color: rgba(255,255,255,0.45);
+      font-family: "Inter", sans-serif;
+    }
+  </style>
+
+  <script>
+    (function () {
+      const S  = '[data-composition-id="s11-y-diagram"]';
+      const tl = gsap.timeline({ paused: true });
+
+      // Title and subtitle
+      tl.to(`${S} .diag-title`, { opacity: 1, duration: 0.7, ease: "power2.out" }, 0.2);
+      tl.to(`${S} .diag-sub`,   { opacity: 1, duration: 0.5, ease: "power2.out" }, 0.6);
+
+      // Spokes draw outward
+      const spokes = document.querySelectorAll(`${S} .spoke`);
+      spokes.forEach((s, i) => {
+        tl.to(s, { strokeDashoffset: 0, duration: 0.7, ease: "power2.out" }, 0.9 + i * 0.12);
+      });
+
+      // Hub box scales in
+      tl.to(`${S} .hub-box`, {
+        scale: 1,
+        duration: 0.5,
+        ease: "back.out(1.5)"
+      }, 1.0);
+
+      // Satellite cards pop in
+      tl.to(`${S} .sat-card`, {
+        opacity: 1, scale: 1,
+        duration: 0.45,
+        stagger: 0.14,
+        ease: "back.out(1.4)"
+      }, 1.6);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["s11-y-diagram"] = tl;
+    })();
+  </script>
+</div>
+</body>
+</html>

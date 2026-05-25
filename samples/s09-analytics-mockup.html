@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1920, height=1080" />
+  <title>Sample: Analytics / Leaderboard Site Mockup</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;900&family=Inter:wght@400;500;600;700&display=block" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 1920px; height: 1080px; overflow: hidden; background: #f5f5f5; }
+  </style>
+</head>
+<body>
+
+<!--
+  SCENE TYPE: Screen Recording Mockup — Analytics / Pricing / Leaderboard Site
+  BACKGROUND: Light gray #f5f5f5 (mimics real analytics website)
+  USE WHEN: Script references a real website with data (pricing, rankings, scores)
+            and you need to show realistic numbers from that site
+  CURSOR: Red flag cursor — use CSS custom cursor (mimics real screen recording look)
+  DURATION: 12–20s
+  FROM QWEN VIDEO: artificialanalysis.ai scenes (frames 153s–192s, 453s–480s)
+  MOTION: Page header fades in → stat cards animate in → table rows appear one by one
+  KEY VISUAL: Looks like a real website. Use the actual data from the URL you fetched.
+  RED CURSOR: Position it via JS at a point of interest, move it slowly with GSAP
+-->
+
+<div
+  data-composition-id="s09-analytics-mockup"
+  data-width="1920"
+  data-height="1080"
+  data-duration="14"
+>
+
+  <!-- Simulated site nav bar -->
+  <div class="site-nav">
+    <div class="site-logo">artificialanalysis.ai</div>
+    <div class="nav-links">
+      <span>Models</span><span>Providers</span><span>Benchmarks</span><span>API Pricing</span>
+    </div>
+  </div>
+
+  <!-- Page content -->
+  <div class="page-body">
+    <!-- Model hero card -->
+    <div class="model-hero">
+      <div class="model-name-wrap">
+        <h1 class="model-name">Qwen3-235B-A22B</h1>
+        <span class="model-tag">Qwen 3.7-Max</span>
+      </div>
+      <div class="stat-boxes">
+        <div class="stat-box sb1">
+          <div class="stat-val v1">57</div>
+          <div class="stat-key">Intelligence Index</div>
+          <div class="stat-rank">#7 of 151 models</div>
+        </div>
+        <div class="stat-box sb2">
+          <div class="stat-val v2">$2.50</div>
+          <div class="stat-key">Input per M tokens</div>
+        </div>
+        <div class="stat-box sb3">
+          <div class="stat-val v3">$7.50</div>
+          <div class="stat-key">Output per M tokens</div>
+        </div>
+        <div class="stat-box sb4">
+          <div class="stat-val v4">131K</div>
+          <div class="stat-key">Context window</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comparison table -->
+    <div class="compare-table">
+      <div class="table-head">
+        <span class="col-model">Model</span>
+        <span class="col-score">Intelligence</span>
+        <span class="col-in">Input $/M</span>
+        <span class="col-out">Output $/M</span>
+        <span class="col-ctx">Context</span>
+      </div>
+      <div class="table-row tr1 highlight-row">
+        <span class="col-model"><strong>Qwen 3.7-Max</strong></span>
+        <span class="col-score accent">57 ↑</span>
+        <span class="col-in">$2.50</span>
+        <span class="col-out">$7.50</span>
+        <span class="col-ctx">131K</span>
+      </div>
+      <div class="table-row tr2">
+        <span class="col-model">Claude 3.7 Sonnet</span>
+        <span class="col-score">55</span>
+        <span class="col-in">$3.00</span>
+        <span class="col-out">$15.00</span>
+        <span class="col-ctx">200K</span>
+      </div>
+      <div class="table-row tr3">
+        <span class="col-model">GPT-4o</span>
+        <span class="col-score">52</span>
+        <span class="col-in">$5.00</span>
+        <span class="col-out">$15.00</span>
+        <span class="col-ctx">128K</span>
+      </div>
+      <div class="table-row tr4">
+        <span class="col-model">Qwen 3.6-Plus</span>
+        <span class="col-score">48</span>
+        <span class="col-in">$1.30</span>
+        <span class="col-out">$7.80</span>
+        <span class="col-ctx">131K</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Red cursor (custom) -->
+  <div class="red-cursor">
+    <svg width="24" height="32" viewBox="0 0 24 32">
+      <path d="M0 0 L0 28 L8 20 L14 32 L17 31 L11 18 L22 18 Z"
+            fill="#cc0000" stroke="white" stroke-width="1.5"/>
+    </svg>
+  </div>
+
+  <style>
+    [data-composition-id="s09-analytics-mockup"] {
+      width: 1920px;
+      height: 1080px;
+      background: #f5f5f5;
+      font-family: "Inter", sans-serif;
+      position: relative;
+      overflow: hidden;
+      cursor: none;
+    }
+
+    /* Nav */
+    [data-composition-id="s09-analytics-mockup"] .site-nav {
+      background: #ffffff;
+      border-bottom: 1px solid #e5e5e5;
+      padding: 20px 80px;
+      display: flex;
+      align-items: center;
+      gap: 80px;
+      opacity: 0;
+    }
+
+    [data-composition-id="s09-analytics-mockup"] .site-logo {
+      font-size: 26px;
+      font-weight: 700;
+      color: #1a1a2e;
+      font-family: "Space Grotesk", sans-serif;
+    }
+
+    [data-composition-id="s09-analytics-mockup"] .nav-links {
+      display: flex;
+      gap: 40px;
+      font-size: 20px;
+      color: #555;
+    }
+
+    /* Page body */
+    [data-composition-id="s09-analytics-mockup"] .page-body {
+      padding: 50px 80px;
+    }
+
+    /* Model hero */
+    [data-composition-id="s09-analytics-mockup"] .model-hero {
+      margin-bottom: 48px;
+      opacity: 0;
+    }
+
+    [data-composition-id="s09-analytics-mockup"] .model-name-wrap {
+      display: flex;
+      align-items: baseline;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    [data-composition-id="s09-analytics-mockup"] .model-name {
+      font-size: 42px;
+      font-weight: 800;
+      color: #1a1a2e;
+      font-family: "Space Grotesk", sans-serif;
+    }
+
+    [data-composition-id="s09-analytics-mockup"] .model-tag {
+      background: #eef;
+      color: #5533dd;
+      border-radius: 8px;
+      padding: 4px 14px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    [data-composition-id="s09-analytics-mockup"] .stat-boxes {
+      display: flex;
+      gap: 24px;
+    }
+
+    [data-composition-id="s09-analytics-mockup"] .stat-box {
+      background: #ffffff;
+      border: 1px solid #e0e0e8;
+      border-radius: 14px;
+      padding: 24px 36px;
+      min-width: 200px;
+    }
+
+    [data-composition-id="s09-analytics-mockup"] .stat-val {
+      font-size: 48px;
+      font-weight: 900;
+      color: #1a1a2e;
+      font-family: "Space Grotesk", sans-serif;
+      line-height: 1;
+    }
+
+    [data-composition-id="s09-analytics-mockup"] .stat-key {
+      font-size: 16px;
+      color: #888;
+      margin-top: 6px;
+    }
+
+    [data-composition-id="s09-analytics-mockup"] .stat-rank {
+      font-size: 14px;
+      color: #5533dd;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    /* Table */
+    [data-composition-id="s09-analytics-mockup"] .compare-table {
+      background: #ffffff;
+      border: 1px solid #e0e0e8;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    [data-composition-id="s09-analytics-mockup"] .table-head,
+    [data-composition-id="s09-analytics-mockup"] .table-row {
+      display: grid;
+      grid-template-columns: 3fr 1fr 1fr 1fr 1fr;
+      padding: 18px 32px;
+      align-items: center;
+      border-bottom: 1px solid #f0f0f5;
+    }
+
+    [data-composition-id="s09-analytics-mockup"] .table-head {
+      font-size: 16px;
+      font-weight: 700;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: #fafafa;
+    }
+
+    [data-composition-id="s09-analytics-mockup"] .table-row {
+      font-size: 22px;
+      color: #333;
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+
+    [data-composition-id="s09-analytics-mockup"] .highlight-row {
+      background: #f0eeff;
+    }
+
+    [data-composition-id="s09-analytics-mockup"] .accent {
+      color: #5533dd;
+      font-weight: 700;
+    }
+
+    /* Red cursor */
+    [data-composition-id="s09-analytics-mockup"] .red-cursor {
+      position: absolute;
+      top: 300px;
+      left: 400px;
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0;
+    }
+  </style>
+
+  <script>
+    (function () {
+      const S  = '[data-composition-id="s09-analytics-mockup"]';
+      const tl = gsap.timeline({ paused: true });
+
+      // Nav fades in
+      tl.to(`${S} .site-nav`, { opacity: 1, duration: 0.5, ease: "power2.out" }, 0);
+
+      // Hero card
+      tl.to(`${S} .model-hero`, { opacity: 1, duration: 0.6, ease: "power2.out" }, 0.4);
+
+      // Table rows stagger in
+      tl.to(`${S} .table-row`, {
+        opacity: 1, x: 0,
+        duration: 0.4,
+        stagger: 0.1,
+        ease: "power2.out"
+      }, 1.0);
+
+      // Red cursor appears and slowly moves
+      tl.to(`${S} .red-cursor`, { opacity: 1, duration: 0.2 }, 1.8);
+      tl.to(`${S} .red-cursor`, { left: 520, top: 380, duration: 1.2, ease: "power1.inOut" }, 2.0);
+      tl.to(`${S} .red-cursor`, { left: 640, top: 440, duration: 0.8, ease: "power1.inOut" }, 3.5);
+      tl.to(`${S} .red-cursor`, { left: 480, top: 500, duration: 1.0, ease: "power1.inOut" }, 5.0);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["s09-analytics-mockup"] = tl;
+    })();
+  </script>
+</div>
+</body>
+</html>

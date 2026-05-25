@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1920, height=1080" />
+  <title>Sample: Animated Bar Chart (Benchmark)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;900&family=Inter:wght@400;500;600;700&display=block" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 1920px; height: 1080px; overflow: hidden; background: #ededf8; }
+  </style>
+</head>
+<body>
+
+<!--
+  SCENE TYPE: Benchmark Bar Chart / Data Comparison
+  BACKGROUND: Light lavender #ededf8
+  USE WHEN: Showing model rankings, benchmark scores, performance data with numbers
+  CURSOR: White arrow
+  DURATION: 8–12s
+  FROM QWEN VIDEO: Benchmark bar chart scene (frames 057s–060s)
+  MOTION: Title wipes in → bars grow from bottom with stagger → score labels count up above each bar
+  KEY VISUAL: Featured model bar = accent color (taller), competitor bars = muted gray
+-->
+
+<div
+  data-composition-id="s06-bar-chart"
+  data-width="1920"
+  data-height="1080"
+  data-duration="10"
+>
+  <div class="chart-outer">
+    <!-- Header -->
+    <div class="chart-header">
+      <h2 class="chart-title">Coding Benchmark (SWE-Bench Verified)</h2>
+      <div class="chart-sub">Pass@1 score — higher is better</div>
+    </div>
+
+    <!-- Bars -->
+    <div class="bars-area">
+      <div class="bar-group">
+        <div class="bar-wrap">
+          <div class="score-label sl1">72.1</div>
+          <div class="bar b1 accent"></div>
+        </div>
+        <div class="bar-name">Qwen 3.7-Max</div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-wrap">
+          <div class="score-label sl2">65.4</div>
+          <div class="bar b2"></div>
+        </div>
+        <div class="bar-name">Claude 3.7</div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-wrap">
+          <div class="score-label sl3">61.0</div>
+          <div class="bar b3"></div>
+        </div>
+        <div class="bar-name">GPT-4o</div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-wrap">
+          <div class="score-label sl4">58.3</div>
+          <div class="bar b4"></div>
+        </div>
+        <div class="bar-name">Gemini 2.0</div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-wrap">
+          <div class="score-label sl5">54.7</div>
+          <div class="bar b5"></div>
+        </div>
+        <div class="bar-name">Qwen 3.6-Plus</div>
+      </div>
+    </div>
+
+    <!-- Source -->
+    <div class="source">Source: Alibaba / independent evaluation · May 2025</div>
+  </div>
+
+  <style>
+    [data-composition-id="s06-bar-chart"] {
+      width: 1920px;
+      height: 1080px;
+      background: #ededf8;
+      font-family: "Space Grotesk", sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    [data-composition-id="s06-bar-chart"] .chart-outer {
+      width: 1560px;
+      position: relative;
+    }
+
+    /* Header */
+    [data-composition-id="s06-bar-chart"] .chart-header {
+      margin-bottom: 60px;
+      clip-path: inset(0 100% 0 0);
+    }
+
+    [data-composition-id="s06-bar-chart"] .chart-title {
+      font-size: 52px;
+      font-weight: 900;
+      color: #1a1a2e;
+    }
+
+    [data-composition-id="s06-bar-chart"] .chart-sub {
+      font-size: 24px;
+      color: rgba(26,26,46,0.45);
+      font-family: "Inter", sans-serif;
+      margin-top: 8px;
+    }
+
+    /* Bars area */
+    [data-composition-id="s06-bar-chart"] .bars-area {
+      display: flex;
+      align-items: flex-end;
+      gap: 40px;
+      height: 600px;
+      border-bottom: 2px solid rgba(26,26,46,0.15);
+      padding-bottom: 0;
+    }
+
+    [data-composition-id="s06-bar-chart"] .bar-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      justify-content: flex-end;
+    }
+
+    [data-composition-id="s06-bar-chart"] .bar-wrap {
+      position: relative;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      height: 100%;
+    }
+
+    [data-composition-id="s06-bar-chart"] .bar {
+      width: 100%;
+      height: 0;            /* animated from 0 */
+      border-radius: 12px 12px 0 0;
+      background: rgba(26,26,46,0.18);
+    }
+
+    [data-composition-id="s06-bar-chart"] .bar.accent {
+      background: linear-gradient(180deg, #7c5fff 0%, #5533dd 100%);
+    }
+
+    [data-composition-id="s06-bar-chart"] .score-label {
+      font-size: 32px;
+      font-weight: 900;
+      color: #1a1a2e;
+      margin-bottom: 10px;
+      opacity: 0;
+    }
+
+    [data-composition-id="s06-bar-chart"] .bar-name {
+      font-size: 22px;
+      font-family: "Inter", sans-serif;
+      font-weight: 600;
+      color: rgba(26,26,46,0.6);
+      margin-top: 14px;
+      text-align: center;
+    }
+
+    [data-composition-id="s06-bar-chart"] .source {
+      font-size: 18px;
+      font-family: "Inter", sans-serif;
+      color: rgba(26,26,46,0.35);
+      margin-top: 20px;
+      opacity: 0;
+    }
+  </style>
+
+  <script>
+    (function () {
+      const S = '[data-composition-id="s06-bar-chart"]';
+      const tl = gsap.timeline({ paused: true });
+
+      const scores   = [72.1, 65.4, 61.0, 58.3, 54.7];
+      const maxScore = 80;
+      const maxH     = 560; // px, max bar height
+
+      const bars   = document.querySelectorAll(`${S} .bar`);
+      const labels = document.querySelectorAll(`${S} .score-label`);
+
+      // Header wipe
+      tl.to(`${S} .chart-header`, { clipPath: "inset(0 0% 0 0)", duration: 1.0, ease: "power2.inOut" }, 0);
+
+      // Bars grow one by one with slight stagger
+      bars.forEach((bar, i) => {
+        const targetH = (scores[i] / maxScore) * maxH;
+        const startT  = 0.8 + i * 0.18;
+
+        tl.to(bar, { height: targetH, duration: 0.75, ease: "power2.out" }, startT);
+
+        // Score label counts up
+        const dummy = { v: 0 };
+        tl.to(labels[i], { opacity: 1, duration: 0.2, ease: "power2.out" }, startT + 0.4);
+        tl.to(dummy, {
+          v: scores[i],
+          duration: 0.65,
+          ease: "power2.out",
+          onUpdate: () => { labels[i].textContent = dummy.v.toFixed(1); }
+        }, startT + 0.4);
+      });
+
+      // Source line
+      tl.to(`${S} .source`, { opacity: 1, duration: 0.4, ease: "power2.out" }, 2.6);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["s06-bar-chart"] = tl;
+    })();
+  </script>
+</div>
+</body>
+</html>

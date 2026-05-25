@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1920, height=1080" />
+  <title>Sample: Strikethrough Reveal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;900&family=Inter:wght@400;500;600;700&display=block" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 1920px; height: 1080px; overflow: hidden; background: #0d1f0a; }
+  </style>
+</head>
+<body>
+
+<!--
+  SCENE TYPE: Strikethrough Reveal / "That was then, this is now"
+  BACKGROUND: Dark forest green #0d1f0a
+  USE WHEN: Challenging old assumptions, revealing what changed, debunking a label
+  CURSOR: Crosshair (+)
+  DURATION: 8–12s
+  FROM QWEN VIDEO: "Agent engine / Not a chatbot." scene (frames 195s–207s)
+  MOTION: Old claim appears → red strikethrough draws → new claim fades in below → orbiting gear icons appear
+  KEY VISUAL: Old claim in muted white, strikethrough in red, new claim in bright accent
+-->
+
+<div
+  data-composition-id="s07-strikethrough"
+  data-width="1920"
+  data-height="1080"
+  data-duration="10"
+>
+  <!-- Old claim with strikethrough -->
+  <div class="claim-block">
+    <div class="old-claim-wrap">
+      <span class="old-claim">Not a chatbot.</span>
+      <div class="strike-line"></div>
+    </div>
+    <div class="new-claim">An <em>autonomous</em> agent engine.</div>
+    <div class="new-sub">It plans, executes, self-corrects, and ships — without you in the loop.</div>
+  </div>
+
+  <!-- Gear orbit diagram (appears after reveal) -->
+  <div class="orbit-system">
+    <div class="orbit-ring">
+      <div class="center-gear">⚙️</div>
+      <div class="orbit-item oi1">📁</div>
+      <div class="orbit-item oi2">🔍</div>
+      <div class="orbit-item oi3">💻</div>
+      <div class="orbit-item oi4">🌐</div>
+    </div>
+  </div>
+
+  <style>
+    [data-composition-id="s07-strikethrough"] {
+      width: 1920px;
+      height: 1080px;
+      background: #0d1f0a;
+      font-family: "Space Grotesk", sans-serif;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      padding: 0 160px;
+      gap: 120px;
+      cursor: crosshair;
+    }
+
+    /* Left: text claim block */
+    [data-composition-id="s07-strikethrough"] .claim-block {
+      flex: 1;
+    }
+
+    /* Old claim + strikethrough */
+    [data-composition-id="s07-strikethrough"] .old-claim-wrap {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 50px;
+    }
+
+    [data-composition-id="s07-strikethrough"] .old-claim {
+      font-size: 120px;
+      font-weight: 900;
+      color: rgba(255,255,255,0.55);
+      display: block;
+      opacity: 0;
+    }
+
+    [data-composition-id="s07-strikethrough"] .strike-line {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      height: 7px;
+      width: 0;
+      background: #ff3333;
+      transform: translateY(-50%);
+      border-radius: 4px;
+    }
+
+    /* New claim */
+    [data-composition-id="s07-strikethrough"] .new-claim {
+      font-size: 88px;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1.05;
+      opacity: 0;
+      transform: translateY(30px);
+      margin-bottom: 28px;
+    }
+
+    [data-composition-id="s07-strikethrough"] .new-claim em {
+      color: #7cfc60;
+      font-style: italic;
+    }
+
+    [data-composition-id="s07-strikethrough"] .new-sub {
+      font-size: 28px;
+      color: rgba(255,255,255,0.45);
+      font-family: "Inter", sans-serif;
+      font-weight: 400;
+      max-width: 800px;
+      line-height: 1.6;
+      opacity: 0;
+    }
+
+    /* Right: Gear orbit */
+    [data-composition-id="s07-strikethrough"] .orbit-system {
+      flex: 0 0 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+    }
+
+    [data-composition-id="s07-strikethrough"] .orbit-ring {
+      width: 340px;
+      height: 340px;
+      position: relative;
+      animation: spin-orbit 8s linear infinite;
+    }
+
+    @keyframes spin-orbit {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    [data-composition-id="s07-strikethrough"] .center-gear {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 72px;
+      animation: counter-spin 8s linear infinite;
+    }
+
+    @keyframes counter-spin {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to   { transform: translate(-50%, -50%) rotate(-360deg); }
+    }
+
+    [data-composition-id="s07-strikethrough"] .orbit-item {
+      position: absolute;
+      font-size: 40px;
+      top: 50%;
+      left: 50%;
+      animation: counter-spin 8s linear infinite;
+    }
+
+    [data-composition-id="s07-strikethrough"] .oi1 { transform: translate(-50%, -50%) translateX(150px); }
+    [data-composition-id="s07-strikethrough"] .oi2 { transform: translate(-50%, -50%) translateY(-150px); }
+    [data-composition-id="s07-strikethrough"] .oi3 { transform: translate(-50%, -50%) translateX(-150px); }
+    [data-composition-id="s07-strikethrough"] .oi4 { transform: translate(-50%, -50%) translateY(150px); }
+  </style>
+
+  <script>
+    (function () {
+      const S = '[data-composition-id="s07-strikethrough"]';
+      const tl = gsap.timeline({ paused: true });
+
+      // Old claim fades in
+      tl.to(`${S} .old-claim`, { opacity: 1, duration: 0.6, ease: "power2.out" }, 0.3);
+
+      // Strikethrough draws across
+      tl.to(`${S} .strike-line`, {
+        width: "100%",
+        duration: 0.5,
+        ease: "power3.in"
+      }, 1.2);
+
+      // New claim rises up
+      tl.to(`${S} .new-claim`, { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, 1.9);
+      tl.to(`${S} .new-sub`,   { opacity: 1, duration: 0.6, ease: "power2.out" }, 2.5);
+
+      // Orbit diagram fades in
+      tl.to(`${S} .orbit-system`, { opacity: 1, duration: 0.8, ease: "power2.out" }, 2.8);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["s07-strikethrough"] = tl;
+    })();
+  </script>
+</div>
+</body>
+</html>

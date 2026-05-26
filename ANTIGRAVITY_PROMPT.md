@@ -266,15 +266,49 @@ When the script mentions a specific real-world interface, you build it from scra
 - The brand's **real iconography** — recreate logos in SVG or CSS
 - The brand's **real microcopy** — exact button labels ("Continue with Google"), exact menu items
 
+#### High-priority AI news recreations (build these exactly)
+
+**Google AI Studio / Gemini Developer Console:**
+- Background: `#1e1e2e` near-black, left nav `#181825` darker panel
+- Accent: Google Blue `#4285f4`, success green `#34a853`
+- Font: Google Sans (`font-family:'Google Sans',Roboto,sans-serif`)
+- Layout: Left nav 240px (model selector, history), center = prompt editor + response, right = parameter panel
+- Right panel has: Temperature slider (0.0–2.0, styled Google blue), Max output tokens input, Top-P/Top-K sliders, Safety settings toggles
+- Top bar: Google AI Studio wordmark (blue), model dropdown showing "Gemini 2.5 Flash" with version chip, Run button (blue pill)
+- Response area: streaming cursor blinks while text types out — GSAP `tl.set('.cursor', {opacity:0/1})` alternating at 0.53s interval
+- Token counter bottom-right updates as tokens accumulate — animate a counter from 0 to scene-specific value
+- Include active API key input field (masked `sk-...****`) and "Copy code" button
+
+**ChatGPT / GPT Plus Interface:**
+- Background: `#212121` dark grey, sidebar `#171717` near-black
+- Text: `#ececec` light, input area `#2f2f2f`
+- Font: Söhne (`font-family:'Söhne',ui-sans-serif,system-ui,sans-serif`) — fall back to `Inter,sans-serif`
+- Sidebar 260px: ChatGPT logo top-left, "New chat" button, history list showing real-looking past chats ("Solar Cell Verification", "Neural Diagnostics", "Code Review Pipeline", "Latency Benchmarks")
+- Top-center: model selector dropdown showing "GPT-5.5" with a small gear icon
+- Chat area: user message bubble (right-aligned, `#2f2f2f` bg), then ChatGPT response streaming — use GSAP to append text characters in chunks (deterministic: add 8 chars every 0.1s from a hardcoded string)
+- Bottom: textarea with send button (upward arrow `#ffffff` on `#676767` circle), "ChatGPT can make mistakes" disclaimer in small grey text
+- Streaming cursor: blinking `|` character appended to end of response text
+
+**Meta View Companion App (inside a phone frame):**
+- Phone frame: Rounded rect 390×844px, border `2px solid #333`, `border-radius:40px`, screen inset with real iOS status bar (9:41, signal dots, wifi icon, battery bar — all CSS)
+- App: Meta branding — `#0866ff` blue accent, `#f0f2f5` light grey background, Meta logo top-left
+- Content panels inside the app:
+  1. **Bluetooth pairing graph** — animated signal strength arc (3 bars, CSS animation cycling 1→2→3→all)
+  2. **Smart Glasses battery** — "Ray-Ban Meta Smart Glasses: 94%" with a segmented CSS battery bar in blue
+  3. **Camera AI viewfinder** — 200×150px dark rect showing a simulated camera feed with CSS bounding boxes drawn on top (2–3 coloured `outline` boxes positioned over "detected objects"), object labels overlaid: "Person 98%", "Laptop 94%", "Coffee cup 87%"
+  4. Status row: "Connected · Bluetooth 5.2 · 2.4ms latency"
+- The whole phone frame floats with a subtle `box-shadow:0 30px 80px rgba(0,0,0,0.5)` and a 2-degree rotation GSAP loop
+
 #### Chat / model interfaces
-- **ChatGPT** — `#212121` dark / `#ffffff` light, Söhne font, sidebar 260px
+- **ChatGPT** — `#212121` dark / `#ffffff` light, Söhne font, sidebar 260px (see detailed spec above)
 - **Claude.ai** — `#faf9f5` cream, Tiempos serif headlines + Styrene sans, right-side artifact panel
-- **Gemini** — `#1f1f1f` dark / `#f0f4f9` light, Google Sans, gem-icon left sidebar
+- **Gemini / Google AI Studio** — `#1e1e2e` dark, Google Sans, dev console layout (see detailed spec above)
 - **Grok / xAI** — `#000000` black, Inter, X-style minimal nav
 - **DeepSeek chat** — `#202327` dark, Inter, simple message column
 - **Qwen chat (chat.qwen.ai)** — `#fafafa` light, system sans, sidebar with model picker
 - **Mistral le Chat** — `#fa520f` orange accent, Inter, clean cream/dark
 - **Perplexity** — `#1f2025` dark / `#fbfaf4` light, FK Display Pro + FK Grotesk, source citations under answer
+- **Meta AI / Meta View app** — `#0866ff` blue, SF Pro, phone frame with companion app UI (see detailed spec above)
 - **Meta AI / Llama** — Facebook blue `#0866ff`, SF Pro, simple chat layout
 - **Any other AI chat app you don't recognize** — research the brand, then default to: clean theme matching their site, Inter font, model selector top-left, chat column centered max 768px
 
@@ -375,64 +409,245 @@ Every element that appears on screen must enter at the exact timestamp of the wo
 - Zero `Math.random()`, `Date.now()`, or network fetches — everything deterministic
 - Particle positions are hardcoded integers, not calculated randomly
 
-**8-zone spatial subdivision — every dark-background scene must use this layout:**
+**8-panel ultra-dense architecture — every dark-background scene maps to this exact layout:**
 
-The screen is always divided into 8 independent zones, all moving simultaneously. The audience sees something alive in every corner at every moment — no region is ever static. Each zone operates on its own animation loop and never pauses waiting for another.
+The 1920×1080 screen is divided into 8 independently-animated panels. Every panel has its own loop running at all times. No panel ever pauses waiting for another.
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│  ZONE 1: Top info bar  (ticker / headline scroll)            │
-├────────────┬─────────────────────────┬───────────────────────┤
-│ ZONE 2     │                         │ ZONE 3                │
-│ Left panel │   ZONE 5: HERO CENTER   │ Right panel           │
-│ (radar /   │   (main scene content)  │ (waveform / data      │
-│  stats)    │                         │  stream)              │
-├────────────┤                         ├───────────────────────┤
-│ ZONE 4     │                         │ ZONE 6                │
-│ Corner TL  │                         │ Corner TR             │
-│ brackets   ├─────────────────────────┤ brackets              │
-│  + pulses  │   ZONE 7: Keyword matrix│                       │
-│            │   (every key term shows │                       │
-├────────────┴─────────────────────────┴───────────────────────┤
-│  ZONE 8: Bottom stat bar  (5 real data points, cycling)      │
-└──────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│  TOP TICKER — full 1920px wide, 48px tall, scrolling facts loop     │
+├───────────────────┬──────────────────────────┬──────────────────────┤
+│ P7: Polar Radar   │                          │ P3: Waveform Scope   │
+│ 280×280           │   P1: Brand Interface    │ 280×full             │
+│ (top-left corner) │   920×540 centered hero  │ (right strip)        │
+├───────────────────┤   Brand-accurate pixel-  ├──────────────────────┤
+│ P4: Terminal Code │   perfect UI recreation  │ P8: Float Value Grid │
+│ 280×260 below     │   of Google AI Studio /  │ 280×260              │
+│ radar             │   ChatGPT / Meta View /  │ decimal arrays loop  │
+├───────────────────┤   or template scene      ├──────────────────────┤
+│ P5: System Log    │                          │ P6: Math Curve       │
+│ 280×200 scrolling │                          │ 280×200 coordinate   │
+│ upward server log ├──────────────────────────┤ graph plotting live  │
+│                   │ P2: Kinetic Keyword Mx   │ latency values       │
+│                   │ gliding highlight box    │                      │
+├───────────────────┴──────────────────────────┴──────────────────────┤
+│  BOTTOM STAT BAR — full 1920px wide, 48px tall, 5 cycling values   │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
-| Zone | What it does | Always-alive motion |
-|------|-------------|---------------------|
-| 1 — Top ticker | Scrolls key facts, model names, scores from the topic | CSS marquee or GSAP `x` loop, never stops |
-| 2 — Left panel | Radar sweep, signal bars, or stat column | Radar: CSS rotate loop; Bars: GSAP yoyo on height |
-| 3 — Right panel | Waveform, data stream, or log scroll | Waveform: SVG path with CSS animation; Log: GSAP y loop |
-| 4 — TL bracket | Corner bracket + blinking ping dot | GSAP opacity yoyo |
-| 5 — Hero center | The main scene content (template-specific) | Driven by word timestamps |
-| 6 — TR bracket | Corner bracket + status chip | GSAP opacity yoyo, offset timing |
-| 7 — Keyword matrix | Grid of key terms that glow when spoken | Each word triggers on its timestamp (see keyword matrix rule below) |
-| 8 — Bottom bar | 5 data points from scene topic | Number odometer loop cycling hardcoded values |
+| Panel | Content | Motion pattern |
+|-------|---------|---------------|
+| P1 — Brand Interface | Pixel-perfect HTML recreation of the real product UI (see brand recreation rules) | Typing cursor blinks; dropdowns animate; temperature slider pulses |
+| P2 — Kinetic Keyword Matrix | 10–16 key terms; a glowing selector box physically flies from word to word | GSAP position interpolation at each word timestamp |
+| P3 — Waveform Scope | SVG or canvas audio waveform pulsing in sync with narration energy | Amplitude cycles through hardcoded array, never random |
+| P4 — Terminal Code | Monospaced code lines streaming downward — real API calls, real model names | GSAP `y` translate loop, new line every 0.6s |
+| P5 — System Log | Server telemetry scrolling upward — latency, token counts, response codes | GSAP `y` loop, entries from hardcoded sequence |
+| P6 — Math Curve | SVG coordinate graph, polyline redrawn each frame cycle — latency vs tokens | Path `d` attribute cycles through 3–4 hardcoded shapes |
+| P7 — Polar Radar | Circular sweep arm rotating; concentric rings; target acquisition blips | CSS `rotate` loop + SVG circle flash on ping |
+| P8 — Float Value Grid | 4×4 grid of fluctuating decimal values (weight matrix simulation) | Values cycle hardcoded sequences, all offset by different intervals |
 
-**Keyword matrix rule (mandatory for every dark-background scene):**
+---
 
-The keyword matrix (Zone 7) is a grid of 8–14 key terms drawn from the script and data URLs. Each term is always visible at low opacity. When the narrator speaks that word, its cell glows, scales up, and settles — giving the audience something to read at every moment.
+**P2 — Kinetic Keyword Matrix with Gliding Highlight Box:**
+
+This is the signature animation. A single glowing selector frame physically flies across the keyword grid, scaling and morphing to fit each active word as the narrator speaks it. The eye follows the box, not the word — creating constant kinetic motion across the panel.
 
 ```html
-<!-- keyword matrix example -->
-<div class="kw-matrix" style="position:absolute;bottom:180px;left:80px;right:80px;
-     display:flex;flex-wrap:wrap;gap:8px;opacity:0.4;">
-  <span class="kw" id="kw-model" style="font-size:13px;letter-spacing:0.1em;
-        color:#7cfc60;padding:4px 10px;border:1px solid rgba(124,252,96,0.3);border-radius:4px;">
-    [MODEL NAME]
-  </span>
-  <!-- 7–13 more terms -->
+<!-- keyword matrix panel -->
+<div class="kw-matrix" style="position:absolute;bottom:160px;left:300px;right:300px;
+     display:flex;flex-wrap:wrap;gap:10px;padding:16px;">
+  <!-- selector box — absolutely positioned, flies over the words -->
+  <div class="kw-selector" style="position:absolute;border:2px solid #7cfc60;
+       border-radius:6px;box-shadow:0 0 24px rgba(124,252,96,0.7),0 0 60px rgba(124,252,96,0.3);
+       pointer-events:none;z-index:10;transition:none;"></div>
+
+  <span class="kw" id="kw-0" style="font-size:14px;letter-spacing:0.12em;color:#7cfc60;
+        padding:6px 14px;border:1px solid rgba(124,252,96,0.2);border-radius:6px;
+        opacity:0.35;white-space:nowrap;">[TERM 1]</span>
+  <span class="kw" id="kw-1" style="...opacity:0.35;">[TERM 2]</span>
+  <!-- 8–14 terms total -->
 </div>
 ```
 
 ```js
-// Keyword matrix — each term fires at its word's timestamp
-tl.to('#kw-model', { opacity: 1, scale: 1.15, color: '#ffffff',
-  boxShadow: '0 0 20px rgba(124,252,96,0.8)', duration: 0.3, ease: 'back.out(2)' }, wordTimestamp);
-tl.to('#kw-model', { opacity: 0.4, scale: 1, duration: 0.6 }, wordTimestamp + 0.5);
+// Gliding highlight box — moves to each keyword at its word timestamp
+const box   = root.querySelector('.kw-selector');
+const kws   = root.querySelectorAll('.kw');
+
+function flyTo(kwEl, t) {
+  // Measure the keyword's position relative to the matrix container
+  const mat  = root.querySelector('.kw-matrix');
+  const mr   = mat.getBoundingClientRect();
+  const kr   = kwEl.getBoundingClientRect();
+  const relL = kr.left - mr.left - 2;
+  const relT = kr.top  - mr.top  - 2;
+
+  tl.to(box, {
+    left:   relL, top:   relT,
+    width:  kr.width  + 4,
+    height: kr.height + 4,
+    duration: 0.28, ease: 'power3.inOut'
+  }, t);
+
+  // trailing laser sweep — a 2px line that chases the box center
+  tl.fromTo('.kw-laser', { scaleX: 0, opacity: 1 }, { scaleX: 1, opacity: 0, duration: 0.22 }, t);
+
+  // keyword itself: highlight then settle
+  tl.to(kwEl, { opacity: 1, color: '#ffffff', duration: 0.18 }, t);
+  tl.to(kwEl, { opacity: 0.35, color: '#7cfc60', duration: 0.5  }, t + 0.55);
+}
+
+// One call per word in the timing table
+flyTo(kws[0], 0.3);   // "Gemini" spoken at 0.3s
+flyTo(kws[1], 0.84);  // "Flash" spoken at 0.84s
+// ... all word timestamps from the timing table
 ```
 
-Key terms for the matrix come from the script + fetched URLs — model name, version, benchmark names, capability words, score values. Not invented. The matrix shows what the video is about; the hero center shows the detail.
+The selector box starts positioned over the first keyword at `t=0`. It never teleports — it always glides. The `kw-laser` is a 2px horizontal line element absolutely positioned that stretches and fades to trace the box's travel path.
+
+---
+
+**P3 — Waveform Scope:**
+
+```html
+<canvas class="wv-scope" width="280" height="360"
+  style="position:absolute;right:0;top:48px;"></canvas>
+```
+```js
+const WV_FRAMES = [
+  [0.1,0.4,0.9,0.6,0.3,0.8,0.5,0.2,0.7,0.4,0.6,0.3,0.8,0.5,0.2,0.7],
+  [0.3,0.7,0.5,0.8,0.2,0.6,0.9,0.4,0.3,0.7,0.5,0.8,0.2,0.6,0.9,0.4],
+  // 6–8 frames total — all hardcoded, no Math.random()
+];
+let wfi = 0;
+const wCtx = root.querySelector('.wv-scope').getContext('2d');
+function drawWave() {
+  const f = WV_FRAMES[wfi++ % WV_FRAMES.length];
+  wCtx.clearRect(0,0,280,360);
+  wCtx.beginPath();
+  f.forEach((v,i) => {
+    const x = (i / (f.length-1)) * 280;
+    const y = 180 - v * 140;
+    i === 0 ? wCtx.moveTo(x,y) : wCtx.lineTo(x,y);
+  });
+  wCtx.strokeStyle = 'rgba(77,255,145,0.85)';
+  wCtx.lineWidth = 2;
+  wCtx.stroke();
+}
+// Drive from timeline at 120ms intervals — deterministic, not requestAnimationFrame random
+const WV_SEQ = [0,120,240,360,480,600,720,840,960,1080,1200,1320,1440,1560,1680,1800,1920,2040,2160,2280];
+WV_SEQ.forEach((t,i) => tl.call(drawWave, [], t/1000));
+```
+
+**P4 — Terminal Code Stream:**
+
+Lines of real API code visible and scrolling — model names, endpoint calls, response payloads from the topic. All hardcoded strings, no network calls.
+
+```js
+const CODE_LINES = [
+  'curl -X POST https://api.google.com/v1/gemini-flash/generate \\',
+  '  -H "Authorization: Bearer $API_KEY" \\',
+  '  -d \'{"model":"gemini-2.5-flash","max_tokens":8192}\'',
+  '{"id":"gen_01jx...","tokens_used":4821,"latency_ms":312}',
+  // 12–16 lines of real-looking API traffic for the scene topic
+];
+let cli = 0;
+function addCodeLine() {
+  const el = document.createElement('div');
+  el.textContent = CODE_LINES[cli++ % CODE_LINES.length];
+  el.style.cssText = 'font:11px/1.6 "JetBrains Mono",monospace;color:rgba(0,212,255,0.7);';
+  termEl.appendChild(el);
+  if (termEl.children.length > 10) termEl.removeChild(termEl.firstChild);
+}
+const TERM_SEQ = [0.6,1.2,1.8,2.4,3.0,3.6,4.2,4.8,5.4,6.0,6.6,7.2];
+TERM_SEQ.forEach(t => tl.call(addCodeLine, [], t));
+```
+
+**P5 — System Log Terminal:**
+
+```js
+const LOG_LINES = [
+  '[12:04:01] INFO  model=gemini-flash-2.5 status=200 lat=312ms',
+  '[12:04:02] INFO  tokens_in=1024 tokens_out=4821 cost=$0.0003',
+  '[12:04:02] DEBUG context_window=1048576 utilized=0.46%',
+  '[12:04:03] INFO  safety_filter=PASS harm_score=0.01',
+  // 10–14 log lines of real-looking telemetry
+];
+```
+
+**P6 — Math Curve (SVG coordinate graph):**
+
+```html
+<svg class="math-curve" width="280" height="200" style="position:absolute;right:0;bottom:200px;">
+  <line x1="20" y1="180" x2="260" y2="180" stroke="rgba(140,100,255,0.3)" stroke-width="1"/>
+  <line x1="20" y1="10"  x2="20"  y2="180" stroke="rgba(140,100,255,0.3)" stroke-width="1"/>
+  <polyline class="mc-line" fill="none" stroke="#8c64ff" stroke-width="2"/>
+</svg>
+```
+```js
+const MC_PATHS = [
+  '20,170 70,140 120,90 170,110 220,60 260,80',   // latency curve shape 1
+  '20,160 70,120 120,100 170,70  220,90 260,50',   // shape 2
+  '20,175 70,130 120,95  170,120 220,55 260,70',   // shape 3
+];
+let mci = 0;
+const mcLine = root.querySelector('.mc-line');
+const MC_SEQ = [0, 2.0, 4.0, 6.0, 8.0];
+MC_SEQ.forEach(t => tl.call(() => { mcLine.setAttribute('points', MC_PATHS[mci++ % MC_PATHS.length]); }, [], t));
+```
+
+**P7 — Polar Radar:**
+
+```html
+<svg class="radar" width="280" height="280" style="position:absolute;left:0;top:48px;">
+  <circle cx="140" cy="140" r="120" fill="none" stroke="rgba(0,212,255,0.15)" stroke-width="1"/>
+  <circle cx="140" cy="140" r="80"  fill="none" stroke="rgba(0,212,255,0.10)" stroke-width="1"/>
+  <circle cx="140" cy="140" r="40"  fill="none" stroke="rgba(0,212,255,0.08)" stroke-width="1"/>
+  <line class="sweep-arm" x1="140" y1="140" x2="140" y2="20"
+        stroke="rgba(0,212,255,0.8)" stroke-width="2"
+        style="transform-origin:140px 140px;animation:radarSweep 3s linear infinite;"/>
+  <circle class="ping" cx="200" cy="80" r="4" fill="#00d4ff" opacity="0"/>
+</svg>
+<style>
+@keyframes radarSweep { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+</style>
+```
+```js
+// Ping blink at hardcoded times — not random
+const PING_TIMES = [1.5, 4.2, 7.8, 10.1, 13.6];
+PING_TIMES.forEach(t => {
+  tl.to('.ping', { opacity: 1, r: 7, duration: 0.15 }, t);
+  tl.to('.ping', { opacity: 0, r: 4, duration: 0.6  }, t + 0.15);
+});
+```
+
+**P8 — Float Value Grid:**
+
+```html
+<div class="fv-grid" style="position:absolute;right:0;top:308px;width:280px;
+     display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:8px;">
+  <span class="fv" id="fv-00" style="font:10px 'JetBrains Mono',monospace;
+        color:rgba(255,204,0,0.7);text-align:center;">0.847</span>
+  <!-- 15 more cells, 4×4 grid -->
+</div>
+```
+```js
+// Each cell cycles its own hardcoded sequence at its own interval offset
+const FV_SEQS = {
+  'fv-00': [0.847,0.923,0.761,0.889,0.734,0.956,0.812],
+  'fv-01': [0.312,0.441,0.298,0.367,0.423,0.289,0.401],
+  // ... all 16 cells with real-derived decimal values
+};
+Object.entries(FV_SEQS).forEach(([id, seq], i) => {
+  let fi = 0;
+  const el = root.querySelector('#' + id);
+  const BASE_TIMES = [0.3,0.6,0.9,1.2,1.5,1.8,2.1,2.4,2.7,3.0,3.3,3.6];
+  const offset = (i * 0.07) % 0.3;   // stagger by cell index — deterministic
+  BASE_TIMES.forEach(t => tl.call(() => { el.textContent = seq[fi++ % seq.length].toFixed(3); }, [], t + offset));
+});
+```
+
+---
 
 **Hardcoded sequences — not Math.random() — for all fluctuating values:**
 
@@ -448,35 +663,43 @@ setInterval(() => { el.textContent = SEQ[si++ % SEQ.length].toFixed(1); }, 400);
 setInterval(() => { el.textContent = (Math.random() * 60 + 20).toFixed(1); }, 400);
 ```
 
-Values in the sequence must come from the topic's real data — actual benchmark scores, real latency numbers, real token counts from the fetched URLs.
+Values in the sequences must come from the topic's real data — actual benchmark scores, real latency numbers, real token counts from the fetched URLs. Invent nothing.
 
-**Composable zone files — each zone is its own HTML layer:**
+---
 
-Write each zone as a separate standalone HTML file. Every file has its own `data-composition-id`, `data-width/height/duration`, and GSAP timeline on `window.__timelines`.
+**Composable panel files — each panel is its own HTML layer:**
+
+Write each panel as a separate standalone HTML file. Every file has its own `data-composition-id`, `data-width/height/duration`, and GSAP timeline on `window.__timelines`.
 
 **7 files per scene — all required, all unique:**
 ```
-scene-01-bg.html          ← canvas grid + floating particles (Zone ambient)
-scene-01-corners.html     ← 4 corner brackets + ambient glow loops (Zone 4/6)
-scene-01-ticker.html      ← top ticker bar scrolling scene-specific facts (Zone 1)
-scene-01-sidebar-l.html   ← left panel: radar / stat column / signal bars (Zone 2)
-scene-01-sidebar-r.html   ← right panel: waveform / log stream / data feed (Zone 3)
-scene-01-keywords.html    ← keyword matrix wired to word timestamps (Zone 7)
-scene-01-hero.html        ← main scene content, word-synced (Zone 5)
+scene-01-bg.html          ← canvas dot grid + floating particles
+scene-01-brand.html       ← P1: pixel-perfect brand interface recreation
+scene-01-keywords.html    ← P2: keyword matrix + gliding selector box
+scene-01-waveform.html    ← P3: waveform scope + P7: polar radar
+scene-01-terminal.html    ← P4: code stream + P5: system log
+scene-01-mathcurve.html   ← P6: coordinate graph + P8: float value grid
+scene-01-hero.html        ← main word-synced scene content (template-specific)
 ```
 
-**Never share zone files across scenes.** Every scene has unique ticker text, unique sidebar data, unique keyword set, unique corner status chips. Shared = lazy = wrong. A 10-scene video = 70 files. A 12-scene video = 84 files.
+Top ticker and bottom stat bar live inside `scene-01-bg.html` as they frame every panel.
+
+**Never share panel files across scenes.** Every scene gets unique ticker text, unique brand interface content, unique keyword set, unique log lines, unique code lines, unique float sequences. A 10-scene video = 70 files. A 12-scene video = 84 files.
 
 **Visual density checklist (every dark-background scene must have all of these):**
-- [ ] Animated background — canvas dot grid or moving line grid
-- [ ] 8 zones populated (ticker, left panel, right panel, TL corner, hero, TR corner, keyword matrix, bottom bar)
-- [ ] Keyword matrix — 8–14 terms from script + data, each wired to its word's timestamp
-- [ ] Hardcoded sequences for all fluctuating telemetry values (no Math.random())
-- [ ] Continuous scan line — sweeps full width or full height, `repeat: -1`
-- [ ] 4 corner brackets — TL, TR, BL, BR — with continuous opacity pulse
-- [ ] Minimum 5 continuous GSAP loops — `repeat: -1, yoyo: true` running across all zones
-- [ ] Simultaneous animations — multiple elements at the same GSAP time marker
-- [ ] Scene-specific hero layer — orbit, bars, checklist, strikethrough, etc.
+- [ ] All 8 panels populated and independently animated (P1–P8)
+- [ ] P1 is a pixel-perfect brand UI recreation — not a generic block
+- [ ] P2 keyword matrix has 10–16 terms; gliding selector box physically flies between words
+- [ ] P3 waveform cycles hardcoded amplitude frames, not Math.random()
+- [ ] P4 terminal shows real-looking API calls for the scene topic (12+ lines hardcoded)
+- [ ] P5 system log scrolls real-looking telemetry (10+ lines hardcoded)
+- [ ] P6 math curve redraws from 3+ hardcoded SVG path shapes
+- [ ] P7 polar radar rotates continuously; ping flashes at hardcoded timestamps
+- [ ] P8 float grid 4×4 cells all cycling unique hardcoded sequences
+- [ ] Top ticker scrolls scene-specific facts (not generic)
+- [ ] Bottom stat bar shows 5 real numbers from fetched URLs
+- [ ] Minimum 5 continuous GSAP `repeat:-1` loops running simultaneously
+- [ ] Zero Math.random() anywhere
 
 **Exception — light-background templates (s06, s08, s09):**
 These scenes use light backgrounds (#ededf8, #f5f5ff, #f5f5f5). Do NOT add dark cyber particles, neon corner brackets, or heavy scan lines — it breaks the professional UI look. Instead:

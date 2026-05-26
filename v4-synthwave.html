@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI News — Synthwave Edition</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet" />
+
+<!-- GSAP -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: #0d0019;
+  }
+
+  #stage {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: radial-gradient(ellipse 70% 60% at 50% 40%, #1a0035 0%, #0d0019 100%);
+  }
+
+  /* ─── PERSPECTIVE GRID ──────────────────────────────────── */
+  #stage::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(58,134,255,0.06) 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(58,134,255,0.04) 40px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─── SCENE BASE ─────────────────────────────────────────── */
+  .scene {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    display: flex;
+    padding: 8vh 7vw;
+    z-index: 1;
+  }
+
+  /* ─── TYPOGRAPHY ─────────────────────────────────────────── */
+  .orbitron { font-family: 'Orbitron', sans-serif; }
+  .rajdhani { font-family: 'Rajdhani', sans-serif; }
+
+  .section-label {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: clamp(9px, 1vw, 13px);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #ff006e;
+  }
+
+  .neon-text-magenta {
+    text-shadow: 0 0 12px #ff006e, 0 0 30px rgba(255,0,110,0.5);
+  }
+  .neon-text-blue {
+    text-shadow: 0 0 12px #3a86ff, 0 0 30px rgba(58,134,255,0.5);
+  }
+  .neon-text-purple {
+    text-shadow: 0 0 12px #8338ec, 0 0 30px rgba(131,56,236,0.5);
+  }
+
+  .gradient-title {
+    background: linear-gradient(135deg, #ff006e, #8338ec);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ─── CARDS ──────────────────────────────────────────────── */
+  .card-magenta {
+    background: rgba(255,0,110,0.06);
+    border: 1px solid rgba(255,0,110,0.3);
+    border-radius: 4px;
+  }
+  .card-blue {
+    background: rgba(58,134,255,0.06);
+    border: 1px solid rgba(58,134,255,0.3);
+    border-radius: 4px;
+  }
+  .card-purple {
+    background: rgba(131,56,236,0.06);
+    border: 1px solid rgba(131,56,236,0.3);
+    border-radius: 4px;
+  }
+
+  .glow-magenta {
+    box-shadow: 0 0 20px rgba(255,0,110,0.4), 0 0 60px rgba(255,0,110,0.15);
+  }
+  .glow-blue {
+    box-shadow: 0 0 20px rgba(58,134,255,0.4), 0 0 60px rgba(58,134,255,0.15);
+  }
+  .glow-purple {
+    box-shadow: 0 0 20px rgba(131,56,236,0.4), 0 0 60px rgba(131,56,236,0.15);
+  }
+
+  /* ─── SCENE 1: GEMINI 3.5 FLASH ─────────────────────────── */
+  #s1 {
+    flex-direction: column;
+    justify-content: center;
+    gap: 3vh;
+  }
+
+  #s1-eyebrow {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: clamp(10px, 1.1vw, 15px);
+    letter-spacing: 0.25em;
+    color: #ff006e;
+    text-shadow: 0 0 12px #ff006e;
+    opacity: 0;
+  }
+
+  #s1-header {
+    opacity: 0;
+  }
+
+  #s1-title {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: clamp(36px, 5.5vw, 90px);
+    line-height: 1;
+    background: linear-gradient(135deg, #ff006e, #8338ec);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 20px rgba(255,0,110,0.5));
+  }
+
+  #s1-desc {
+    opacity: 0;
+    padding: 2.2vh 2vw;
+    max-width: 60vw;
+  }
+
+  #s1-desc p {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 400;
+    font-size: clamp(14px, 1.5vw, 22px);
+    color: #f0e8ff;
+    line-height: 1.6;
+  }
+
+  #s1-desc strong {
+    font-weight: 700;
+    color: #3a86ff;
+    text-shadow: 0 0 8px rgba(58,134,255,0.6);
+  }
+
+  #s1-bench {
+    opacity: 0;
+    padding: 2.2vh 2vw;
+    max-width: 55vw;
+    border-top: 2px solid #ff006e;
+    box-shadow: 0 -2px 20px rgba(255,0,110,0.3), 0 0 40px rgba(255,0,110,0.08);
+  }
+
+  #s1-bench .bench-title {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: clamp(9px, 1vw, 13px);
+    letter-spacing: 0.2em;
+    color: #ff006e;
+    text-shadow: 0 0 10px #ff006e;
+    margin-bottom: 1.4vh;
+  }
+
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 1.5vw;
+    margin-bottom: 1vh;
+  }
+
+  .bar-label {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: clamp(9px, 0.9vw, 13px);
+    color: #f0e8ff;
+    letter-spacing: 0.1em;
+    width: 14vw;
+    flex-shrink: 0;
+  }
+
+  .bar-track {
+    flex: 1;
+    height: 18px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .bar-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 2px;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  #bar-b-fill {
+    background: linear-gradient(90deg, #1a3a6e, #3a86ff);
+    box-shadow: 0 0 10px rgba(58,134,255,0.5);
+  }
+
+  #bar-f-fill {
+    background: linear-gradient(90deg, #ff006e, #8338ec);
+    box-shadow: 0 0 15px rgba(255,0,110,0.7), 0 0 40px rgba(255,0,110,0.3);
+  }
+
+  .bar-pct {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: clamp(9px, 0.9vw, 13px);
+    color: #f0e8ff;
+    width: 4vw;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* ─── SCENE 2: CODING + GPT-5.5 ─────────────────────────── */
+  #s2 {
+    flex-direction: row;
+    align-items: center;
+    gap: 4vw;
+  }
+
+  #s2-term {
+    flex: 1.1;
+    opacity: 0;
+    padding: 2.5vh 2vw;
+    height: 60vh;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    overflow: hidden;
+  }
+
+  .term-header {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: clamp(9px, 0.9vw, 12px);
+    letter-spacing: 0.2em;
+    color: #3a86ff;
+    text-shadow: 0 0 10px #3a86ff;
+    margin-bottom: 2vh;
+    padding-bottom: 1.5vh;
+    border-bottom: 1px solid rgba(58,134,255,0.3);
+  }
+
+  .term-line {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: clamp(12px, 1.3vw, 18px);
+    line-height: 2.4;
+    color: #f0e8ff;
+    opacity: 0;
+  }
+
+  .term-line.cmd {
+    color: #ff006e;
+    text-shadow: 0 0 8px rgba(255,0,110,0.5);
+  }
+
+  .term-line.val-online { color: #39ff14; text-shadow: 0 0 8px rgba(57,255,20,0.5); }
+  .term-line.val-active { color: #ffbe0b; text-shadow: 0 0 8px rgba(255,190,11,0.5); }
+  .term-line.val-running { color: #3a86ff; text-shadow: 0 0 8px rgba(58,134,255,0.5); }
+
+  #s2-gpt {
+    flex: 0.9;
+    opacity: 0;
+    padding: 3vh 2.5vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2vh;
+    height: 60vh;
+  }
+
+  #s2-gpt .entity-label {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: clamp(8px, 0.9vw, 12px);
+    letter-spacing: 0.25em;
+    color: #8338ec;
+    text-shadow: 0 0 12px #8338ec;
+  }
+
+  #s2-gpt-title {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: clamp(28px, 4vw, 64px);
+    line-height: 1;
+    background: linear-gradient(135deg, #8338ec, #ff006e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 16px rgba(131,56,236,0.6));
+  }
+
+  #s2-gpt .gpt-desc {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 400;
+    font-size: clamp(13px, 1.3vw, 19px);
+    color: #f0e8ff;
+    line-height: 1.6;
+  }
+
+  .badge {
+    display: inline-block;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: clamp(9px, 0.85vw, 12px);
+    letter-spacing: 0.15em;
+    color: #3a86ff;
+    border: 1px solid rgba(58,134,255,0.5);
+    background: rgba(58,134,255,0.1);
+    padding: 0.4em 0.9em;
+    border-radius: 2px;
+    text-shadow: 0 0 8px #3a86ff;
+    box-shadow: 0 0 12px rgba(58,134,255,0.3);
+  }
+
+  /* ─── SCENE 3: GPT-5 CAPABILITIES ───────────────────────── */
+  #s3 {
+    flex-direction: column;
+    justify-content: center;
+    gap: 3vh;
+  }
+
+  #s3-label {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: clamp(9px, 1vw, 13px);
+    letter-spacing: 0.2em;
+    color: #ff006e;
+    text-shadow: 0 0 10px #ff006e;
+  }
+
+  #s3-nodes {
+    display: flex;
+    gap: 2vw;
+    align-items: stretch;
+  }
+
+  .cap-node {
+    flex: 1;
+    padding: 2.5vh 1.8vw;
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+    border-radius: 4px;
+    transition: none;
+  }
+
+  .cap-node .node-icon {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: clamp(20px, 2.5vw, 38px);
+    line-height: 1;
+  }
+
+  .cap-node .node-title {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: clamp(10px, 1.1vw, 15px);
+    letter-spacing: 0.15em;
+    color: #f0e8ff;
+  }
+
+  .cap-node .node-desc {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 400;
+    font-size: clamp(12px, 1.2vw, 17px);
+    color: rgba(240,232,255,0.7);
+    line-height: 1.5;
+  }
+
+  #n1 { background: rgba(255,0,110,0.04); border: 1px solid rgba(255,0,110,0.15); }
+  #n2 { background: rgba(58,134,255,0.04); border: 1px solid rgba(58,134,255,0.15); }
+  #n3 { background: rgba(131,56,236,0.04); border: 1px solid rgba(131,56,236,0.15); }
+
+  #n1 .node-icon { color: #ff006e; }
+  #n2 .node-icon { color: #3a86ff; }
+  #n3 .node-icon { color: #8338ec; }
+
+  #s3-err {
+    opacity: 0;
+    padding: 2.5vh 2.5vw;
+    display: flex;
+    align-items: center;
+    gap: 3vw;
+  }
+
+  #err-number {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: clamp(40px, 6vw, 96px);
+    line-height: 1;
+    background: linear-gradient(135deg, #ff006e, #ff4500);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 20px rgba(255,0,110,0.7));
+    min-width: 8vw;
+    text-align: center;
+  }
+
+  .err-desc {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5vh;
+    flex: 1;
+  }
+
+  .err-desc .err-title {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: clamp(10px, 1.1vw, 15px);
+    letter-spacing: 0.15em;
+    color: #ff006e;
+    text-shadow: 0 0 10px #ff006e;
+  }
+
+  .err-desc .err-sub {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 400;
+    font-size: clamp(13px, 1.3vw, 19px);
+    color: rgba(240,232,255,0.8);
+    line-height: 1.5;
+  }
+
+  #err-bar-wrap {
+    width: 100%;
+    margin-top: 1vh;
+  }
+
+  #err-bar-track {
+    width: 100%;
+    height: 16px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  #err-bar-fill {
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-radius: 2px;
+    background: linear-gradient(90deg, #ff006e, #ff4500);
+    box-shadow: 0 0 15px rgba(255,0,110,0.6);
+    width: 80%;
+  }
+
+  /* ─── SCENE 4: META RAY-BAN AR ───────────────────────────── */
+  #s4 {
+    flex-direction: row;
+    align-items: center;
+    gap: 4vw;
+  }
+
+  #s4-hud {
+    flex: 1;
+    opacity: 0;
+    position: relative;
+    height: 70vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2vh;
+  }
+
+  .hud-frame {
+    position: relative;
+    width: 36vw;
+    height: 36vw;
+    max-width: 360px;
+    max-height: 360px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Corner brackets */
+  .hud-frame::before,
+  .hud-frame::after {
+    content: '';
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    border-color: #ff006e;
+    border-style: solid;
+    box-shadow: 0 0 12px rgba(255,0,110,0.6);
+  }
+  .hud-frame::before { top: 0; left: 0; border-width: 2px 0 0 2px; }
+  .hud-frame::after  { bottom: 0; right: 0; border-width: 0 2px 2px 0; }
+
+  .hud-corner-tr,
+  .hud-corner-bl {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    border-color: #ff006e;
+    border-style: solid;
+    box-shadow: 0 0 12px rgba(255,0,110,0.6);
+  }
+  .hud-corner-tr { top: 0; right: 0; border-width: 2px 2px 0 0; }
+  .hud-corner-bl { bottom: 0; left: 0; border-width: 0 0 2px 2px; }
+
+  /* Radar */
+  #radar-bg {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(10,0,30,0.95) 0%, rgba(5,0,20,0.98) 100%);
+    border: 1px solid rgba(58,134,255,0.3);
+    box-shadow: 0 0 30px rgba(58,134,255,0.2), inset 0 0 40px rgba(10,0,40,0.8);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Concentric circles */
+  #radar-bg::before {
+    content: '';
+    position: absolute;
+    inset: 15%;
+    border-radius: 50%;
+    border: 1px solid rgba(255,0,110,0.2);
+    box-shadow: 0 0 8px rgba(255,0,110,0.1);
+  }
+
+  #radar-rings {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .radar-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(58,134,255,0.15);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  #radar-crosshair {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  #radar-crosshair::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba(58,134,255,0.2);
+    transform: translateY(-50%);
+  }
+  #radar-crosshair::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgba(58,134,255,0.2);
+    transform: translateX(-50%);
+  }
+
+  #radar-sweep {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent 0%, rgba(58,134,255,0.25) 8%, transparent 8%);
+  }
+
+  #radar-blip {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ff006e;
+    box-shadow: 0 0 12px #ff006e, 0 0 24px rgba(255,0,110,0.5);
+    top: 30%;
+    left: 60%;
+    transform: translate(-50%, -50%);
+  }
+
+  .hud-status {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: clamp(9px, 0.9vw, 12px);
+    letter-spacing: 0.2em;
+    color: #ff006e;
+    text-shadow: 0 0 10px #ff006e;
+    text-align: center;
+  }
+
+  #s4-trans {
+    flex: 1;
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5vh;
+    justify-content: center;
+  }
+
+  #s4-trans .trans-label {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: clamp(9px, 1vw, 13px);
+    letter-spacing: 0.2em;
+    color: #ff006e;
+    text-shadow: 0 0 10px #ff006e;
+  }
+
+  .bubble {
+    padding: 1.8vh 1.8vw;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6vh;
+    opacity: 0;
+  }
+
+  #bubble-es {
+    border: 1px solid rgba(255,0,110,0.4);
+    background: rgba(255,0,110,0.06);
+    box-shadow: 0 0 20px rgba(255,0,110,0.15);
+  }
+
+  #bubble-en {
+    border: 1px solid rgba(58,134,255,0.4);
+    background: rgba(58,134,255,0.06);
+    box-shadow: 0 0 20px rgba(58,134,255,0.15);
+  }
+
+  .bubble .lang-tag {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: clamp(8px, 0.8vw, 11px);
+    letter-spacing: 0.2em;
+  }
+  #bubble-es .lang-tag { color: #ff006e; text-shadow: 0 0 8px #ff006e; }
+  #bubble-en .lang-tag { color: #3a86ff; text-shadow: 0 0 8px #3a86ff; }
+
+  .bubble .bubble-text {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: clamp(14px, 1.6vw, 24px);
+    color: #f0e8ff;
+    line-height: 1.4;
+  }
+
+  #landmark {
+    opacity: 0;
+    padding: 2vh 2vw;
+    border: 1px solid rgba(255,0,110,0.4);
+    background: rgba(255,0,110,0.05);
+    box-shadow: 0 0 24px rgba(255,0,110,0.2);
+    border-radius: 4px;
+  }
+
+  #landmark .lock-label {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: clamp(9px, 1vw, 13px);
+    letter-spacing: 0.2em;
+    color: #ff006e;
+    text-shadow: 0 0 10px #ff006e;
+    display: flex;
+    align-items: center;
+    gap: 0.8vw;
+    margin-bottom: 1vh;
+  }
+
+  #cursor-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ff006e;
+    box-shadow: 0 0 10px #ff006e;
+    flex-shrink: 0;
+  }
+
+  #landmark .coords {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: clamp(9px, 0.85vw, 12px);
+    color: #3a86ff;
+    text-shadow: 0 0 8px rgba(58,134,255,0.5);
+    letter-spacing: 0.1em;
+  }
+
+  /* ─── SCANLINE OVERLAY ───────────────────────────────────── */
+  #scanlines {
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.08) 2px,
+      rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  /* ─── CHROMATIC VIGNETTE ─────────────────────────────────── */
+  #vignette {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 55%, rgba(10,0,25,0.7) 100%);
+    pointer-events: none;
+    z-index: 998;
+  }
+</style>
+</head>
+<body>
+
+<div id="stage">
+
+  <!-- ─── SCENE 1: GEMINI 3.5 FLASH ────────────────────────── -->
+  <section class="scene" id="s1">
+    <div id="s1-eyebrow">§ 01 ─ SPEED_LEADER // GOOGLE_AI</div>
+    <div id="s1-header">
+      <div id="s1-title">GEMINI_3.5_FLASH</div>
+    </div>
+
+    <div id="s1-desc" class="card-blue glow-blue">
+      <p>
+        Reaching <strong>1 billion users</strong> in record time —<br>
+        Gemini 3.5 Flash redefines intelligence at scale.<br>
+        <strong>Sub-second latency</strong>. Multimodal. Always online.
+      </p>
+    </div>
+
+    <div id="s1-bench" class="card-magenta">
+      <div class="bench-title">§ BENCHMARK_MATRIX // RESPONSE_VELOCITY</div>
+      <div class="bar-row">
+        <div class="bar-label">COMPETITOR_B</div>
+        <div class="bar-track">
+          <div class="bar-fill" id="bar-b-fill"></div>
+        </div>
+        <div class="bar-pct" id="bar-b-pct">0%</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label" style="color:#ff006e;text-shadow:0 0 8px rgba(255,0,110,0.5);">FLASH_3.5</div>
+        <div class="bar-track">
+          <div class="bar-fill" id="bar-f-fill"></div>
+        </div>
+        <div class="bar-pct" id="bar-f-pct" style="color:#ff006e;text-shadow:0 0 8px rgba(255,0,110,0.5);">0%</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SCENE 2: CODING + GPT-5.5 ────────────────────────── -->
+  <section class="scene" id="s2">
+
+    <div id="s2-term" class="card-blue glow-blue">
+      <div class="term-header">// SYS_ROUTER :: TASK_DISPATCH_v4.1</div>
+      <div class="term-line cmd" id="tl1">&gt; ROUTING ── TASK: CODING</div>
+      <div class="term-line" id="tl2">&nbsp;&nbsp;MODEL: GEMINI_3.5_FLASH ──── <span class="val-online">ONLINE</span></div>
+      <div class="term-line" id="tl3">&nbsp;&nbsp;LATENCY: 0.8s ─────────── <span class="val-online">OPTIMAL</span></div>
+      <div class="term-line cmd" id="tl4">&gt; ROUTING ── TASK: AGENTIC</div>
+      <div class="term-line" id="tl5">&nbsp;&nbsp;ACTION: BROWSER_AUTO ──── <span class="val-active">ACTIVE</span></div>
+      <div class="term-line" id="tl6">&nbsp;&nbsp;AGENT: FLASH-v2 ──────── <span class="val-running">RUNNING</span></div>
+    </div>
+
+    <div id="s2-gpt" class="card-purple">
+      <div class="entity-label">// EXTERNAL_ENTITY_DETECTED</div>
+      <div id="s2-gpt-title">GPT_5.5</div>
+      <p class="gpt-desc">
+        OpenAI deploys next-gen reasoning model.<br>
+        Enhanced multimodal cognition.<br>
+        Autonomous task chaining. API-first.
+      </p>
+      <div><span class="badge">[LAUNCHED]</span></div>
+    </div>
+
+  </section>
+
+  <!-- ─── SCENE 3: GPT-5 CAPABILITIES ──────────────────────── -->
+  <section class="scene" id="s3">
+
+    <div id="s3-label">§ 03 ─ CAPABILITY_MATRIX // GPT-5_DEPLOYMENT</div>
+
+    <div id="s3-nodes">
+      <div class="cap-node" id="n1">
+        <div class="node-icon">◈</div>
+        <div class="node-title">KNOWLEDGE_WORK</div>
+        <div class="node-desc">Legal analysis, financial modeling, medical synthesis — GPT-5 operates at expert consultant level across domains.</div>
+      </div>
+      <div class="cap-node" id="n2">
+        <div class="node-icon">◈</div>
+        <div class="node-title">AUTOMATION</div>
+        <div class="node-desc">Multi-step workflow execution. Browser control. Code generation and deployment pipelines in a single prompt.</div>
+      </div>
+      <div class="cap-node" id="n3">
+        <div class="node-icon">◈</div>
+        <div class="node-title">SCIENTIFIC_RESEARCH</div>
+        <div class="node-desc">Hypothesis generation, literature synthesis, experimental design — accelerating discovery at machine speed.</div>
+      </div>
+    </div>
+
+    <div id="s3-err" class="card-magenta">
+      <div id="err-number">80</div>
+      <div class="err-desc">
+        <div class="err-title">// ERROR_RATE_REDUCTION</div>
+        <div class="err-sub">
+          Proxy task benchmark: GPT-5 drives critical error rates<br>
+          from <strong style="color:#ff006e;">80%</strong> baseline → <strong style="color:#39ff14;text-shadow:0 0 8px rgba(57,255,20,0.5);">20%</strong> via autonomous correction.
+        </div>
+        <div id="err-bar-wrap">
+          <div id="err-bar-track">
+            <div id="err-bar-fill"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ─── SCENE 4: META RAY-BAN AR ─────────────────────────── -->
+  <section class="scene" id="s4">
+
+    <div id="s4-hud">
+      <div class="hud-status">META_AI // AR_LENS // ACTIVE</div>
+      <div class="hud-frame">
+        <div class="hud-corner-tr"></div>
+        <div class="hud-corner-bl"></div>
+        <div id="radar-bg">
+          <div id="radar-rings">
+            <div class="radar-ring" style="width:75%;height:75%;"></div>
+            <div class="radar-ring" style="width:50%;height:50%;border-color:rgba(255,0,110,0.12);"></div>
+            <div class="radar-ring" style="width:25%;height:25%;border-color:rgba(131,56,236,0.18);"></div>
+          </div>
+          <div id="radar-crosshair"></div>
+          <div id="radar-sweep"></div>
+          <div id="radar-blip"></div>
+        </div>
+      </div>
+      <div class="hud-status">§ 04 ─ AR_TRANSLATION // REAL_TIME</div>
+    </div>
+
+    <div id="s4-trans">
+      <div class="trans-label">// LIVE_TRANSLATION_STREAM</div>
+
+      <div class="bubble" id="bubble-es">
+        <div class="lang-tag">INPUT :: ES-MX</div>
+        <div class="bubble-text">
+          "¿Qué es ese edificio tan alto<br>con la torre de hierro?"
+        </div>
+      </div>
+
+      <div id="landmark">
+        <div class="lock-label">
+          <div id="cursor-dot"></div>
+          TARGET_LOCK // EIFFEL_TOWER
+        </div>
+        <div class="coords">48°51'29.6"N &nbsp;2°17'40.2"E &nbsp;│&nbsp; ALT: 330m &nbsp;│&nbsp; CONFIDENCE: 99.4%</div>
+      </div>
+
+      <div class="bubble" id="bubble-en">
+        <div class="lang-tag">OUTPUT :: EN-US</div>
+        <div class="bubble-text">
+          "That tall building with the iron tower<br>is the Eiffel Tower — built in 1889."
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+</div><!-- /#stage -->
+
+<div id="scanlines"></div>
+<div id="vignette"></div>
+
+<script>
+/* ─────────────────────────────────────────────────────────────
+   v4-synthwave.html  —  60s AI News Motion Graphic
+   Pure GSAP, no HyperFrames. Deterministic: no Math.random / Date.now
+   ───────────────────────────────────────────────────────────── */
+
+const tl = gsap.timeline({ repeat: -1 });
+
+/* ── Proxy objects for countup animations ── */
+const barBProxy = { val: 0 };
+const barFProxy = { val: 0 };
+const errProxy  = { val: 80 };
+
+/* ══════════════════════════════════════════════════════════════
+   INITIAL STATES
+   ══════════════════════════════════════════════════════════════ */
+gsap.set(['#s1','#s2','#s3','#s4'], { opacity: 0 });
+gsap.set('#s1-eyebrow', { opacity: 0, y: -20 });
+gsap.set('#s1-header',  { opacity: 0, scale: 0.8 });
+gsap.set('#s1-desc',    { opacity: 0, x: -40 });
+gsap.set('#s1-bench',   { opacity: 0, y: 30 });
+gsap.set('#bar-b-fill', { width: '0%' });
+gsap.set('#bar-f-fill', { width: '0%' });
+gsap.set('#s2-term',    { opacity: 0, x: -60 });
+gsap.set(['#tl1','#tl2','#tl3','#tl4','#tl5','#tl6'], { opacity: 0, x: -20 });
+gsap.set('#s2-gpt',     { opacity: 0, x: 60 });
+gsap.set('#n1',         { borderColor: 'rgba(255,0,110,0.15)', boxShadow: 'none' });
+gsap.set('#n2',         { borderColor: 'rgba(58,134,255,0.15)', boxShadow: 'none' });
+gsap.set('#n3',         { borderColor: 'rgba(131,56,236,0.15)', boxShadow: 'none' });
+gsap.set('#s3-err',     { opacity: 0, y: 40 });
+gsap.set('#err-bar-fill', { width: '80%' });
+gsap.set('#s4-hud',     { opacity: 0 });
+gsap.set('#s4-trans',   { opacity: 0, x: 60 });
+gsap.set('#bubble-es',  { opacity: 0, scale: 0.9 });
+gsap.set('#landmark',   { opacity: 0, y: 20 });
+gsap.set('#bubble-en',  { opacity: 0, scale: 0.9 });
+
+/* ══════════════════════════════════════════════════════════════
+   SCENE 1 — GEMINI 3.5 FLASH  (0 – 15s)
+   ══════════════════════════════════════════════════════════════ */
+
+/* 0.0s — scene fade in */
+tl.to('#s1', { opacity: 1, duration: 0.4 }, 0.0);
+
+/* 3.12s — eyebrow + title burst */
+tl.to('#s1-eyebrow', { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }, 3.12);
+tl.to('#s1-header', {
+  opacity: 1, scale: 1, duration: 0.6, ease: 'back.out(1.7)'
+}, 3.12);
+
+/* 5.84s — description panel slides in */
+tl.to('#s1-desc', { opacity: 1, x: 0, duration: 0.5, ease: 'power3.out' }, 5.84);
+
+/* 7.92s — benchmark panel enters */
+tl.to('#s1-bench', { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' }, 7.92);
+
+/* 11.08s — competitor bar fills to 25% */
+tl.to(barBProxy, {
+  val: 25, duration: 1.2, ease: 'power2.out',
+  onUpdate: () => {
+    document.getElementById('bar-b-fill').style.width = barBProxy.val + '%';
+    document.getElementById('bar-b-pct').textContent  = Math.round(barBProxy.val) + '%';
+  }
+}, 11.08);
+
+/* 12.0s — Flash bar surges to 100% */
+tl.to(barFProxy, {
+  val: 100, duration: 1.4, ease: 'power4.out',
+  onUpdate: () => {
+    document.getElementById('bar-f-fill').style.width = barFProxy.val + '%';
+    document.getElementById('bar-f-pct').textContent  = Math.round(barFProxy.val) + '%';
+  }
+}, 12.0);
+
+/* 14.5s — scene fade out */
+tl.to('#s1', { opacity: 0, duration: 0.6 }, 14.5);
+
+/* ══════════════════════════════════════════════════════════════
+   SCENE 2 — CODING + GPT-5.5  (15 – 30s)
+   ══════════════════════════════════════════════════════════════ */
+
+/* Reset s1 state */
+tl.set('#s1',        { opacity: 0 }, 15.0);
+tl.set(['#s1-eyebrow','#s1-header','#s1-desc','#s1-bench'], { opacity: 0 }, 15.0);
+tl.set('#bar-b-fill', { width: '0%' }, 15.0);
+tl.set('#bar-f-fill', { width: '0%' }, 15.0);
+tl.set(barBProxy, { val: 0 }, 15.0);
+tl.set(barFProxy, { val: 0 }, 15.0);
+
+/* 14.8s — scene fade in */
+tl.to('#s2', { opacity: 1, duration: 0.5 }, 14.8);
+
+/* 16.64s — terminal slides in */
+tl.to('#s2-term', { opacity: 1, x: 0, duration: 0.5, ease: 'power3.out' }, 16.64);
+
+/* 17.0s — terminal lines stagger */
+tl.to('#tl1', { opacity: 1, x: 0, duration: 0.25, ease: 'power2.out' }, 17.0);
+tl.to('#tl2', { opacity: 1, x: 0, duration: 0.25, ease: 'power2.out' }, 17.35);
+tl.to('#tl3', { opacity: 1, x: 0, duration: 0.25, ease: 'power2.out' }, 17.7);
+tl.to('#tl4', { opacity: 1, x: 0, duration: 0.25, ease: 'power2.out' }, 18.1);
+tl.to('#tl5', { opacity: 1, x: 0, duration: 0.25, ease: 'power2.out' }, 18.45);
+tl.to('#tl6', { opacity: 1, x: 0, duration: 0.25, ease: 'power2.out' }, 18.8);
+
+/* 19.2s — GPT panel slides in from right */
+tl.to('#s2-gpt', { opacity: 1, x: 0, duration: 0.6, ease: 'back.out(1.3)' }, 19.2);
+
+/* 29.5s — scene fade out */
+tl.to('#s2', { opacity: 0, duration: 0.5 }, 29.5);
+
+/* ══════════════════════════════════════════════════════════════
+   SCENE 3 — GPT-5 CAPABILITIES  (30 – 45s)
+   ══════════════════════════════════════════════════════════════ */
+
+/* Reset s2 state */
+tl.set('#s2',       { opacity: 0 }, 30.0);
+tl.set('#s2-term',  { opacity: 0, x: -60 }, 30.0);
+tl.set('#s2-gpt',   { opacity: 0, x: 60 }, 30.0);
+tl.set(['#tl1','#tl2','#tl3','#tl4','#tl5','#tl6'], { opacity: 0, x: -20 }, 30.0);
+
+/* Reset err proxy */
+tl.set(errProxy, { val: 80 }, 29.9);
+tl.set('#err-bar-fill', { width: '80%', background: 'linear-gradient(90deg, #ff006e, #ff4500)', boxShadow: '0 0 15px rgba(255,0,110,0.6)' }, 29.9);
+
+/* 29.8s — scene fade in */
+tl.to('#s3', { opacity: 1, duration: 0.5 }, 29.8);
+
+/* 30.12s — Node 1 lights up */
+tl.to('#n1', {
+  borderColor: 'rgba(255,0,110,0.7)',
+  boxShadow: '0 0 20px rgba(255,0,110,0.4), 0 0 60px rgba(255,0,110,0.15)',
+  background: 'rgba(255,0,110,0.12)',
+  duration: 0.4, ease: 'power2.out'
+}, 30.12);
+tl.to('#n1 .node-title', { textShadow: '0 0 12px currentColor', color: '#ff006e', duration: 0.3 }, 30.12);
+
+/* 32.06s — Node 1 dims, Node 2 lights up */
+tl.to('#n1', {
+  borderColor: 'rgba(255,0,110,0.15)',
+  boxShadow: 'none',
+  background: 'rgba(255,0,110,0.04)',
+  duration: 0.3
+}, 32.06);
+tl.to('#n1 .node-title', { textShadow: 'none', color: '#f0e8ff', duration: 0.3 }, 32.06);
+tl.to('#n2', {
+  borderColor: 'rgba(58,134,255,0.7)',
+  boxShadow: '0 0 20px rgba(58,134,255,0.4), 0 0 60px rgba(58,134,255,0.15)',
+  background: 'rgba(58,134,255,0.12)',
+  duration: 0.4, ease: 'power2.out'
+}, 32.06);
+tl.to('#n2 .node-title', { textShadow: '0 0 12px currentColor', color: '#3a86ff', duration: 0.3 }, 32.06);
+
+/* 33.62s — Node 2 dims, Node 3 lights up */
+tl.to('#n2', {
+  borderColor: 'rgba(58,134,255,0.15)',
+  boxShadow: 'none',
+  background: 'rgba(58,134,255,0.04)',
+  duration: 0.3
+}, 33.62);
+tl.to('#n2 .node-title', { textShadow: 'none', color: '#f0e8ff', duration: 0.3 }, 33.62);
+tl.to('#n3', {
+  borderColor: 'rgba(131,56,236,0.7)',
+  boxShadow: '0 0 20px rgba(131,56,236,0.4), 0 0 60px rgba(131,56,236,0.15)',
+  background: 'rgba(131,56,236,0.12)',
+  duration: 0.4, ease: 'power2.out'
+}, 33.62);
+tl.to('#n3 .node-title', { textShadow: '0 0 12px currentColor', color: '#8338ec', duration: 0.3 }, 33.62);
+
+/* 35.24s — error panel enters */
+tl.to('#s3-err', { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' }, 35.24);
+
+/* 37.64s — error count 80→20, bar shrinks, colors shift */
+tl.to(errProxy, {
+  val: 20,
+  duration: 2.8,
+  ease: 'power2.inOut',
+  onUpdate: () => {
+    const v = Math.round(errProxy.val);
+    document.getElementById('err-number').textContent = v;
+    const pct = v + '%';
+    const fill = document.getElementById('err-bar-fill');
+    fill.style.width = pct;
+    // Color transitions red→green as value drops
+    const t = 1 - (v - 20) / 60; // 0 at 80, 1 at 20
+    const r = Math.round(255 * (1 - t));
+    const g = Math.round(255 * t);
+    fill.style.background = `linear-gradient(90deg, rgb(${r},${Math.round(g*0.6)},${Math.round(20*t)}), rgb(${r},${g},${Math.round(20*t)}))`;
+    const glowR = Math.round(255 * (1 - t));
+    const glowG = Math.round(255 * t);
+    fill.style.boxShadow = `0 0 15px rgba(${glowR},${glowG},20,0.6)`;
+  }
+}, 37.64);
+
+/* 44.5s — scene fade out */
+tl.to('#s3', { opacity: 0, duration: 0.5 }, 44.5);
+
+/* ══════════════════════════════════════════════════════════════
+   SCENE 4 — META RAY-BAN AR  (45 – 60s)
+   ══════════════════════════════════════════════════════════════ */
+
+/* Reset s3 */
+tl.set('#s3',   { opacity: 0 }, 45.0);
+tl.set('#s3-err', { opacity: 0, y: 40 }, 45.0);
+tl.set('#n1',   { borderColor: 'rgba(255,0,110,0.15)', boxShadow: 'none', background: 'rgba(255,0,110,0.04)' }, 45.0);
+tl.set('#n2',   { borderColor: 'rgba(58,134,255,0.15)', boxShadow: 'none', background: 'rgba(58,134,255,0.04)' }, 45.0);
+tl.set('#n3',   { borderColor: 'rgba(131,56,236,0.15)', boxShadow: 'none', background: 'rgba(131,56,236,0.04)' }, 45.0);
+tl.set('#n1 .node-title', { textShadow: 'none', color: '#f0e8ff' }, 45.0);
+tl.set('#n2 .node-title', { textShadow: 'none', color: '#f0e8ff' }, 45.0);
+tl.set('#n3 .node-title', { textShadow: 'none', color: '#f0e8ff' }, 45.0);
+tl.set('#bubble-es', { opacity: 0, scale: 0.9 }, 45.0);
+tl.set('#landmark',  { opacity: 0, y: 20 }, 45.0);
+tl.set('#bubble-en', { opacity: 0, scale: 0.9 }, 45.0);
+tl.set('#s4-trans',  { opacity: 0, x: 60 }, 45.0);
+tl.set('#s4-hud',    { opacity: 0 }, 45.0);
+
+/* 44.8s — scene fade in */
+tl.to('#s4', { opacity: 1, duration: 0.5 }, 44.8);
+
+/* 45.26s — HUD appears + radar sweep starts */
+tl.to('#s4-hud', { opacity: 1, duration: 0.5, ease: 'power2.out' }, 45.26);
+tl.add(() => {
+  gsap.killTweensOf('#radar-sweep');
+  gsap.to('#radar-sweep', {
+    rotation: 360,
+    duration: 3,
+    ease: 'none',
+    repeat: -1,
+    transformOrigin: '50% 50%'
+  });
+}, 45.26);
+
+/* Cursor dot blink */
+tl.add(() => {
+  gsap.to('#cursor-dot', {
+    opacity: 0,
+    duration: 0.4,
+    ease: 'none',
+    repeat: -1,
+    yoyo: true
+  });
+}, 45.26);
+
+/* 50.04s — translation panel slides in */
+tl.to('#s4-trans', { opacity: 1, x: 0, duration: 0.5, ease: 'power3.out' }, 50.04);
+
+/* 51.26s — Spanish bubble pops in */
+tl.to('#bubble-es', { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(1.5)' }, 51.26);
+
+/* 53.02s — landmark lock appears */
+tl.to('#landmark', { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' }, 53.02);
+
+/* 55.26s — English bubble pops in */
+tl.to('#bubble-en', { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(1.5)' }, 55.26);
+
+/* 59.5s — final fade out */
+tl.to('#s4', { opacity: 0, duration: 0.5 }, 59.5);
+
+/* Reset s4 for loop */
+tl.set('#s4',        { opacity: 0 }, 60.0);
+tl.add(() => {
+  gsap.killTweensOf('#radar-sweep');
+  gsap.killTweensOf('#cursor-dot');
+  gsap.set('#radar-sweep', { rotation: 0 });
+  gsap.set('#cursor-dot',  { opacity: 1 });
+}, 60.0);
+
+/* ══════════════════════════════════════════════════════════════
+   PLAY
+   ══════════════════════════════════════════════════════════════ */
+tl.play();
+</script>
+</body>
+</html>

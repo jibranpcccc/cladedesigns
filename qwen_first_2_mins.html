@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Qwen 3.7 Max — ANTIgravity Style</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700;900&family=Playfair+Display:ital,wght@0,900;1,900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --coral:  #e05c3a;
+  --amber:  #f5a520;
+  --white:  #ffffff;
+  --ink:    #1a1a1a;
+  --muted:  #3d3630;
+}
+
+html, body { width: 100vw; height: 100vh; overflow: hidden; }
+
+#stage { position: relative; width: 100%; height: 100%; overflow: hidden; }
+
+/* ── All scenes stack absolutely ── */
+.scene {
+  position: absolute; inset: 0;
+  opacity: 0;
+  display: flex;
+  padding: 8vh 7vw;
+}
+
+/* ── Shared section label ── */
+.sec-lbl {
+  font-family: 'Space Mono', monospace;
+  font-weight: 700;
+  font-size: clamp(10px, 0.85vw, 14px);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--coral);
+  margin-bottom: 3.2vh;
+}
+
+
+/* ═══════════════════════════════════════════════════
+   SCENE 1 — Dark Navy  ·  Serif Headline  ·  Cube
+═══════════════════════════════════════════════════ */
+
+#s1 {
+  background: radial-gradient(ellipse at 62% 42%, #1d1434 0%, #0d0c1d 62%);
+  align-items: center;
+}
+
+.s1-left {
+  flex: 0 0 48%;
+  display: flex; flex-direction: column; justify-content: center;
+}
+
+.s1-hl {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: clamp(46px, 8vw, 132px);
+  line-height: 1.02;
+  color: var(--white);
+  margin-bottom: 3vh;
+}
+.s1-hl .coral { color: var(--coral); font-style: italic; }
+
+.s1-rule { width: 18vw; height: 2px; background: var(--coral); }
+
+.s1-right {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* Wireframe cube */
+.cube-wrap { perspective: 1400px; }
+
+.cube {
+  width: 22vw; height: 22vw;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateX(18deg);
+}
+
+.face {
+  position: absolute; inset: 0;
+  border: 1.5px solid rgba(224, 92, 58, 0.55);
+  background: rgba(200, 68, 32, 0.028);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Space Mono', monospace;
+  font-weight: 700;
+  font-size: clamp(14px, 1.9vw, 32px);
+  color: rgba(255, 255, 255, 0.78);
+  letter-spacing: 0.04em;
+}
+
+/* Particles */
+.pt {
+  position: absolute; border-radius: 50%;
+  background: rgba(190, 162, 255, 0.55);
+  pointer-events: none;
+}
+
+
+/* ═══════════════════════════════════════════════════
+   SCENE 2 — Warm Cream  ·  Big Numbers  ·  Cards
+═══════════════════════════════════════════════════ */
+
+#s2 { background: #ede8df; align-items: center; }
+
+.s2-left {
+  flex: 0 0 44%;
+  display: flex; flex-direction: column; justify-content: center;
+}
+
+.s2-num-row {
+  display: flex; align-items: baseline; gap: 0.1em;
+  margin-bottom: 2.5vh;
+}
+
+.s2-num {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 900;
+  font-size: clamp(88px, 15vw, 232px);
+  line-height: 0.88;
+  color: var(--ink);
+  letter-spacing: -0.03em;
+}
+
+.s2-max {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 900;
+  font-size: clamp(38px, 6.5vw, 104px);
+  color: var(--coral);
+  letter-spacing: -0.02em;
+}
+
+.s2-body {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  font-size: clamp(12px, 1.22vw, 19px);
+  line-height: 1.62;
+  color: var(--muted);
+}
+.s2-body strong { font-weight: 700; color: var(--ink); }
+
+.s2-right { flex: 1; position: relative; }
+
+/* Floating feature cards */
+.fc {
+  position: absolute;
+  border-radius: 16px;
+  padding: 2.2vh 2.2vw;
+  font-family: 'Space Mono', monospace;
+  font-weight: 700;
+  font-size: clamp(10px, 1vw, 16px);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--white);
+  white-space: nowrap;
+  box-shadow: 0 22px 52px rgba(0,0,0,0.17);
+}
+
+#fc-ctx { background: #bf3a26; top:  6%; left: 12%; transform: perspective(600px) rotate(-2deg)   rotateX(8deg)  rotateY(-5deg); }
+#fc-thk { background: #1c1c1c; top: 33%; left: 42%; transform: perspective(600px) rotate(1.5deg)  rotateX(8deg)  rotateY( 4deg); }
+#fc-agt { background: #c97a3a; top: 58%; left:  8%; transform: perspective(600px) rotate(-1deg)   rotateX(6deg)  rotateY(-3deg); }
+#fc-prv { background: #5b4fcc; top: 74%; left: 38%; transform: perspective(600px) rotate(2deg)    rotateX(10deg) rotateY( 5deg); }
+
+
+/* ═══════════════════════════════════════════════════
+   SCENE 3 — Dark Charcoal  ·  Amber Quote
+═══════════════════════════════════════════════════ */
+
+#s3 {
+  background: #1c1f2c;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.s3-hl {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: clamp(28px, 4.8vw, 78px);
+  line-height: 1.22;
+  color: var(--white);
+  margin-top: 3vh;
+  max-width: 88vw;
+}
+.s3-hl .amb { color: var(--amber); }
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- ════════════════ SCENE 1 ════════════════ -->
+  <div class="scene" id="s1">
+    <!-- Deterministic particle positions -->
+    <div class="pt" style="width:3px;height:3px;top:10%;left:72%;"></div>
+    <div class="pt" style="width:2px;height:2px;top:17%;left:84%;opacity:.7;"></div>
+    <div class="pt" style="width:4px;height:4px;top:29%;left:91%;opacity:.5;"></div>
+    <div class="pt" style="width:2px;height:2px;top:43%;left:78%;opacity:.8;"></div>
+    <div class="pt" style="width:3px;height:3px;top:54%;left:88%;opacity:.6;"></div>
+    <div class="pt" style="width:2px;height:2px;top:67%;left:75%;opacity:.7;"></div>
+    <div class="pt" style="width:3px;height:3px;top:80%;left:93%;opacity:.5;"></div>
+    <div class="pt" style="width:2px;height:2px;top:20%;left:57%;opacity:.6;"></div>
+    <div class="pt" style="width:2px;height:2px;top:73%;left:62%;opacity:.4;"></div>
+    <div class="pt" style="width:3px;height:3px;top:38%;left:66%;opacity:.5;"></div>
+    <div class="pt" style="width:2px;height:2px;top:89%;left:83%;opacity:.6;"></div>
+    <div class="pt" style="width:2px;height:2px;top: 5%;left:95%;opacity:.4;"></div>
+    <div class="pt" style="width:3px;height:3px;top:47%;left:53%;opacity:.5;"></div>
+    <div class="pt" style="width:2px;height:2px;top:61%;left:97%;opacity:.3;"></div>
+    <div class="pt" style="width:2px;height:2px;top:85%;left:68%;opacity:.5;"></div>
+
+    <div class="s1-left">
+      <div class="sec-lbl">§ 01 &thinsp;·&thinsp; New Flagship Drop</div>
+      <h1 class="s1-hl">
+        Alibaba<br>
+        shipped<br>
+        <span class="coral">Qwen 3.7 Max</span><br>
+        almost in<br>
+        silence.
+      </h1>
+      <div class="s1-rule"></div>
+    </div>
+
+    <div class="s1-right">
+      <div class="cube-wrap">
+        <div class="cube" id="cube">
+          <div class="face" id="ff">MAX</div>
+          <div class="face" id="fb">3.7</div>
+          <div class="face" id="fl">IA</div>
+          <div class="face" id="fr">Q</div>
+          <div class="face" id="ft">通义</div>
+          <div class="face" id="fd"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ SCENE 2 ════════════════ -->
+  <div class="scene" id="s2">
+    <div class="s2-left">
+      <div class="sec-lbl">§ 02 &thinsp;·&thinsp; The Headline Number</div>
+      <div class="s2-num-row">
+        <span class="s2-num">3.7</span><span class="s2-max">MAX</span>
+      </div>
+      <p class="s2-body">
+        The new flagship in Alibaba's <strong>Qwen</strong> family — built for<br>
+        the agent era, with a million-token context and a<br>
+        thinking mode that reasons before it answers.
+      </p>
+    </div>
+    <div class="s2-right">
+      <div class="fc" id="fc-ctx">1M Context</div>
+      <div class="fc" id="fc-thk">Thinking Mode</div>
+      <div class="fc" id="fc-agt">Agent-Ready</div>
+      <div class="fc" id="fc-prv">Preview</div>
+    </div>
+  </div>
+
+  <!-- ════════════════ SCENE 3 ════════════════ -->
+  <div class="scene" id="s3">
+    <div class="sec-lbl">§ 03 &thinsp;·&thinsp; The Stealth Playbook</div>
+    <h2 class="s3-hl">
+      No press push. No countdown. Just <span class="amb">quiet proof<br>first.</span>
+    </h2>
+  </div>
+
+</div><!-- /#stage -->
+
+<script>
+  /* ── Cube: position faces based on rendered size ── */
+  function positionCube() {
+    const half = document.getElementById('cube').offsetWidth / 2;
+    document.getElementById('ff').style.transform = `translateZ(${half}px)`;
+    document.getElementById('fb').style.transform = `translateZ(-${half}px) rotateY(180deg)`;
+    document.getElementById('fl').style.transform = `translateX(-${half}px) rotateY(-90deg)`;
+    document.getElementById('fr').style.transform = `translateX(${half}px) rotateY(90deg)`;
+    document.getElementById('ft').style.transform = `translateY(-${half}px) rotateX(90deg)`;
+    document.getElementById('fd').style.transform = `translateY(${half}px) rotateX(-90deg)`;
+  }
+  positionCube();
+  window.addEventListener('resize', positionCube);
+
+  /* ── Cube: continuous rotation ── */
+  gsap.set('#cube', { rotationX: 18 });
+  gsap.to('#cube', { rotationY: 360, duration: 24, repeat: -1, ease: 'none' });
+
+  /* ── Particles: deterministic staggered pulse ── */
+  document.querySelectorAll('.pt').forEach(function(el, i) {
+    gsap.to(el, {
+      opacity: 0.12,
+      duration: 1.4 + i * 0.22,
+      yoyo: true,
+      repeat: -1,
+      ease: 'sine.inOut',
+      delay: i * 0.17
+    });
+  });
+
+  /* ── Master scene timeline (loops) ──
+     0–10s : Scene 1 (dark cube)
+     9.5–17s: Scene 2 (cream cards)
+     16.5–27s: Scene 1 again
+     26.5–36s: Scene 3 (charcoal quote)
+  ── */
+  const tl = gsap.timeline({ repeat: -1 });
+
+  tl.to('#s1', { opacity: 1, duration: 0.9, ease: 'power2.inOut' }, 0)
+    .to('#s1', { opacity: 0, duration: 0.9, ease: 'power2.inOut' }, 10);
+
+  tl.to('#s2', { opacity: 1, duration: 0.9, ease: 'power2.inOut' }, 9.5)
+    .to('#s2', { opacity: 0, duration: 0.9, ease: 'power2.inOut' }, 17);
+
+  tl.to('#s1', { opacity: 1, duration: 0.9, ease: 'power2.inOut' }, 16.5)
+    .to('#s1', { opacity: 0, duration: 0.9, ease: 'power2.inOut' }, 27);
+
+  tl.to('#s3', { opacity: 1, duration: 0.9, ease: 'power2.inOut' }, 26.5)
+    .to('#s3', { opacity: 0, duration: 0.9, ease: 'power2.inOut' }, 36);
+</script>
+</body>
+</html>

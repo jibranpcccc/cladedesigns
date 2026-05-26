@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI News — v5 Minimal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,700;0,9..40,900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #0a0a0a;
+  font-family: 'DM Sans', sans-serif;
+  color: #ffffff;
+}
+
+#stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ── SCENE BASE ── */
+.scene {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  display: flex;
+  padding: 9vh 8vw;
+  align-items: flex-start;
+}
+
+/* ══════════════════════════════════════════════
+   SCENE 1 — Google Gemini 3.5 Flash
+══════════════════════════════════════════════ */
+#s1 {
+  flex-direction: row;
+  gap: 6vw;
+  padding-top: 12vh;
+}
+
+#s1-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+#s1-right {
+  width: 38%;
+  display: flex;
+  flex-direction: column;
+  padding-top: 0.5vh;
+}
+
+#s1-google-label {
+  font-weight: 700;
+  font-size: clamp(11px, 1vw, 15px);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #ff2222;
+  margin-bottom: 1.4vh;
+}
+
+#s1-rule {
+  height: 1px;
+  background: #ffffff;
+  width: 0;
+  margin-bottom: 2.2vh;
+}
+
+#s1-title {
+  font-weight: 900;
+  font-size: clamp(52px, 8.5vw, 136px);
+  color: #ffffff;
+  line-height: 0.88;
+  letter-spacing: -0.02em;
+}
+
+#s1-desc {
+  margin-top: 5vh;
+  border-left: 1px solid #ff2222;
+  padding-left: 1.4vw;
+}
+
+#s1-desc p {
+  font-weight: 400;
+  font-size: clamp(13px, 1.1vw, 17px);
+  line-height: 1.65;
+  color: rgba(255,255,255,0.55);
+}
+
+#s1-bench {
+  display: flex;
+  flex-direction: column;
+}
+
+#s1-bench-rule {
+  height: 2px;
+  background: #ffffff;
+  margin-bottom: 2vh;
+}
+
+#s1-bench-label {
+  font-weight: 900;
+  font-size: clamp(10px, 0.8vw, 13px);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin-bottom: 3.5vh;
+}
+
+.bench-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+  margin-bottom: 3.5vh;
+}
+
+.bench-label {
+  font-weight: 700;
+  font-size: clamp(11px, 0.9vw, 14px);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.6);
+}
+
+.bench-track {
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  width: 100%;
+  position: relative;
+}
+
+.bench-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+}
+
+#bar-b { background: rgba(255,255,255,0.3); }
+#bar-f { background: #ff2222; }
+
+/* ══════════════════════════════════════════════
+   SCENE 2 — Coding + GPT-5.5
+══════════════════════════════════════════════ */
+#s2 {
+  flex-direction: row;
+  gap: 5vw;
+  padding-top: 10vh;
+}
+
+#s2-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+#s2-right {
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+#s2-term {
+  display: flex;
+  flex-direction: column;
+}
+
+#s2-term-rule {
+  height: 2px;
+  background: #ffffff;
+  margin-bottom: 2vh;
+}
+
+#s2-term-label {
+  font-weight: 900;
+  font-size: clamp(10px, 0.8vw, 13px);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin-bottom: 2.5vh;
+}
+
+.code-line {
+  font-family: monospace;
+  font-size: clamp(12px, 1vw, 15px);
+  line-height: 2;
+  color: rgba(255,255,255,0.6);
+  white-space: nowrap;
+}
+
+.code-line .kw-red {
+  color: #ff2222;
+  font-weight: 700;
+}
+
+#s2-gpt {
+  border-left: 2px solid #ff2222;
+  padding-left: 2.5vw;
+}
+
+#s2-openai-label {
+  font-weight: 700;
+  font-size: clamp(11px, 1vw, 15px);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #ff2222;
+  margin-bottom: 2vh;
+}
+
+#s2-model-name {
+  font-weight: 900;
+  font-size: clamp(60px, 9vw, 140px);
+  color: #ffffff;
+  line-height: 0.88;
+  letter-spacing: -0.02em;
+}
+
+#s2-caption {
+  font-weight: 400;
+  font-size: clamp(12px, 1vw, 15px);
+  color: rgba(255,255,255,0.45);
+  margin-top: 2.5vh;
+  margin-bottom: 2.5vh;
+  line-height: 1.6;
+}
+
+#s2-launched {
+  font-weight: 700;
+  font-size: clamp(14px, 1.2vw, 19px);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #ff2222;
+}
+
+/* ══════════════════════════════════════════════
+   SCENE 3 — GPT-5 Capabilities
+══════════════════════════════════════════════ */
+#s3 {
+  flex-direction: column;
+  padding-top: 8vh;
+}
+
+#s3-header {
+  margin-bottom: 5vh;
+}
+
+#s3-header-label {
+  font-weight: 900;
+  font-size: clamp(10px, 0.8vw, 13px);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin-bottom: 1.5vh;
+}
+
+#s3-header-title {
+  font-weight: 900;
+  font-size: clamp(32px, 4.5vw, 72px);
+  color: #ffffff;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+
+#s3-nodes {
+  display: flex;
+  flex-direction: row;
+  gap: 2vw;
+  margin-bottom: 6vh;
+  width: 100%;
+}
+
+.cap-node {
+  flex: 1;
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 3vh 2.5vw;
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+}
+
+.node-num {
+  font-weight: 900;
+  font-size: clamp(28px, 3vw, 48px);
+  color: #ff2222;
+  line-height: 1;
+}
+
+.node-name {
+  font-weight: 700;
+  font-size: clamp(13px, 1.1vw, 17px);
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.node-sub {
+  font-weight: 400;
+  font-size: clamp(11px, 0.85vw, 13px);
+  color: rgba(255,255,255,0.4);
+  line-height: 1.5;
+  margin-top: 0.5vh;
+}
+
+#s3-err {
+  display: flex;
+  flex-direction: column;
+}
+
+#s3-err-rule {
+  height: 1px;
+  background: #ffffff;
+  margin-bottom: 2vh;
+  width: 100%;
+}
+
+#s3-err-label {
+  font-weight: 700;
+  font-size: clamp(10px, 0.85vw, 13px);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #ffffff;
+  font-variant: small-caps;
+  margin-bottom: 1.5vh;
+}
+
+#s3-err-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5vw;
+}
+
+#s3-err-num {
+  font-weight: 900;
+  font-size: clamp(80px, 14vw, 220px);
+  color: #ffffff;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+#s3-err-pct {
+  font-weight: 900;
+  font-size: clamp(28px, 4vw, 60px);
+  color: rgba(255,255,255,0.5);
+}
+
+#s3-err-caption {
+  font-weight: 400;
+  font-size: clamp(12px, 1vw, 15px);
+  color: rgba(255,255,255,0.45);
+  margin-top: 1.5vh;
+  margin-bottom: 2.5vh;
+}
+
+#s3-err-bar-track {
+  height: 3px;
+  background: rgba(255,255,255,0.08);
+  width: 100%;
+  position: relative;
+}
+
+#s3-err-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 80%;
+  background: #ff2222;
+}
+
+/* ══════════════════════════════════════════════
+   SCENE 4 — Meta Ray-Ban AR
+══════════════════════════════════════════════ */
+#s4 {
+  flex-direction: row;
+  gap: 6vw;
+  padding-top: 10vh;
+}
+
+#s4-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+#s4-right {
+  width: 38%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#s4-header {
+  margin-bottom: 4vh;
+}
+
+#s4-label {
+  font-weight: 900;
+  font-size: clamp(10px, 0.8vw, 13px);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin-bottom: 1.2vh;
+}
+
+#s4-title {
+  font-weight: 900;
+  font-size: clamp(36px, 5.5vw, 88px);
+  color: #ffffff;
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+}
+
+#s4-title span {
+  color: #ff2222;
+}
+
+#s4-trans {
+  display: flex;
+  flex-direction: column;
+  gap: 3.5vh;
+}
+
+.trans-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5vh;
+}
+
+.trans-lang {
+  font-weight: 700;
+  font-size: clamp(10px, 0.8vw, 13px);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #ff2222;
+}
+
+.trans-text {
+  font-weight: 400;
+  font-size: clamp(14px, 1.2vw, 19px);
+  color: #ffffff;
+  line-height: 1.5;
+}
+
+#landmark {
+  font-weight: 700;
+  font-size: clamp(11px, 0.9vw, 14px);
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.7);
+  margin-top: 0.5vh;
+}
+
+#landmark .dot-red {
+  color: #ff2222;
+  margin-right: 0.4em;
+}
+
+/* HUD */
+#s4-hud {
+  border: 1px solid rgba(255,255,255,0.25);
+  width: min(32vh, 28vw);
+  aspect-ratio: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#hud-label {
+  position: absolute;
+  top: 1.2vh;
+  left: 1.2vw;
+  font-weight: 700;
+  font-size: clamp(9px, 0.65vw, 11px);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #ffffff;
+  opacity: 0.7;
+}
+
+#hud-crosshair-h {
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+  transform: translateY(-50%);
+}
+
+#hud-crosshair-v {
+  position: absolute;
+  left: 50%;
+  top: 10%;
+  bottom: 10%;
+  width: 1px;
+  background: rgba(255,255,255,0.08);
+  transform: translateX(-50%);
+}
+
+#radar-ring {
+  width: 65%;
+  aspect-ratio: 1;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#radar-sweep {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0%,
+    rgba(255,34,34,0.3) 8%,
+    transparent 8%
+  );
+}
+
+#radar-center {
+  width: 6px;
+  height: 6px;
+  background: #ff2222;
+  border-radius: 50%;
+  position: absolute;
+}
+
+#s4-hud-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.2vh;
+  margin-top: 2.5vh;
+  width: min(32vh, 28vw);
+}
+
+#s4-hud-status {
+  font-weight: 900;
+  font-size: clamp(10px, 0.75vw, 12px);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #ff2222;
+}
+
+#s4-hud-rule {
+  height: 1px;
+  background: rgba(255,255,255,0.12);
+  width: 100%;
+}
+
+#s4-hud-info {
+  font-weight: 400;
+  font-size: clamp(10px, 0.75vw, 12px);
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.05em;
+  line-height: 1.8;
+}
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- ══ SCENE 1 ══ -->
+  <div class="scene" id="s1">
+    <div id="s1-left">
+      <div id="s1-google-label">Google AI</div>
+      <div id="s1-rule"></div>
+      <div id="s1-title">GEMINI<br>3.5<br>FLASH</div>
+      <div id="s1-desc">
+        <p>Context window: 1M tokens.<br>
+        Multimodal reasoning across<br>
+        text, audio, image, and video.<br>
+        Sub-second response latency.</p>
+      </div>
+    </div>
+    <div id="s1-right">
+      <div id="s1-bench">
+        <div id="s1-bench-rule"></div>
+        <div id="s1-bench-label">§ 01&nbsp;&nbsp;&nbsp;Speed Benchmark</div>
+        <div class="bench-row">
+          <div class="bench-label">GPT-4o&nbsp;&nbsp;Baseline</div>
+          <div class="bench-track"><div class="bench-fill" id="bar-b"></div></div>
+        </div>
+        <div class="bench-row">
+          <div class="bench-label">Gemini 3.5 Flash</div>
+          <div class="bench-track"><div class="bench-fill" id="bar-f"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCENE 2 ══ -->
+  <div class="scene" id="s2">
+    <div id="s2-left">
+      <div id="s2-term">
+        <div id="s2-term-rule"></div>
+        <div id="s2-term-label">§ 02&nbsp;&nbsp;&nbsp;Routing Log</div>
+        <div class="code-line" id="cl1">INPUT &gt; classify(task="code_generation")</div>
+        <div class="code-line" id="cl2">MODELS <span class="kw-red">SELECTED</span> &gt; ["gpt-5.5", "gemini-3.5"]</div>
+        <div class="code-line" id="cl3">EVAL &gt; latency=0.41s&nbsp;&nbsp;quality=0.97</div>
+        <div class="code-line" id="cl4">ROUTE &gt; gpt-5.5 <span class="kw-red">ACTIVE</span></div>
+        <div class="code-line" id="cl5">OUT &gt; tokens=1842&nbsp;&nbsp;cost=$0.0018</div>
+      </div>
+    </div>
+    <div id="s2-right">
+      <div id="s2-gpt">
+        <div id="s2-openai-label">OpenAI</div>
+        <div id="s2-model-name">GPT-<br>5.5</div>
+        <div id="s2-caption">Advanced reasoning with<br>enhanced code generation<br>and multimodal capabilities.</div>
+        <div id="s2-launched">— Launched</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCENE 3 ══ -->
+  <div class="scene" id="s3">
+    <div id="s3-header">
+      <div id="s3-header-label">§ 03&nbsp;&nbsp;&nbsp;Capabilities</div>
+      <div id="s3-header-title">GPT-5<br>CAPABILITIES</div>
+    </div>
+    <div id="s3-nodes">
+      <div class="cap-node" id="n1">
+        <div class="node-num">01</div>
+        <div class="node-name">Multimodal</div>
+        <div class="node-sub">Vision, audio, video,<br>and document input</div>
+      </div>
+      <div class="cap-node" id="n2">
+        <div class="node-num">02</div>
+        <div class="node-name">Agentic</div>
+        <div class="node-sub">Tool use, planning,<br>multi-step reasoning</div>
+      </div>
+      <div class="cap-node" id="n3">
+        <div class="node-num">03</div>
+        <div class="node-name">Reasoning</div>
+        <div class="node-sub">Chain-of-thought with<br>reduced error rate</div>
+      </div>
+    </div>
+    <div id="s3-err">
+      <div id="s3-err-rule"></div>
+      <div id="s3-err-label">Reasoning Error Rate</div>
+      <div id="s3-err-row">
+        <div id="s3-err-num">80</div>
+        <div id="s3-err-pct">%</div>
+      </div>
+      <div id="s3-err-caption">reduced from 80% to 20%</div>
+      <div id="s3-err-bar-track">
+        <div id="s3-err-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCENE 4 ══ -->
+  <div class="scene" id="s4">
+    <div id="s4-left">
+      <div id="s4-header">
+        <div id="s4-label">§ 04&nbsp;&nbsp;&nbsp;Spatial AI</div>
+        <div id="s4-title">META<br>RAY-BAN<br><span>AR</span></div>
+      </div>
+      <div id="s4-trans">
+        <div class="trans-block" id="s4-es">
+          <div class="trans-lang">ES:</div>
+          <div class="trans-text">¿Puedes ver la Torre Eiffel<br>desde aquí esta noche?</div>
+        </div>
+        <div id="landmark">
+          <span class="dot-red">·</span>EIFFEL TOWER&nbsp;&nbsp;48.8584°N&nbsp;&nbsp;2.2945°E
+        </div>
+        <div class="trans-block" id="s4-en">
+          <div class="trans-lang">EN:</div>
+          <div class="trans-text">Can you see the Eiffel Tower<br>from here tonight?</div>
+        </div>
+      </div>
+    </div>
+    <div id="s4-right">
+      <div id="s4-hud">
+        <div id="hud-label">HUD Active</div>
+        <div id="hud-crosshair-h"></div>
+        <div id="hud-crosshair-v"></div>
+        <div id="radar-ring">
+          <div id="radar-sweep"></div>
+          <div id="radar-center"></div>
+        </div>
+      </div>
+      <div id="s4-hud-bottom">
+        <div id="s4-hud-status">Translation Active</div>
+        <div id="s4-hud-rule"></div>
+        <div id="s4-hud-info">
+          LANG PAIR&nbsp;&nbsp;ES → EN<br>
+          LATENCY&nbsp;&nbsp;38ms<br>
+          ACCURACY&nbsp;&nbsp;99.1%
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<script>
+(function () {
+
+  /* ── Error proxy for Scene 3 counter ── */
+  var errProxy = { val: 80 };
+
+  function updateErrDisplay() {
+    document.getElementById('s3-err-num').textContent = Math.round(errProxy.val);
+  }
+
+  /* ══════════════════════════════════════════════
+     INITIAL STATES — everything hidden / reset
+  ══════════════════════════════════════════════ */
+
+  // All scenes invisible
+  gsap.set('#s1, #s2, #s3, #s4', { opacity: 0 });
+
+  // S1 — text elements
+  gsap.set('#s1-google-label', { opacity: 0 });
+  gsap.set('#s1-rule',         { width: 0 });
+  gsap.set('#s1-title',        { opacity: 0, y: 30 });
+  gsap.set('#s1-desc',         { opacity: 0 });
+  gsap.set('#s1-bench',        { opacity: 0 });
+  gsap.set('#bar-b, #bar-f',   { width: '0%' });
+
+  // S2
+  gsap.set('#s2-term',                          { opacity: 0, x: -30 });
+  gsap.set('#cl1, #cl2, #cl3, #cl4, #cl5',     { opacity: 0, y: 8 });
+  gsap.set('#s2-gpt',                           { opacity: 0, x: 30 });
+
+  // S3
+  gsap.set('#n1, #n2, #n3',  { borderColor: 'rgba(255,255,255,0.12)' });
+  gsap.set('#s3-err',         { opacity: 0, y: 30 });
+  gsap.set('#s3-err-bar',     { width: '80%' });
+
+  // S4
+  gsap.set('#s4-hud',        { opacity: 0 });
+  gsap.set('#s4-hud-bottom', { opacity: 0 });
+  gsap.set('#s4-trans',      { opacity: 0 });
+  gsap.set('#s4-es, #s4-en', { opacity: 0, x: 20 });
+  gsap.set('#landmark',      { opacity: 0 });
+  gsap.set('#radar-sweep',   { rotation: 0, transformOrigin: '50% 50%' });
+
+  /* ══════════════════════════════════════════════
+     MASTER TIMELINE — 60s, infinite loop
+  ══════════════════════════════════════════════ */
+  var tl = gsap.timeline({ repeat: -1 });
+
+  /* ────────────────────────────────────────────
+     SCENE 1  (0s – 15s)  Google Gemini 3.5 Flash
+  ──────────────────────────────────────────── */
+
+  // 0.0 — scene fade in
+  tl.to('#s1', { opacity: 1, duration: 0.4, ease: 'power2.out' }, 0)
+
+  // 3.12 — Google label, horizontal rule, then title slides up
+  .to('#s1-google-label', { opacity: 1, duration: 0.25, ease: 'power2.out' }, 3.12)
+  .to('#s1-rule',  { width: '15vw', duration: 0.3,  ease: 'power2.out' }, 3.12)
+  .to('#s1-title', { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, 3.42)
+
+  // 5.84 — description block
+  .to('#s1-desc', { opacity: 1, duration: 0.5, ease: 'power2.out' }, 5.84)
+
+  // 7.92 — benchmark panel
+  .to('#s1-bench', { opacity: 1, duration: 0.4, ease: 'power2.out' }, 7.92)
+
+  // 11.08 — GPT-4o baseline bar fills to 25%
+  .to('#bar-b', { width: '25%', duration: 0.8, ease: 'power2.out' }, 11.08)
+
+  // 12.0 — Gemini bar surges to 100% (red)
+  .to('#bar-f', { width: '100%', duration: 0.55, ease: 'power2.out' }, 12.0)
+
+  // 14.5 — scene fade out
+  .to('#s1', { opacity: 0, duration: 0.6, ease: 'power2.out' }, 14.5)
+
+  /* ────────────────────────────────────────────
+     SCENE 2  (15s – 30s)  Coding + GPT-5.5
+  ──────────────────────────────────────────── */
+
+  // 14.8 — fade in
+  .to('#s2', { opacity: 1, duration: 0.5, ease: 'power2.out' }, 14.8)
+
+  // 16.64 — terminal block slides in from left
+  .to('#s2-term', { opacity: 1, x: 0, duration: 0.65, ease: 'power2.out' }, 16.64)
+
+  // 17.0 — code lines stagger (every 0.3s)
+  .to('#cl1', { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }, 17.0)
+  .to('#cl2', { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }, 17.3)
+  .to('#cl3', { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }, 17.6)
+  .to('#cl4', { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }, 17.9)
+  .to('#cl5', { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }, 18.2)
+
+  // 19.2 — GPT-5.5 panel slides in from right
+  .to('#s2-gpt', { opacity: 1, x: 0, duration: 0.65, ease: 'power2.out' }, 19.2)
+
+  // 29.5 — scene fade out
+  .to('#s2', { opacity: 0, duration: 0.5, ease: 'power2.out' }, 29.5)
+
+  /* ────────────────────────────────────────────
+     SCENE 3  (30s – 45s)  GPT-5 Capabilities
+  ──────────────────────────────────────────── */
+
+  // 29.9 — reset errProxy and S3 state before scene
+  .call(function () {
+    errProxy.val = 80;
+    updateErrDisplay();
+    gsap.set('#s3-err-bar', { width: '80%' });
+    gsap.set('#n1, #n2, #n3', { borderColor: 'rgba(255,255,255,0.12)' });
+    gsap.set('#s3-err', { opacity: 0, y: 30 });
+  }, null, 29.9)
+
+  // 29.8 — fade in
+  .to('#s3', { opacity: 1, duration: 0.5, ease: 'power2.out' }, 29.8)
+
+  // 30.12 — n1 border goes red
+  .to('#n1', { borderColor: '#ff2222', duration: 0.15, ease: 'none' }, 30.12)
+
+  // 32.06 — n1 back, n2 active
+  .to('#n1', { borderColor: 'rgba(255,255,255,0.12)', duration: 0.15, ease: 'none' }, 32.06)
+  .to('#n2', { borderColor: '#ff2222',               duration: 0.15, ease: 'none' }, 32.06)
+
+  // 33.62 — n2 back, n3 active
+  .to('#n2', { borderColor: 'rgba(255,255,255,0.12)', duration: 0.15, ease: 'none' }, 33.62)
+  .to('#n3', { borderColor: '#ff2222',               duration: 0.15, ease: 'none' }, 33.62)
+
+  // 35.24 — error block enters (slides up)
+  .to('#s3-err', { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, 35.24)
+
+  // 37.64 — error rate counts down 80→20, bar shrinks
+  .to(errProxy, {
+    val: 20,
+    duration: 1.6,
+    ease: 'power2.out',
+    onUpdate: updateErrDisplay
+  }, 37.64)
+  .to('#s3-err-bar', { width: '20%', duration: 1.6, ease: 'power2.out' }, 37.64)
+
+  // 44.5 — scene fade out
+  .to('#s3', { opacity: 0, duration: 0.6, ease: 'power2.out' }, 44.5)
+
+  /* ────────────────────────────────────────────
+     SCENE 4  (45s – 60s)  Meta Ray-Ban AR
+  ──────────────────────────────────────────── */
+
+  // 44.75 — reset S4 state before scene
+  .call(function () {
+    gsap.killTweensOf('#radar-sweep');
+    gsap.set('#radar-sweep',   { rotation: 0, transformOrigin: '50% 50%' });
+    gsap.set('#s4-hud',        { opacity: 0 });
+    gsap.set('#s4-hud-bottom', { opacity: 0 });
+    gsap.set('#s4-trans',      { opacity: 0 });
+    gsap.set('#s4-es, #s4-en', { opacity: 0, x: 20 });
+    gsap.set('#landmark',      { opacity: 0 });
+  }, null, 44.75)
+
+  // 44.8 — fade in
+  .to('#s4', { opacity: 1, duration: 0.5, ease: 'power2.out' }, 44.8)
+
+  // 45.26 — HUD square appears, radar sweep starts spinning
+  .to('#s4-hud', { opacity: 1, duration: 0.4, ease: 'power2.out' }, 45.26)
+  .call(function () {
+    gsap.killTweensOf('#radar-sweep');
+    gsap.to('#radar-sweep', {
+      rotation: 360,
+      duration: 2.4,
+      ease: 'none',
+      repeat: -1,
+      transformOrigin: '50% 50%'
+    });
+  }, null, 45.26)
+
+  // 45.8 — HUD bottom info appears
+  .to('#s4-hud-bottom', { opacity: 1, duration: 0.4, ease: 'power2.out' }, 45.8)
+
+  // 50.04 — translation container visible
+  .to('#s4-trans', { opacity: 1, duration: 0.3, ease: 'power2.out' }, 50.04)
+
+  // 51.26 — ES block slides in from right
+  .to('#s4-es', { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' }, 51.26)
+
+  // 53.02 — landmark appears
+  .to('#landmark', { opacity: 1, duration: 0.4, ease: 'power2.out' }, 53.02)
+
+  // 55.26 — EN block slides in from right
+  .to('#s4-en', { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' }, 55.26)
+
+  // 59.5 — scene fade out
+  .to('#s4', { opacity: 0, duration: 0.5, ease: 'power2.out' }, 59.5)
+
+  /* ────────────────────────────────────────────
+     LOOP BOUNDARY  (59.95s) — reset all S1 & S2
+     (S3 and S4 reset in their pre-scene calls)
+  ──────────────────────────────────────────── */
+  .call(function () {
+    // S1 resets
+    gsap.set('#s1-google-label', { opacity: 0 });
+    gsap.set('#s1-rule',         { width: 0 });
+    gsap.set('#s1-title',        { opacity: 0, y: 30 });
+    gsap.set('#s1-desc',         { opacity: 0 });
+    gsap.set('#s1-bench',        { opacity: 0 });
+    gsap.set('#bar-b, #bar-f',   { width: '0%' });
+    // S2 resets
+    gsap.set('#s2-term',                       { opacity: 0, x: -30 });
+    gsap.set('#cl1,#cl2,#cl3,#cl4,#cl5',      { opacity: 0, y: 8 });
+    gsap.set('#s2-gpt',                        { opacity: 0, x: 30 });
+  }, null, 59.95);
+
+})();
+</script>
+</body>
+</html>

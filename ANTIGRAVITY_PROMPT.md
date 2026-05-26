@@ -128,24 +128,71 @@ Read the full script. For every sentence or logical segment, extract:
 
 Then group segments into scenes. Apply these rules:
 
-**Standard script (120+ words):**
-- One scene = one continuous visual idea, typically 6–14 seconds
-- Under 5 seconds → merge with adjacent scene sharing its topic
-- Over 14 seconds → split at the most logical break point
-- Target: 45–90 seconds total, 7–12 scenes
+**Scene count targets — scale by word count (more words = more scenes = more files):**
 
-**Short script (under 120 words) — maximize scene count:**
-- Count the words. A 100-word script at 2.0 wps = 50 seconds. That is enough for 9–12 scenes if you cut aggressively.
-- Minimum scene length: **4 seconds** (not 5). Every phrase that can stand alone visually gets its own scene.
-- Split at every: topic shift, new noun introduced, before/after contrast, any number or stat, any call to action
-- Target: 9–12 scenes even if some are 4–5 seconds — more scenes = more visual context switches = higher engagement
-- Never merge scenes just to hit a minimum. A 4-second scene with one punchy visual is better than a 9-second scene trying to say two things at once.
-- After splitting, if any scene is still over 10 seconds → split it again
+| Script length | Approx. duration | Target scenes | Target HTML files |
+|---|---|---|---|
+| Under 120 words | 40–60s | 9–12 scenes | 63–84 files |
+| 120–200 words | 60–100s | 14–20 scenes | 98–140 files |
+| 200–350 words | 100–175s | 20–35 scenes | 140–245 files |
+| 350–500 words | 175–250s | 35–50 scenes | 245–350 files |
+| 500+ words | 250s+ | 50+ scenes | 350+ files |
 
-**Maximizing unique HTML files:**
-- Each scene produces 7 zone files (not 5). Add `scene-NN-bg.html` (canvas grid + particles) and `scene-NN-corners.html` (corner brackets + ambient glow) as separate composable layers.
-- NEVER share zone files across scenes. Every scene gets its own unique ticker content, unique sidebar content, unique keyword set, unique corner text. Shared files defeat the purpose.
-- A 10-scene video produces 70 unique HTML files. A 12-scene video produces 84. This is the target.
+**The rule that never changes: MORE HTML FILES = BETTER.** Every extra scene is another visual context switch that keeps the viewer locked in. Never compress two ideas into one scene to save output. Split aggressively.
+
+**Scene splitting rules (all script lengths):**
+- Minimum scene length: **4 seconds**. Anything that can stand alone visually becomes its own scene.
+- Maximum scene length: **10 seconds** for scripts over 200 words (tighter than the default 14s).
+- Split triggers — create a new scene at EVERY: topic shift, new noun or product introduced, before/after contrast, any stat or number, any call to action, any transition from claim → proof, any new speaker perspective
+- After the initial split, scan for any scene still over 10 seconds → split it again. Repeat until none are over 10 seconds.
+- Never merge scenes. If two scenes are 4 seconds each, that is two scenes and 14 HTML files, not one 8-second scene and 7 files.
+
+**Template reuse rules for longer videos:**
+
+The 14 built-in templates (s01–s14) cover distinct narrative functions. For short videos, use each once. For longer ones, reuse is allowed — but with these constraints:
+
+| Video length | Same template reuse | Minimum gap between reuses |
+|---|---|---|
+| Under 90s (≤12 scenes) | Not allowed | — |
+| 90–180s (12–25 scenes) | Max 2 uses each | Must have 4+ other scenes between uses |
+| 180–300s (25–40 scenes) | Max 3 uses each | Must have 3+ other scenes between uses |
+| 300s+ (40+ scenes) | Unlimited | Must have 2+ other scenes between uses |
+
+When a template is reused, the **content must be completely different** — different data, different VO, different hero graphic, different keyword set. The template is only the visual language; the scene is built from scratch every time.
+
+**Inventing new templates (s15 and beyond) — mandatory for 25+ scene videos:**
+
+When all 14 templates have appeared and more scenes are needed, invent new ones. A new template:
+- Gets the next available number: s15, s16, s17, ...
+- Uses a color palette from the existing table OR introduces a new bg/accent pair
+- Must serve a distinct narrative function not covered by s01–s14
+- Must have its own visual language (layout, hero element, animation signature)
+- Must follow all 8-panel density rules
+- Gets added to the scene plan table with a one-line description: `s15 — [name]: [what it shows]`
+
+**Starter invented templates (use these when you need more beyond s14):**
+
+| ID | Name | Use when | Visual signature |
+|---|---|---|---|
+| s15 | Split race | Two metrics competing live | Side-by-side bars racing from 0, winner glow burst |
+| s16 | Countdown | "Launching in X" / urgency moment | Big timer counting down, ring depleting |
+| s17 | Network map | Connected nodes, integrations, ecosystem | SVG node graph, edges drawing in one by one |
+| s18 | Code diff | Before/after code, what changed | Red strikethrough lines, green new lines appearing |
+| s19 | Live feed | Real-time camera / sensor view | Phone or monitor frame, bounding boxes animating |
+| s20 | Quote card | A key statement, attribution | Large blockquote with author chip popping in |
+| s21 | Dual timeline | Two parallel histories | Two horizontal timelines, events firing left to right |
+| s22 | Scorecard | Multiple criteria, one winner | Table rows revealing scores, winner row highlights |
+| s23 | Token flow | Data moving through a pipeline | Animated packet icons flowing through a diagram |
+| s24 | Heat map | Regional / categorical data density | CSS grid with cells coloring up from low to high |
+
+Invent beyond s24 as needed. There is no cap. A 500-word video might use s01–s28.
+
+**Maximizing unique HTML files — the prime directive:**
+- Every scene produces exactly **7 HTML files** (bg, brand, keywords, waveform, terminal, mathcurve, hero)
+- NEVER share a file across scenes. Each file is unique — different ticker text, different sidebar data, different keyword set, different log lines, different float sequences
+- If you are tempted to write `// same content as scene-03`, stop. Write it out fully. Every file is complete and standalone.
+- File count formula: `scenes × 7`. A 50-scene video = **350 HTML files**. That is the target for a 500-word script.
+- After finishing all scenes, count your files. If the total is less than `scenes × 7`, you skipped something. Go back and write the missing files.
 
 ---
 
@@ -226,6 +273,9 @@ Use the narrative function of each scene to pick its template. When two template
 - If it's teaching AND has a specific example → s10 beats s14
 - Opening scene of a video → prefer s14, s01, or s07 (high visual impact)
 - Closing scene → always s08 (CTA)
+
+**For 25+ scene videos — inventing new templates:**
+Once all 14 built-in templates have been used, invent new ones (s15, s16, ...). See the invented template starter list in Step 3. Each invented template must have a distinct visual signature — do not make two custom templates that look similar. Assign the invented template an ID, name it, and add it to your scene plan table like any other template. Build it from scratch with the same 8-panel density rules.
 
 ---
 
@@ -923,24 +973,31 @@ After writing all files, before delivering, verify every item:
 - [ ] Zero `Math.random()` or `Date.now()` calls
 - [ ] No placeholder comments like `// same as above`
 
+**File count verification (do this first):**
+- [ ] Count total HTML files delivered: `actual_count = scenes × 7`
+- [ ] If actual_count < scenes × 7, identify which scenes are missing files and write them before finishing
+- [ ] No `// same as scene-NN` shortcuts — every file is written out fully
+- [ ] For a 500-word script: expect 245–350 files. Fewer means scenes were compressed or skipped.
+
 **Visual density:**
 - [ ] Every dark-bg scene has a canvas grid background
-- [ ] Every dark-bg scene uses the 8-zone layout (ticker, L panel, R panel, corners, hero, keyword matrix, bottom bar)
-- [ ] Keyword matrix has 8–14 terms from the script, each wired to its word timestamp
-- [ ] All fluctuating telemetry values use hardcoded sequences — zero `Math.random()` calls anywhere
-- [ ] Every scene has a top bar + bottom bar
-- [ ] Every dark-bg scene has corner brackets
-- [ ] Every dark-bg scene has a scan line
-- [ ] Every dark-bg scene has 5+ `repeat: -1` loops across all zones
+- [ ] Every dark-bg scene uses all 8 panels (P1–P8)
+- [ ] P1 is a pixel-perfect brand UI recreation, not a generic coloured block
+- [ ] P2 keyword matrix has 10–16 terms; gliding selector box wired to word timestamps
+- [ ] All fluctuating telemetry values use hardcoded sequences — zero `Math.random()` anywhere
+- [ ] Every scene has top ticker + bottom stat bar
+- [ ] Every dark-bg scene has 5+ `repeat: -1` loops running simultaneously
 - [ ] Light-bg scenes (s06/s08/s09) keep professional UI look — no heavy cyber overlays
-- [ ] Each zone (hero, ticker, left panel, right panel, keywords) is its own HTML file
+- [ ] Every scene's 7 HTML files are unique — no content shared from another scene
 
 **Scene selection quality:**
 - [ ] No two consecutive scenes use the same template
+- [ ] Reuse gap respected (see reuse rules table in Step 3)
+- [ ] Any invented templates (s15+) have a clearly distinct visual from all other templates
 - [ ] Opening scene is high visual impact (s01, s07, s12, or s14)
 - [ ] Closing scene is CTA (s08)
 - [ ] Every template choice matches the narrative function of that segment
-- [ ] Total duration is between 45 and 90 seconds
+- [ ] Scene count matches the word-count target table (e.g. 500 words → 35–50 scenes)
 
 **Visual quality (the bar):**
 - [ ] Every scene's hero element is what the script describes — not a generic stat card swapped in

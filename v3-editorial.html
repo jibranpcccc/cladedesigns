@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI News — Morning Paper Edition</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,700;1,700&family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet" />
+
+<!-- GSAP -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: #f5f0e8;
+  }
+
+  #stage {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  /* ─── SCENE BASE ─────────────────────────────────────── */
+  .scene {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    display: flex;
+    padding: 8vh 8vw;
+  }
+
+  /* ─── UTILITY ────────────────────────────────────────── */
+  .label {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: clamp(9px, 1.1vw, 14px);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #c9184a;
+  }
+
+  .card {
+    background: #ffffff;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    border-top: 3px solid #c9184a;
+  }
+
+  .serif-headline {
+    font-family: 'Libre Baskerville', serif;
+    font-style: italic;
+    font-weight: 700;
+    color: #1a1a2e;
+    line-height: 1.08;
+  }
+
+  /* ─── SCENE 1 — GEMINI 3.5 FLASH ────────────────────── */
+  #s1 {
+    background: #f5f0e8;
+    flex-direction: row;
+    align-items: center;
+    gap: 5vw;
+  }
+
+  #s1-left {
+    flex: 1.1;
+    display: flex;
+    flex-direction: column;
+    gap: 3vh;
+  }
+
+  #s1-header {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2vh;
+  }
+
+  #s1-headline {
+    font-size: clamp(48px, 7.5vw, 120px);
+    letter-spacing: -0.02em;
+  }
+
+  #s1-desc {
+    padding: 3.2vh 3vw;
+    border-left: 4px solid #c9184a;
+    border-top: none;
+    background: #fff;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 1.2vh;
+  }
+
+  #s1-desc p {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(13px, 1.4vw, 20px);
+    font-weight: 400;
+    color: #1a1a2e;
+    line-height: 1.55;
+  }
+
+  #s1-desc p + p {
+    padding-top: 0.6vh;
+    border-top: 1px solid #e8e4db;
+  }
+
+  #s1-right {
+    flex: 0.9;
+  }
+
+  #s1-bench {
+    padding: 3.6vh 3.2vw;
+    display: flex;
+    flex-direction: column;
+    gap: 2.8vh;
+    border-top: 3px solid #c9184a;
+    background: #fff;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+
+  .bench-title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: clamp(10px, 1.2vw, 15px);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #1a1a2e;
+  }
+
+  .bench-row {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+  }
+
+  .bench-label {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: clamp(11px, 1.2vw, 16px);
+    color: #1a1a2e;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .bench-label span {
+    font-weight: 400;
+    color: #8a8a8a;
+    font-size: 0.88em;
+  }
+
+  .bar-track {
+    width: 100%;
+    height: 8px;
+    background: #ede9e0;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 2px;
+  }
+
+  #bar-b .bar-fill { background: #c2bfb8; }
+  #bar-f .bar-fill { background: #c9184a; }
+
+  /* ─── SCENE 2 — CODING + GPT-5.5 ────────────────────── */
+  #s2 {
+    background: #f5f0e8;
+    flex-direction: row;
+    align-items: center;
+    gap: 5vw;
+  }
+
+  #s2-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2.4vh;
+  }
+
+  #s2-term {
+    padding: 3.2vh 3vw;
+    background: #fff;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    border-top: 3px solid #c9184a;
+    display: flex;
+    flex-direction: column;
+    gap: 1.4vh;
+  }
+
+  .term-line {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 700;
+    font-size: clamp(11px, 1.3vw, 17px);
+    color: #1a1a2e;
+    line-height: 1.4;
+    white-space: pre;
+  }
+
+  .term-line .kw-red { color: #c9184a; }
+  .term-line .kw-gold { color: #e08b1a; }
+  .term-line .kw-dim { color: #999; }
+
+  #s2-right {
+    flex: 1;
+  }
+
+  #s2-gpt {
+    padding: 4vh 3.6vw;
+    background: #fff;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    border-top: 3px solid #c9184a;
+    display: flex;
+    flex-direction: column;
+    gap: 2.2vh;
+  }
+
+  #s2-gpt-byline {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: clamp(9px, 1vw, 13px);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #8a8a8a;
+  }
+
+  #s2-gpt-headline {
+    font-size: clamp(52px, 8vw, 130px);
+    letter-spacing: -0.02em;
+  }
+
+  #s2-gpt-sub {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: clamp(12px, 1.3vw, 18px);
+    color: #444;
+    line-height: 1.6;
+    max-width: 32ch;
+  }
+
+  #s2-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8ch;
+    background: #e08b1a;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: clamp(9px, 1vw, 12px);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 0.5em 1.2em;
+    align-self: flex-start;
+  }
+
+  /* ─── SCENE 3 — GPT-5 CAPABILITIES ──────────────────── */
+  #s3 {
+    background: #1a1a2e;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3vh;
+  }
+
+  #s3-top {
+    display: flex;
+    align-items: flex-end;
+    gap: 4vw;
+    margin-bottom: 1vh;
+  }
+
+  #s3-supertitle {
+    color: rgba(255,255,255,0.45);
+  }
+
+  #s3-main-headline {
+    font-family: 'Libre Baskerville', serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: clamp(32px, 4.5vw, 72px);
+    color: #ffffff;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+
+  #s3-nodes {
+    display: flex;
+    gap: 2.4vw;
+    align-items: stretch;
+  }
+
+  .node-card {
+    flex: 1;
+    padding: 3.2vh 2.6vw;
+    background: rgba(255,255,255,0.06);
+    border-top: 3px solid rgba(255,255,255,0.12);
+    display: flex;
+    flex-direction: column;
+    gap: 1.4vh;
+    opacity: 0.25;
+    transition: none;
+  }
+
+  .node-card .node-num {
+    font-family: 'Inter', sans-serif;
+    font-weight: 900;
+    font-size: clamp(28px, 3.5vw, 52px);
+    color: rgba(255,255,255,0.18);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .node-card .node-title {
+    font-family: 'Libre Baskerville', serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: clamp(15px, 2vw, 28px);
+    color: #ffffff;
+    line-height: 1.2;
+  }
+
+  .node-card .node-body {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: clamp(11px, 1.15vw, 16px);
+    color: rgba(255,255,255,0.55);
+    line-height: 1.6;
+  }
+
+  .node-card.active {
+    border-top-color: #e08b1a;
+  }
+
+  #s3-err {
+    margin-top: 1.5vh;
+    display: flex;
+    align-items: center;
+    gap: 4vw;
+    background: rgba(255,255,255,0.04);
+    border-left: 4px solid #c9184a;
+    padding: 3vh 3.5vw;
+  }
+
+  #s3-err-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6vh;
+  }
+
+  #s3-err-kicker {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: clamp(9px, 1vw, 13px);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #c9184a;
+  }
+
+  #s3-err-num {
+    font-family: 'Libre Baskerville', serif;
+    font-weight: 700;
+    font-size: clamp(64px, 10vw, 160px);
+    color: #ffffff;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+  }
+
+  #s3-err-unit {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: clamp(12px, 1.3vw, 18px);
+    color: rgba(255,255,255,0.5);
+    margin-top: 0.4vh;
+  }
+
+  #s3-err-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.6vh;
+  }
+
+  #s3-err-desc {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: clamp(12px, 1.3vw, 18px);
+    color: rgba(255,255,255,0.7);
+    line-height: 1.6;
+    max-width: 36ch;
+  }
+
+  #s3-err-bar-track {
+    width: 100%;
+    height: 6px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  #s3-err-bar {
+    height: 100%;
+    width: 80%;
+    background: #c9184a;
+    border-radius: 2px;
+    transform-origin: left;
+  }
+
+  /* ─── SCENE 4 — META RAY-BAN AR ──────────────────────── */
+  #s4 {
+    background: #f5f0e8;
+    flex-direction: row;
+    align-items: center;
+    gap: 5vw;
+  }
+
+  #s4-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3vh;
+  }
+
+  #s4-hud {
+    padding: 3.6vh 3.2vw;
+    background: #fff;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    border-top: 3px solid #c9184a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.4vh;
+    position: relative;
+  }
+
+  /* Crimson corner accents */
+  #s4-hud::before,
+  #s4-hud::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-color: #c9184a;
+    border-style: solid;
+  }
+  #s4-hud::before {
+    top: 10px; left: 10px;
+    border-width: 2px 0 0 2px;
+  }
+  #s4-hud::after {
+    bottom: 10px; right: 10px;
+    border-width: 0 2px 2px 0;
+  }
+
+  #s4-hud-label {
+    align-self: flex-start;
+  }
+
+  #radar-wrap {
+    position: relative;
+    width: clamp(120px, 16vw, 220px);
+    height: clamp(120px, 16vw, 220px);
+  }
+
+  #radar-bg {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #ede9e0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* concentric rings */
+  #radar-bg::before {
+    content: '';
+    position: absolute;
+    inset: 22%;
+    border-radius: 50%;
+    border: 1px solid rgba(201,24,74,0.15);
+  }
+  #radar-bg::after {
+    content: '';
+    position: absolute;
+    inset: 44%;
+    border-radius: 50%;
+    border: 1px solid rgba(201,24,74,0.25);
+    background: rgba(201,24,74,0.06);
+  }
+
+  #radar-sweep {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent 0%, rgba(201,24,74,0.2) 8%, transparent 8%);
+  }
+
+  /* crosshair lines */
+  #radar-cross-h, #radar-cross-v {
+    position: absolute;
+    background: rgba(201,24,74,0.18);
+  }
+  #radar-cross-h { top: 50%; left: 0; right: 0; height: 1px; transform: translateY(-50%); }
+  #radar-cross-v { left: 50%; top: 0; bottom: 0; width: 1px; transform: translateX(-50%); }
+
+  #radar-dot {
+    position: absolute;
+    width: 8px; height: 8px;
+    background: #c9184a;
+    border-radius: 50%;
+    top: 35%; left: 60%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 0 3px rgba(201,24,74,0.2);
+  }
+
+  #landmark {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: clamp(10px, 1.1vw, 14px);
+    color: #1a1a2e;
+    letter-spacing: 0.08em;
+    text-align: center;
+    border-top: 1px solid #e8e4db;
+    padding-top: 1.4vh;
+    width: 100%;
+  }
+
+  #landmark span {
+    color: #c9184a;
+  }
+
+  #s4-right {
+    flex: 1.1;
+    display: flex;
+    flex-direction: column;
+    gap: 2.2vh;
+  }
+
+  #s4-trans {
+    padding: 3.6vh 3.2vw;
+    background: #fff;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    border-top: 3px solid #c9184a;
+    display: flex;
+    flex-direction: column;
+    gap: 2.4vh;
+  }
+
+  .bubble {
+    max-width: 88%;
+    padding: 1.8vh 2.2vw;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8vh;
+  }
+
+  #bubble-es {
+    background: #faf6ee;
+    border: 1px solid #ede9e0;
+    align-self: flex-start;
+    transform-origin: left center;
+  }
+
+  #bubble-en {
+    background: #fff;
+    border-left: 3px solid #c9184a;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    align-self: flex-end;
+    transform-origin: right center;
+  }
+
+  .bubble-lang {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: clamp(8px, 0.9vw, 11px);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #c9184a;
+  }
+
+  .bubble-text {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: clamp(12px, 1.35vw, 19px);
+    color: #1a1a2e;
+    line-height: 1.55;
+  }
+
+  #s4-caption {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: clamp(11px, 1.1vw, 15px);
+    color: #888;
+    line-height: 1.5;
+    border-top: 1px solid #e8e4db;
+    padding-top: 1.4vh;
+  }
+
+  /* ─── GLOBAL RULE LINE ───────────────────────────────── */
+  .rule {
+    height: 1px;
+    background: #ddd9d0;
+    width: 100%;
+  }
+
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- ════════════════════════════════════════════════════
+       SCENE 1 — GOOGLE GEMINI 3.5 FLASH
+  ════════════════════════════════════════════════════ -->
+  <div class="scene" id="s1">
+    <div id="s1-left">
+
+      <div id="s1-header">
+        <div class="label">§ 01 — Speed Leader</div>
+        <div id="s1-headline" class="serif-headline">Gemini 3.5<br>Flash</div>
+      </div>
+
+      <div id="s1-desc">
+        <p>Built for billions of global users.</p>
+        <p>Optimized for raw, production-grade speed.</p>
+      </div>
+
+    </div>
+
+    <div id="s1-right">
+      <div id="s1-bench">
+        <div class="bench-title">Benchmark Comparison</div>
+
+        <div class="bench-row" id="bar-b">
+          <div class="bench-label">
+            GPT-4o Mini <span>Baseline</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill" id="bar-b-fill"></div>
+          </div>
+        </div>
+
+        <div class="bench-row" id="bar-f">
+          <div class="bench-label">
+            Gemini 3.5 Flash <span style="color:#c9184a; font-weight:700;">4× faster</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill" id="bar-f-fill"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════
+       SCENE 2 — CODING + GPT-5.5
+  ════════════════════════════════════════════════════ -->
+  <div class="scene" id="s2">
+    <div id="s2-left">
+      <div class="label">§ 02 — Agentic Routing</div>
+      <div id="s2-term">
+        <div class="term-line" id="tl1"><span class="kw-red">→</span> Routing: Coding task detected</div>
+        <div class="term-line" id="tl2">  Model: <span class="kw-red">Gemini 3.5 Flash</span> — <span class="kw-gold">SELECTED</span></div>
+        <div class="term-line" id="tl3">  Latency: <span class="kw-gold">0.8s</span> — <span class="kw-gold">OPTIMAL</span></div>
+        <div class="term-line" id="tl4"><span class="kw-red">→</span> Agentic: <span class="kw-dim">browser automation</span></div>
+        <div class="term-line" id="tl5">  Agent <span class="kw-red">Flash-v2</span> — <span class="kw-gold">RUNNING</span></div>
+      </div>
+    </div>
+
+    <div id="s2-right">
+      <div id="s2-gpt">
+        <div id="s2-gpt-byline">OpenAI</div>
+        <div id="s2-gpt-headline" class="serif-headline">GPT-5.5</div>
+        <div id="s2-gpt-sub">The next frontier in general intelligence — reasoning, creativity, and real-world autonomy unified.</div>
+        <div id="s2-badge">Launched 2025</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════
+       SCENE 3 — GPT-5 CAPABILITIES (dark spread)
+  ════════════════════════════════════════════════════ -->
+  <div class="scene" id="s3">
+
+    <div id="s3-top">
+      <div>
+        <div class="label" id="s3-supertitle">§ 03 — Frontier Capabilities</div>
+        <div id="s3-main-headline">GPT-5: What it<br>changes.</div>
+      </div>
+    </div>
+
+    <div id="s3-nodes">
+
+      <div class="node-card" id="n1">
+        <div class="node-num">01</div>
+        <div class="node-title">Knowledge Work</div>
+        <div class="node-body">Legal drafting, financial analysis, research synthesis — at expert level, on demand.</div>
+      </div>
+
+      <div class="node-card" id="n2">
+        <div class="node-num">02</div>
+        <div class="node-title">Automation</div>
+        <div class="node-body">Complex multi-step workflows executed autonomously across tools, APIs, and interfaces.</div>
+      </div>
+
+      <div class="node-card" id="n3">
+        <div class="node-num">03</div>
+        <div class="node-title">Scientific Research</div>
+        <div class="node-body">Hypothesis generation, literature synthesis, and experimental design at unprecedented scale.</div>
+      </div>
+
+    </div>
+
+    <div id="s3-err">
+      <div id="s3-err-left">
+        <div id="s3-err-kicker">§ Error Rate Reduction</div>
+        <div id="s3-err-num">80</div>
+        <div id="s3-err-unit">percent → reduced to 20%</div>
+      </div>
+      <div id="s3-err-right">
+        <div id="s3-err-desc">GPT-5 cuts critical task error rates by four times — a step-change in reliability for production AI systems.</div>
+        <div id="s3-err-bar-track">
+          <div id="s3-err-bar"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════════════════════════════════════════════════
+       SCENE 4 — META RAY-BAN AR
+  ════════════════════════════════════════════════════ -->
+  <div class="scene" id="s4">
+    <div id="s4-left">
+      <div class="label">§ 04 — Live Translation</div>
+      <div id="s4-hud">
+        <div class="label" id="s4-hud-label">Meta Ray-Ban AR — Field View</div>
+        <div id="radar-wrap">
+          <div id="radar-bg">
+            <div id="radar-sweep"></div>
+            <div id="radar-cross-h"></div>
+            <div id="radar-cross-v"></div>
+            <div id="radar-dot"></div>
+          </div>
+        </div>
+        <div id="landmark">
+          <span>AUDIO SOURCE</span> · 48.8°N 2.3°E · Live
+        </div>
+      </div>
+    </div>
+
+    <div id="s4-right">
+      <div id="s4-trans">
+        <div class="label">Live Translation Stream</div>
+        <div id="bubble-es" class="bubble">
+          <div class="bubble-lang">ES · Detected</div>
+          <div class="bubble-text">¿Puede decirme cómo llegar a la Torre Eiffel desde aquí?</div>
+        </div>
+        <div id="bubble-en" class="bubble">
+          <div class="bubble-lang">EN · Translated</div>
+          <div class="bubble-text">Can you tell me how to get to the Eiffel Tower from here?</div>
+        </div>
+        <div id="s4-caption">Real-time audio translation via Meta AI on Ray-Ban glasses. No phone required.</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- #stage -->
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// v3-editorial.html — AI News Motion Graphic (60s, 4 scenes, GSAP)
+// ═══════════════════════════════════════════════════════════════════
+
+// ── INITIAL STATES ─────────────────────────────────────────────────
+gsap.set('#s1', { opacity: 0 });
+gsap.set('#s1-header', { opacity: 0, y: 20 });
+gsap.set('#s1-desc', { opacity: 0, y: 16 });
+gsap.set('#s1-bench', { opacity: 0, x: 40 });
+gsap.set('#bar-b-fill', { width: '0%' });
+gsap.set('#bar-f-fill', { width: '0%' });
+
+gsap.set('#s2', { opacity: 0 });
+gsap.set('#s2-term', { opacity: 0, x: -40 });
+gsap.set(['#tl1','#tl2','#tl3','#tl4','#tl5'], { opacity: 0, x: -12 });
+gsap.set('#s2-gpt', { opacity: 0, x: 40 });
+gsap.set('#s2-badge', { opacity: 0, scaleX: 0.8 });
+
+gsap.set('#s3', { opacity: 0 });
+gsap.set('#n1', { opacity: 0.25 });
+gsap.set('#n2', { opacity: 0.25 });
+gsap.set('#n3', { opacity: 0.25 });
+gsap.set('#s3-err', { opacity: 0, y: 20 });
+gsap.set('#s3-err-bar', { width: '80%' });
+
+gsap.set('#s4', { opacity: 0 });
+gsap.set('#s4-hud', { opacity: 0, y: 24 });
+gsap.set('#s4-trans', { opacity: 0, x: 30 });
+gsap.set('#bubble-es', { opacity: 0, scale: 0.92 });
+gsap.set('#landmark', { opacity: 0 });
+gsap.set('#bubble-en', { opacity: 0, scale: 0.92 });
+
+// ── ERROR PROXY ─────────────────────────────────────────────────────
+var errProxy = { val: 80 };
+
+// ── RADAR SWEEP TWEEN (stored for restart) ──────────────────────────
+var radarTween = null;
+
+function startRadar() {
+  gsap.killTweensOf('#radar-sweep');
+  radarTween = gsap.to('#radar-sweep', {
+    rotation: 360,
+    duration: 3,
+    ease: 'none',
+    repeat: -1,
+    transformOrigin: '50% 50%'
+  });
+}
+
+// ── MAIN TIMELINE ───────────────────────────────────────────────────
+var tl = gsap.timeline({ repeat: -1 });
+
+// ────────────────────────────────────────────────────────────────────
+// SCENE 1 (0–15s)
+// ────────────────────────────────────────────────────────────────────
+
+// 0.0s — scene fades in
+tl.to('#s1', { opacity: 1, duration: 0.4, ease: 'power1.inOut' }, 0.0);
+
+// 3.12s — header enters
+tl.to('#s1-header', { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out' }, 3.12);
+
+// 5.84s — description card
+tl.to('#s1-desc', { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, 5.84);
+
+// 7.92s — benchmark card slides in from right
+tl.to('#s1-bench', { opacity: 1, x: 0, duration: 0.55, ease: 'power2.out' }, 7.92);
+
+// 11.08s — baseline bar fills to 25%
+tl.to('#bar-b-fill', { width: '25%', duration: 0.7, ease: 'power2.inOut' }, 11.08);
+
+// 12.0s — flash bar surges to 100%
+tl.to('#bar-f-fill', { width: '100%', duration: 0.9, ease: 'power3.inOut' }, 12.0);
+
+// 14.5s — scene fades out
+tl.to('#s1', { opacity: 0, duration: 0.6, ease: 'power1.inOut' }, 14.5);
+
+// ────────────────────────────────────────────────────────────────────
+// SCENE 2 (15–30s)
+// ────────────────────────────────────────────────────────────────────
+
+// Reset s2 elements on boundary
+tl.set(['#s2-term','#s2-gpt','#s2-badge'], { clearProps: 'opacity,x,scaleX' }, 14.75);
+tl.set('#s2-term', { opacity: 0, x: -40 }, 14.75);
+tl.set('#s2-gpt', { opacity: 0, x: 40 }, 14.75);
+tl.set(['#tl1','#tl2','#tl3','#tl4','#tl5'], { opacity: 0, x: -12 }, 14.75);
+tl.set('#s2-badge', { opacity: 0, scaleX: 0.8 }, 14.75);
+
+// 14.8s — scene fades in
+tl.to('#s2', { opacity: 1, duration: 0.5, ease: 'power1.inOut' }, 14.8);
+
+// 16.64s — terminal card enters
+tl.to('#s2-term', { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' }, 16.64);
+
+// 17.0s — lines stagger in
+tl.to('#tl1', { opacity: 1, x: 0, duration: 0.3, ease: 'power2.out' }, 17.0);
+tl.to('#tl2', { opacity: 1, x: 0, duration: 0.3, ease: 'power2.out' }, 17.42);
+tl.to('#tl3', { opacity: 1, x: 0, duration: 0.3, ease: 'power2.out' }, 17.84);
+tl.to('#tl4', { opacity: 1, x: 0, duration: 0.3, ease: 'power2.out' }, 18.28);
+tl.to('#tl5', { opacity: 1, x: 0, duration: 0.3, ease: 'power2.out' }, 18.72);
+
+// 19.2s — GPT card enters from right
+tl.to('#s2-gpt', { opacity: 1, x: 0, duration: 0.55, ease: 'power2.out' }, 19.2);
+
+// Badge appears shortly after
+tl.to('#s2-badge', { opacity: 1, scaleX: 1, duration: 0.4, ease: 'back.out(1.6)' }, 20.4);
+
+// 29.5s — scene fades out
+tl.to('#s2', { opacity: 0, duration: 0.5, ease: 'power1.inOut' }, 29.5);
+
+// ────────────────────────────────────────────────────────────────────
+// SCENE 3 (30–45s)
+// ────────────────────────────────────────────────────────────────────
+
+// Reset scene 3 elements
+tl.set(['#n1','#n2','#n3'], { opacity: 0.25, borderTopColor: 'rgba(255,255,255,0.12)' }, 29.7);
+tl.set('#s3-err', { opacity: 0, y: 20 }, 29.7);
+tl.call(function() { errProxy.val = 80; }, [], 29.9);
+tl.set('#s3-err-bar', { width: '80%' }, 29.9);
+tl.set('#s3-err-num', { innerText: '80' }, 29.9);
+
+// 29.8s — dark scene fades in
+tl.to('#s3', { opacity: 1, duration: 0.5, ease: 'power1.inOut' }, 29.8);
+
+// 30.12s — n1 lights up
+tl.to('#n1', {
+  opacity: 1,
+  borderTopColor: '#e08b1a',
+  duration: 0.4,
+  ease: 'power2.out'
+}, 30.12);
+
+// 32.06s — n1 dims, n2 lights up
+tl.to('#n1', { opacity: 0.25, borderTopColor: 'rgba(255,255,255,0.12)', duration: 0.3 }, 32.06);
+tl.to('#n2', { opacity: 1, borderTopColor: '#e08b1a', duration: 0.4, ease: 'power2.out' }, 32.06);
+
+// 33.62s — n2 dims, n3 lights up
+tl.to('#n2', { opacity: 0.25, borderTopColor: 'rgba(255,255,255,0.12)', duration: 0.3 }, 33.62);
+tl.to('#n3', { opacity: 1, borderTopColor: '#e08b1a', duration: 0.4, ease: 'power2.out' }, 33.62);
+
+// 35.24s — pull-quote enters
+tl.to('#s3-err', { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out' }, 35.24);
+
+// 37.64s — error number and bar animate from 80→20
+tl.to(errProxy, {
+  val: 20,
+  duration: 0.5,
+  ease: 'power2.inOut',
+  onUpdate: function() {
+    var el = document.getElementById('s3-err-num');
+    if (el) el.textContent = Math.round(errProxy.val);
+  }
+}, 37.64);
+tl.to('#s3-err-bar', { width: '20%', duration: 0.5, ease: 'power2.inOut' }, 37.64);
+
+// 44.5s — scene fades out
+tl.to('#s3', { opacity: 0, duration: 0.5, ease: 'power1.inOut' }, 44.5);
+
+// ────────────────────────────────────────────────────────────────────
+// SCENE 4 (45–60s)
+// ────────────────────────────────────────────────────────────────────
+
+// Reset scene 4 elements
+tl.set('#s4-hud', { opacity: 0, y: 24 }, 44.7);
+tl.set('#s4-trans', { opacity: 0, x: 30 }, 44.7);
+tl.set('#bubble-es', { opacity: 0, scale: 0.92 }, 44.7);
+tl.set('#landmark', { opacity: 0 }, 44.7);
+tl.set('#bubble-en', { opacity: 0, scale: 0.92 }, 44.7);
+
+// 44.8s — scene fades in
+tl.to('#s4', { opacity: 1, duration: 0.5, ease: 'power1.inOut' }, 44.8);
+
+// 45.26s — HUD card enters + radar starts
+tl.to('#s4-hud', { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out' }, 45.26);
+tl.call(function() { startRadar(); }, [], 45.26);
+
+// 50.04s — translation card enters
+tl.to('#s4-trans', { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' }, 50.04);
+
+// 51.26s — Spanish bubble scales in
+tl.to('#bubble-es', { opacity: 1, scale: 1, duration: 0.45, ease: 'back.out(1.4)' }, 51.26);
+
+// 53.02s — landmark caption appears
+tl.to('#landmark', { opacity: 1, duration: 0.4, ease: 'power2.out' }, 53.02);
+
+// 55.26s — English bubble scales in
+tl.to('#bubble-en', { opacity: 1, scale: 1, duration: 0.45, ease: 'back.out(1.4)' }, 55.26);
+
+// 59.5s — scene fades out
+tl.to('#s4', { opacity: 0, duration: 0.5, ease: 'power1.inOut' }, 59.5);
+
+// ── END OF 60s LOOP ─────────────────────────────────────────────────
+// Reset all scenes to opacity:0 at boundary for clean loop
+tl.set(['#s1','#s2','#s3','#s4'], { opacity: 0 }, 60);
+
+// Reset bar fills for loop
+tl.set('#bar-b-fill', { width: '0%' }, 60);
+tl.set('#bar-f-fill', { width: '0%' }, 60);
+
+// Reset s1 header and desc positions
+tl.set('#s1-header', { opacity: 0, y: 20 }, 60);
+tl.set('#s1-desc', { opacity: 0, y: 16 }, 60);
+tl.set('#s1-bench', { opacity: 0, x: 40 }, 60);
+
+</script>
+</body>
+</html>

@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ANTIgravity — AI News Motion Graphic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Space+Mono:wght@700&family=DM+Sans:wght@400;700;900&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 30% 40%, #1e1535 0%, #0d0c1d 70%);
+    font-family: 'DM Sans', sans-serif;
+    color: #fff;
+  }
+
+  #stage {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  /* Subtle noise texture overlay */
+  #stage::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .scene {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    display: flex;
+    padding: 8vh 7vw;
+    z-index: 1;
+  }
+
+  /* ─── SHARED COMPONENTS ─── */
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #e05c3a;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+  }
+
+  .glass-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 2rem;
+  }
+
+  .glass-card.active-glow {
+    box-shadow: 0 0 25px rgba(224,92,58,0.3);
+    border-color: rgba(224,92,58,0.5);
+  }
+
+  .eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.45);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 0.7rem;
+  }
+
+  .headline-serif {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-style: italic;
+    line-height: 1.05;
+    color: #fff;
+  }
+
+  .coral { color: #e05c3a; }
+  .amber { color: #f5a520; }
+  .muted { color: rgba(255,255,255,0.5); }
+
+  /* ─── DECORATIVE LINES ─── */
+  .deco-line {
+    height: 1px;
+    background: linear-gradient(90deg, #e05c3a, transparent);
+    margin: 1.2rem 0;
+  }
+
+  /* ═══════════════════════════════════
+     SCENE 1 — GEMINI 3.5 FLASH
+  ═══════════════════════════════════ */
+  #s1 {
+    align-items: center;
+    gap: 4vw;
+  }
+
+  #s1-left {
+    flex: 0 0 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  #s1-header {
+    margin-bottom: 2rem;
+  }
+
+  #s1-header .headline-serif {
+    font-size: clamp(3rem, 5.5vw, 5.5rem);
+  }
+
+  #s1-header .deco-line {
+    width: 60%;
+    margin-top: 1rem;
+  }
+
+  #s1-desc {
+    padding: 1.4rem 1.8rem;
+    border-left: 3px solid #e05c3a;
+    background: rgba(224,92,58,0.05);
+    border-radius: 0 8px 8px 0;
+  }
+
+  #s1-desc p {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.9;
+    color: rgba(255,255,255,0.75);
+    letter-spacing: 0.04em;
+  }
+
+  #s1-desc p strong {
+    color: #e05c3a;
+    font-weight: 700;
+  }
+
+  #s1-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  #s1-bench {
+    padding: 2rem 2.2rem;
+  }
+
+  #s1-bench .bench-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.6rem;
+  }
+
+  .bench-row {
+    margin-bottom: 1.5rem;
+  }
+
+  .bench-row:last-of-type { margin-bottom: 0; }
+
+  .bench-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.55rem;
+  }
+
+  .bench-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .bench-pct {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: #fff;
+    font-weight: 700;
+  }
+
+  .bar-track {
+    height: 8px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 4px;
+    transition: none;
+  }
+
+  #bar-b { background: rgba(255,255,255,0.25); }
+  #bar-f {
+    background: linear-gradient(90deg, #e05c3a, #f5a520);
+    box-shadow: 0 0 12px rgba(224,92,58,0.6);
+  }
+
+  /* ═══════════════════════════════════
+     SCENE 2 — CODING + GPT-5.5
+  ═══════════════════════════════════ */
+  #s2 {
+    align-items: center;
+    gap: 3vw;
+  }
+
+  #s2-term {
+    flex: 0 0 48%;
+    background: rgba(0,0,0,0.55);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-top: 3px solid #e05c3a;
+    border-radius: 10px;
+    padding: 2rem 2rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .term-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.4rem;
+  }
+
+  .term-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  .term-dot:nth-child(1) { background: #e05c3a; }
+  .term-dot:nth-child(2) { background: #f5a520; }
+  .term-dot:nth-child(3) { background: rgba(255,255,255,0.2); }
+
+  .term-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.58rem;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-left: auto;
+  }
+
+  .term-line {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 0.04em;
+    opacity: 0;
+  }
+
+  .term-line.prompt { color: #e05c3a; }
+  .term-line .hl-green { color: #4ade80; }
+  .term-line .hl-amber { color: #f5a520; }
+  .term-line .hl-coral { color: #e05c3a; }
+
+  #s2-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  #s2-gpt {
+    padding: 2.5rem 2.8rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #s2-gpt::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(245,165,32,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  #s2-gpt .headline-serif {
+    font-size: clamp(4rem, 7vw, 7.5rem);
+    color: #fff;
+    line-height: 0.95;
+    margin-bottom: 1rem;
+  }
+
+  #s2-gpt .subtitle {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: rgba(255,255,255,0.5);
+    max-width: 28ch;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+
+  .launch-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(245,165,32,0.12);
+    border: 1px solid rgba(245,165,32,0.35);
+    border-radius: 100px;
+    padding: 0.45rem 1rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: #f5a520;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .launch-badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: #f5a520;
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(245,165,32,0.7);
+    flex-shrink: 0;
+  }
+
+  /* ═══════════════════════════════════
+     SCENE 3 — GPT-5 CAPABILITIES
+  ═══════════════════════════════════ */
+  #s3 {
+    flex-direction: column;
+    justify-content: center;
+    gap: 3vh;
+  }
+
+  #s3-top {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    justify-content: center;
+  }
+
+  .node-box {
+    flex: 0 0 auto;
+    width: 18vw;
+    min-width: 180px;
+    padding: 1.4rem 1.6rem;
+    border-radius: 10px;
+    opacity: 0.2;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .node-icon {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.12em;
+    margin-bottom: 0.7rem;
+  }
+
+  .node-name {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 900;
+    font-size: 0.92rem;
+    color: #fff;
+    line-height: 1.3;
+  }
+
+  .node-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.4);
+    margin-top: 0.3rem;
+  }
+
+  .node-connector {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.1), rgba(224,92,58,0.25), rgba(255,255,255,0.1));
+    min-width: 2vw;
+  }
+
+  #s3-err {
+    padding: 2rem 2.5rem;
+    display: flex;
+    align-items: center;
+    gap: 4vw;
+    opacity: 0;
+  }
+
+  .err-left {
+    display: flex;
+    align-items: baseline;
+    gap: 0.3rem;
+    flex-shrink: 0;
+  }
+
+  #err-num {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: clamp(4rem, 8vw, 8rem);
+    color: #e05c3a;
+    line-height: 1;
+    display: block;
+    text-shadow: 0 0 40px rgba(224,92,58,0.35);
+  }
+
+  .err-unit {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: clamp(1.5rem, 3vw, 3rem);
+    color: rgba(224,92,58,0.6);
+  }
+
+  .err-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .err-desc {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #fff;
+    line-height: 1.4;
+  }
+
+  .err-sub {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .err-bar-track {
+    height: 6px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 0.5rem;
+  }
+
+  #err-bar {
+    height: 100%;
+    width: 80%;
+    background: linear-gradient(90deg, #e05c3a, rgba(224,92,58,0.4));
+    border-radius: 3px;
+  }
+
+  #s3-label {
+    position: absolute;
+    top: 8vh;
+    left: 7vw;
+  }
+
+  #s3-section-title {
+    position: absolute;
+    top: calc(8vh + 2rem);
+    left: 7vw;
+  }
+
+  /* ═══════════════════════════════════
+     SCENE 4 — META RAY-BAN AR
+  ═══════════════════════════════════ */
+  #s4 {
+    align-items: center;
+    gap: 5vw;
+  }
+
+  #s4-left {
+    flex: 0 0 44%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2.5rem;
+  }
+
+  #s4-trans {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    opacity: 0;
+  }
+
+  .bubble {
+    max-width: 85%;
+    padding: 1rem 1.4rem;
+    border-radius: 16px;
+    font-size: 0.92rem;
+    line-height: 1.55;
+    opacity: 0;
+  }
+
+  #bubble-es {
+    background: rgba(224,92,58,0.12);
+    border: 1px solid rgba(224,92,58,0.25);
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+    font-style: italic;
+    color: rgba(255,255,255,0.85);
+  }
+
+  #bubble-es .bubble-lang {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    color: #e05c3a;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
+  }
+
+  #bubble-en {
+    background: rgba(245,165,32,0.1);
+    border: 1px solid rgba(245,165,32,0.2);
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+    color: rgba(255,255,255,0.85);
+  }
+
+  #bubble-en .bubble-lang {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    color: #f5a520;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
+  }
+
+  #s4-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #s4-hud {
+    opacity: 0;
+    position: relative;
+    width: clamp(260px, 35vw, 440px);
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hud-frame {
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(224,92,58,0.15);
+    border-radius: 4px;
+    background: rgba(0,0,0,0.35);
+  }
+
+  /* Corner brackets */
+  .corner {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    border-color: #e05c3a;
+    border-style: solid;
+  }
+  .corner-tl { top: 0; left: 0; border-width: 3px 0 0 3px; border-radius: 3px 0 0 0; }
+  .corner-tr { top: 0; right: 0; border-width: 3px 3px 0 0; border-radius: 0 3px 0 0; }
+  .corner-bl { bottom: 0; left: 0; border-width: 0 0 3px 3px; border-radius: 0 0 0 3px; }
+  .corner-br { bottom: 0; right: 0; border-width: 0 3px 3px 0; border-radius: 0 0 3px 0; }
+
+  .hud-status {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.56rem;
+    color: #e05c3a;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .hud-status::before {
+    content: '● ';
+    font-size: 0.45rem;
+  }
+
+  .hud-crosshair {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hud-crosshair::before,
+  .hud-crosshair::after {
+    content: '';
+    position: absolute;
+    background: rgba(224,92,58,0.2);
+  }
+
+  .hud-crosshair::before {
+    width: 1px;
+    height: 70%;
+  }
+
+  .hud-crosshair::after {
+    width: 70%;
+    height: 1px;
+  }
+
+  /* Radar container */
+  .radar-container {
+    position: relative;
+    width: 130px;
+    height: 130px;
+    flex-shrink: 0;
+  }
+
+  .radar-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(224,92,58,0.2);
+  }
+
+  .radar-ring-outer {
+    inset: 0;
+  }
+
+  .radar-ring-inner {
+    inset: 25%;
+    border-color: rgba(224,92,58,0.3);
+  }
+
+  #radar-sweep {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent 0%, rgba(224,92,58,0.18) 8%, transparent 8%);
+  }
+
+  .radar-center-dot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 5px;
+    height: 5px;
+    background: #e05c3a;
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(224,92,58,0.8);
+  }
+
+  /* Landmark lock */
+  #landmark {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    opacity: 0;
+  }
+
+  .landmark-cross {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .landmark-h, .landmark-v {
+    background: #e05c3a;
+  }
+
+  .landmark-h { width: 18px; height: 1px; }
+  .landmark-v { width: 1px; height: 18px; }
+
+  .landmark-dot {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: #e05c3a;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(224,92,58,0.9);
+  }
+
+  .landmark-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.52rem;
+    color: rgba(224,92,58,0.85);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    line-height: 1.6;
+  }
+
+  /* Subtle scanline on HUD */
+  #s4-hud::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(0,0,0,0.04) 3px,
+      rgba(0,0,0,0.04) 4px
+    );
+    pointer-events: none;
+    border-radius: 4px;
+  }
+
+  /* ─── SCENE 3 ABSOLUTE LABEL OVERRIDE ─── */
+  #s3 {
+    position: absolute;
+    inset: 0;
+    padding: 8vh 7vw;
+  }
+
+  #s3-heading {
+    flex-shrink: 0;
+  }
+
+  #s3-heading .section-label { margin-bottom: 0.5rem; }
+
+  #s3-heading .headline-serif {
+    font-size: clamp(1.8rem, 2.8vw, 2.8rem);
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- ═══ SCENE 1 — GOOGLE GEMINI 3.5 FLASH ═══ -->
+  <div class="scene" id="s1">
+    <div id="s1-left">
+      <div id="s1-header">
+        <div class="eyebrow">§ 01 · TITLE</div>
+        <p class="eyebrow" style="color: rgba(255,255,255,0.35); margin-bottom:0.5rem;">Google AI</p>
+        <h1 class="headline-serif">Gemini<br>3.5 <span class="coral">Flash</span></h1>
+        <div class="deco-line"></div>
+      </div>
+      <div id="s1-desc">
+        <p><strong>Built for billions</strong> · Optimized for raw speed</p>
+        <p style="margin-top:0.5rem;">Multimodal · Sub-second response</p>
+        <p>Scalable inference · Mobile-first design</p>
+      </div>
+    </div>
+
+    <div id="s1-right">
+      <div id="s1-bench" class="glass-card">
+        <div class="bench-title">Speed Benchmark · Tokens / Second</div>
+
+        <div class="bench-row">
+          <div class="bench-meta">
+            <span class="bench-label">Gemini 1.5 Pro · Base</span>
+            <span class="bench-pct" id="bench-pct-b">25%</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill" id="bar-b"></div>
+          </div>
+        </div>
+
+        <div class="bench-row" style="margin-top:1.8rem;">
+          <div class="bench-meta">
+            <span class="bench-label coral">Gemini 3.5 Flash · New</span>
+            <span class="bench-pct coral" id="bench-pct-f">100%</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill" id="bar-f"></div>
+          </div>
+        </div>
+
+        <div class="deco-line" style="margin-top:2rem;"></div>
+        <div style="font-family:'Space Mono',monospace;font-size:0.58rem;color:rgba(255,255,255,0.2);letter-spacing:0.1em;text-transform:uppercase;">
+          Measured on MMLU-Pro · Internal Benchmark 2025
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SCENE 2 — CODING + GPT-5.5 ═══ -->
+  <div class="scene" id="s2">
+    <div id="s2-term">
+      <div class="term-header">
+        <div class="term-dot"></div>
+        <div class="term-dot"></div>
+        <div class="term-dot"></div>
+        <span class="term-label">AI Router v2.4 · Live</span>
+      </div>
+      <div class="section-label" style="margin-bottom:1rem;">§ 02 · ROUTING</div>
+      <div class="term-line prompt" id="tl1">&gt; EVAL task_type: <span class="hl-coral">CODING</span></div>
+      <div class="term-line" id="tl2">model: Gemini 3.5 Flash ···· <span class="hl-green">SELECTED</span></div>
+      <div class="term-line" id="tl3">latency: 0.8s ·········· <span class="hl-amber">OPTIMAL</span></div>
+      <div class="term-line prompt" id="tl4" style="margin-top:0.8rem;">&gt; EVAL task_type: <span class="hl-coral">AGENTIC</span></div>
+      <div class="term-line" id="tl5">action: browser_automation · <span class="hl-green">ACTIVE</span></div>
+    </div>
+
+    <div id="s2-right">
+      <div id="s2-gpt" class="glass-card">
+        <div class="eyebrow">OpenAI</div>
+        <div class="headline-serif" style="font-size:clamp(4rem,7vw,7.5rem);line-height:0.95;margin-bottom:1rem;">
+          GPT-<span class="amber">5.5</span>
+        </div>
+        <p class="subtitle">The next evolution in reasoning and creativity. Frontier intelligence at scale.</p>
+        <span class="launch-badge">Launch · June 2025</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SCENE 3 — GPT-5 CAPABILITIES ═══ -->
+  <div class="scene" id="s3" style="flex-direction:column;justify-content:center;gap:4vh;">
+    <div id="s3-heading">
+      <div class="section-label">§ 03 · CAPABILITIES</div>
+      <h2 class="headline-serif" style="font-size:clamp(1.8rem,2.8vw,2.8rem);">GPT-5 · Domain Mastery</h2>
+    </div>
+
+    <div id="s3-top">
+      <div class="node-box glass-card" id="n1">
+        <div class="node-icon">[KW]</div>
+        <div class="node-name">Knowledge Work</div>
+        <div class="node-sub">Analysis · Research · Writing</div>
+      </div>
+      <div class="node-connector"></div>
+      <div class="node-box glass-card" id="n2">
+        <div class="node-icon">[AU]</div>
+        <div class="node-name">Computer Use<br>Automation</div>
+        <div class="node-sub">Browser · Code · APIs</div>
+      </div>
+      <div class="node-connector"></div>
+      <div class="node-box glass-card" id="n3">
+        <div class="node-icon">[SR]</div>
+        <div class="node-name">Scientific<br>Research</div>
+        <div class="node-sub">Hypothesis · Validation</div>
+      </div>
+    </div>
+
+    <div id="s3-err" class="glass-card" style="padding:2rem 2.5rem;display:flex;align-items:center;gap:4vw;">
+      <div class="err-left">
+        <span id="err-num">80</span>
+        <span class="err-unit">%</span>
+      </div>
+      <div class="err-right">
+        <div class="section-label" style="margin-bottom:0.3rem;">§ 03 · REDUCTION</div>
+        <div class="err-desc">Reasoning Errors Reduced vs. GPT-4o</div>
+        <div class="err-sub">Hallucination Rate · Internal Eval Suite · May 2025</div>
+        <div class="err-bar-track">
+          <div id="err-bar"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SCENE 4 — META RAY-BAN AR ═══ -->
+  <div class="scene" id="s4">
+    <div id="s4-left">
+      <div>
+        <div class="section-label">§ 04 · AR LENS</div>
+        <h2 class="headline-serif" style="font-size:clamp(2rem,3.5vw,3.5rem);">Meta Ray-Ban<br><span class="coral">Real-Time</span><br>Translation</h2>
+      </div>
+
+      <div id="s4-trans">
+        <div class="bubble" id="bubble-es" style="transform-origin:right center;">
+          <div class="bubble-lang">ES · Source</div>
+          ¿Puedes recomendarme un buen restaurante?
+        </div>
+        <div id="landmark-label" style="position:relative;opacity:0;transform:none;">
+          <div class="landmark-cross">
+            <div class="landmark-h"></div>
+            <div style="position:relative;width:6px;height:6px;">
+              <div class="landmark-dot"></div>
+            </div>
+            <div class="landmark-h"></div>
+          </div>
+          <div class="landmark-text">Eiffel Tower · 48.8584°N · 2.2945°E</div>
+        </div>
+        <div class="bubble" id="bubble-en" style="transform-origin:left center;">
+          <div class="bubble-lang">EN · Translated</div>
+          Can you recommend a good restaurant near here?
+        </div>
+      </div>
+    </div>
+
+    <div id="s4-right">
+      <div id="s4-hud">
+        <div class="hud-frame">
+          <div class="corner corner-tl"></div>
+          <div class="corner corner-tr"></div>
+          <div class="corner corner-bl"></div>
+          <div class="corner corner-br"></div>
+          <div class="hud-status">AR Lens · Active</div>
+          <div class="hud-crosshair"></div>
+        </div>
+
+        <div class="radar-container">
+          <div class="radar-ring radar-ring-outer"></div>
+          <div class="radar-ring radar-ring-inner"></div>
+          <div id="radar-sweep"></div>
+          <div class="radar-center-dot"></div>
+        </div>
+
+        <div id="landmark-hud" style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);text-align:center;opacity:0;">
+          <div class="landmark-cross">
+            <div class="landmark-h"></div>
+            <div style="position:relative;width:6px;height:6px;display:flex;align-items:center;justify-content:center;">
+              <div class="landmark-dot"></div>
+            </div>
+            <div class="landmark-h"></div>
+          </div>
+          <div class="landmark-text">EIFFEL TOWER<br>48.8584°N · 2.2945°E</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- #stage -->
+
+<script>
+(function () {
+  'use strict';
+
+  // ─── ERR PROXY OBJECT ───
+  const errProxy = { val: 80 };
+
+  // ─── INITIAL STATES ───
+  gsap.set('#s1, #s2, #s3, #s4', { opacity: 0 });
+
+  // Scene 1
+  gsap.set('#s1-header', { y: 40, opacity: 0 });
+  gsap.set('#s1-desc', { y: 30, opacity: 0 });
+  gsap.set('#s1-bench', { x: 60, opacity: 0 });
+  gsap.set('#bar-b', { width: '0%' });
+  gsap.set('#bar-f', { width: '0%' });
+
+  // Scene 2
+  gsap.set('#s2-term', { x: -70, opacity: 0 });
+  gsap.set('#tl1, #tl2, #tl3, #tl4, #tl5', { opacity: 0 });
+  gsap.set('#s2-gpt', { x: 70, opacity: 0 });
+
+  // Scene 3
+  gsap.set('#n1, #n2, #n3', { opacity: 0.2 });
+  gsap.set('#s3-err', { y: 35, opacity: 0 });
+  gsap.set('#err-bar', { width: '80%' });
+  errProxy.val = 80;
+  document.getElementById('err-num').textContent = '80';
+
+  // Scene 4
+  gsap.set('#s4-hud', { opacity: 0 });
+  gsap.set('#s4-trans', { opacity: 0 });
+  gsap.set('#bubble-es', { scale: 0.8, opacity: 0 });
+  gsap.set('#bubble-en', { scale: 0.8, opacity: 0 });
+
+  // Landmark elements (unique IDs)
+  gsap.set('#landmark-label', { opacity: 0 });
+  gsap.set('#landmark-hud', { opacity: 0 });
+
+  // ─── MAIN TIMELINE ───
+  const tl = gsap.timeline({
+    repeat: -1,
+    defaults: { ease: 'power2.out' }
+  });
+
+  // ═══ SCENE 1 ═══ (0–15s)
+
+  tl.to('#s1', { opacity: 1, duration: 0.4, ease: 'none' }, 0);
+
+  tl.to('#s1-header', { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }, 3.12);
+
+  tl.to('#s1-desc', { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }, 5.84);
+
+  tl.to('#s1-bench', { x: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }, 7.92);
+
+  tl.to('#bar-b', { width: '25%', duration: 1.5, ease: 'power2.out' }, 11.08);
+
+  tl.to('#bar-f', {
+    width: '100%',
+    duration: 1.1,
+    ease: 'power4.out',
+    boxShadow: '0 0 20px rgba(224,92,58,0.8)'
+  }, 12.0);
+
+  tl.to('#s1', { opacity: 0, duration: 0.6, ease: 'none' }, 14.5);
+
+  // ═══ SCENE 1 → 2 RESETS ═══
+  tl.set('#s1-header', { y: 40, opacity: 0 }, 14.9);
+  tl.set('#s1-desc', { y: 30, opacity: 0 }, 14.9);
+  tl.set('#s1-bench', { x: 60, opacity: 0 }, 14.9);
+  tl.set('#bar-b', { width: '0%' }, 14.9);
+  tl.set('#bar-f', { width: '0%', boxShadow: 'none' }, 14.9);
+
+  // ═══ SCENE 2 ═══ (15–30s)
+
+  tl.to('#s2', { opacity: 1, duration: 0.5, ease: 'none' }, 14.8);
+
+  tl.to('#s2-term', { x: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }, 16.64);
+
+  // Terminal lines stagger from 17.0s, each 0.3s delay
+  tl.to('#tl1', { opacity: 1, duration: 0.2 }, 17.0);
+  tl.to('#tl2', { opacity: 1, duration: 0.2 }, 17.3);
+  tl.to('#tl3', { opacity: 1, duration: 0.2 }, 17.6);
+  tl.to('#tl4', { opacity: 1, duration: 0.2 }, 17.9);
+  tl.to('#tl5', { opacity: 1, duration: 0.2 }, 18.2);
+
+  tl.to('#s2-gpt', { x: 0, opacity: 1, duration: 0.65, ease: 'power3.out' }, 19.2);
+
+  tl.to('#s2', { opacity: 0, duration: 0.6, ease: 'none' }, 29.5);
+
+  // ═══ SCENE 2 → 3 RESETS ═══
+  tl.set('#s2-term', { x: -70, opacity: 0 }, 29.85);
+  tl.set('#tl1, #tl2, #tl3, #tl4, #tl5', { opacity: 0 }, 29.85);
+  tl.set('#s2-gpt', { x: 70, opacity: 0 }, 29.85);
+
+  // errProxy reset callback
+  tl.add(() => {
+    errProxy.val = 80;
+    const el = document.getElementById('err-num');
+    if (el) el.textContent = '80';
+  }, 29.9);
+  tl.set('#err-bar', { width: '80%' }, 29.9);
+  tl.set('#s3-err', { y: 35, opacity: 0 }, 29.9);
+  tl.set('#n1, #n2, #n3', {
+    opacity: 0.2,
+    borderColor: 'rgba(255,255,255,0.08)',
+    boxShadow: 'none'
+  }, 29.9);
+
+  // ═══ SCENE 3 ═══ (30–45s)
+
+  tl.to('#s3', { opacity: 1, duration: 0.5, ease: 'none' }, 29.8);
+
+  // n1 lights up
+  tl.to('#n1', {
+    opacity: 1,
+    borderColor: 'rgba(224,92,58,0.5)',
+    boxShadow: '0 0 25px rgba(224,92,58,0.3)',
+    duration: 0.3
+  }, 30.12);
+
+  // n1 dims, n2 lights
+  tl.to('#n1', {
+    opacity: 0.2,
+    borderColor: 'rgba(255,255,255,0.08)',
+    boxShadow: 'none',
+    duration: 0.3
+  }, 32.06);
+  tl.to('#n2', {
+    opacity: 1,
+    borderColor: 'rgba(224,92,58,0.5)',
+    boxShadow: '0 0 25px rgba(224,92,58,0.3)',
+    duration: 0.3
+  }, 32.06);
+
+  // n2 dims, n3 lights
+  tl.to('#n2', {
+    opacity: 0.2,
+    borderColor: 'rgba(255,255,255,0.08)',
+    boxShadow: 'none',
+    duration: 0.3
+  }, 33.62);
+  tl.to('#n3', {
+    opacity: 1,
+    borderColor: 'rgba(224,92,58,0.5)',
+    boxShadow: '0 0 25px rgba(224,92,58,0.3)',
+    duration: 0.3
+  }, 33.62);
+
+  // Error panel slides up
+  tl.to('#s3-err', { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out' }, 35.24);
+
+  // Animate error number 80→20 and bar
+  tl.to(errProxy, {
+    val: 20,
+    duration: 0.5,
+    ease: 'power4.out',
+    onUpdate: function () {
+      const el = document.getElementById('err-num');
+      if (el) el.textContent = Math.round(errProxy.val);
+    }
+  }, 37.64);
+  tl.to('#err-bar', { width: '20%', duration: 0.5, ease: 'power4.out' }, 37.64);
+
+  tl.to('#s3', { opacity: 0, duration: 0.6, ease: 'none' }, 44.5);
+
+  // ═══ SCENE 3 → 4 RESETS ═══
+  tl.set('#s4-hud', { opacity: 0 }, 44.85);
+  tl.set('#s4-trans', { opacity: 0 }, 44.85);
+  tl.set('#bubble-es', { scale: 0.8, opacity: 0 }, 44.85);
+  tl.set('#bubble-en', { scale: 0.8, opacity: 0 }, 44.85);
+  tl.set('#landmark-label', { opacity: 0 }, 44.85);
+  tl.set('#landmark-hud', { opacity: 0 }, 44.85);
+
+  // Kill radar before restarting
+  tl.add(() => {
+    gsap.killTweensOf('#radar-sweep');
+  }, 44.85);
+
+  // ═══ SCENE 4 ═══ (45–60s)
+
+  tl.to('#s4', { opacity: 1, duration: 0.5, ease: 'none' }, 44.8);
+
+  // HUD fades in + radar starts
+  tl.to('#s4-hud', { opacity: 1, duration: 0.5, ease: 'none' }, 45.26);
+  tl.add(() => {
+    gsap.to('#radar-sweep', {
+      rotation: 360,
+      duration: 3,
+      repeat: -1,
+      ease: 'none',
+      transformOrigin: '50% 50%'
+    });
+  }, 45.26);
+
+  // Translation panel fades in
+  tl.to('#s4-trans', { opacity: 1, duration: 0.4, ease: 'none' }, 50.04);
+
+  // ES bubble pops in
+  tl.to('#bubble-es', {
+    scale: 1,
+    opacity: 1,
+    duration: 0.4,
+    ease: 'back.out(1.7)'
+  }, 51.26);
+
+  // Landmark appears (label in left panel + crosshair in HUD)
+  tl.to('#landmark-label', { opacity: 1, duration: 0.4, ease: 'none' }, 53.02);
+  tl.to('#landmark-hud', { opacity: 1, duration: 0.4, ease: 'none' }, 53.02);
+
+  // EN bubble pops in
+  tl.to('#bubble-en', {
+    scale: 1,
+    opacity: 1,
+    duration: 0.4,
+    ease: 'back.out(1.7)'
+  }, 55.26);
+
+  // Scene 4 fades out
+  tl.to('#s4', { opacity: 0, duration: 0.6, ease: 'none' }, 59.5);
+
+  // ═══ RESET ALL FOR LOOP ═══
+  tl.add(() => {
+    gsap.killTweensOf('#radar-sweep');
+    gsap.set('#radar-sweep', { rotation: 0 });
+  }, 59.9);
+
+  // Reset scene 1 elements for loop
+  tl.set('#s1', { opacity: 0 }, 59.9);
+  tl.set('#s2', { opacity: 0 }, 59.9);
+  tl.set('#s3', { opacity: 0 }, 59.9);
+  tl.set('#s4', { opacity: 0 }, 59.9);
+  tl.set('#s1-header', { y: 40, opacity: 0 }, 59.9);
+  tl.set('#s1-desc', { y: 30, opacity: 0 }, 59.9);
+  tl.set('#s1-bench', { x: 60, opacity: 0 }, 59.9);
+  tl.set('#bar-b', { width: '0%' }, 59.9);
+  tl.set('#bar-f', { width: '0%', boxShadow: 'none' }, 59.9);
+  tl.set('#n1, #n2, #n3', {
+    opacity: 0.2,
+    borderColor: 'rgba(255,255,255,0.08)',
+    boxShadow: 'none'
+  }, 59.9);
+  tl.add(() => {
+    errProxy.val = 80;
+    const el = document.getElementById('err-num');
+    if (el) el.textContent = '80';
+  }, 59.9);
+  tl.set('#err-bar', { width: '80%' }, 59.9);
+  tl.set('#s3-err', { y: 35, opacity: 0 }, 59.9);
+
+  // Reset scene 2 terminal for loop
+  tl.set('#s2-term', { x: -70, opacity: 0 }, 59.9);
+  tl.set('#tl1, #tl2, #tl3, #tl4, #tl5', { opacity: 0 }, 59.9);
+  tl.set('#s2-gpt', { x: 70, opacity: 0 }, 59.9);
+
+  // Reset scene 4 for loop
+  tl.set('#s4-hud', { opacity: 0 }, 59.9);
+  tl.set('#s4-trans', { opacity: 0 }, 59.9);
+  tl.set('#bubble-es', { scale: 0.8, opacity: 0 }, 59.9);
+  tl.set('#bubble-en', { scale: 0.8, opacity: 0 }, 59.9);
+  tl.set('#landmark-label', { opacity: 0 }, 59.9);
+  tl.set('#landmark-hud', { opacity: 0 }, 59.9);
+
+  // Play
+  tl.play();
+
+})();
+</script>
+</body>
+</html>

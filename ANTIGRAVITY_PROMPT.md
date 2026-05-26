@@ -360,16 +360,106 @@ Every element that appears on screen must enter at the exact timestamp of the wo
 - Zero `Math.random()`, `Date.now()`, or network fetches — everything deterministic
 - Particle positions are hardcoded integers, not calculated randomly
 
-**Visual density (every dark-background scene must have all of these):**
+**8-zone spatial subdivision — every dark-background scene must use this layout:**
+
+The screen is always divided into 8 independent zones, all moving simultaneously. The audience sees something alive in every corner at every moment — no region is ever static. Each zone operates on its own animation loop and never pauses waiting for another.
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│  ZONE 1: Top info bar  (ticker / headline scroll)            │
+├────────────┬─────────────────────────┬───────────────────────┤
+│ ZONE 2     │                         │ ZONE 3                │
+│ Left panel │   ZONE 5: HERO CENTER   │ Right panel           │
+│ (radar /   │   (main scene content)  │ (waveform / data      │
+│  stats)    │                         │  stream)              │
+├────────────┤                         ├───────────────────────┤
+│ ZONE 4     │                         │ ZONE 6                │
+│ Corner TL  │                         │ Corner TR             │
+│ brackets   ├─────────────────────────┤ brackets              │
+│  + pulses  │   ZONE 7: Keyword matrix│                       │
+│            │   (every key term shows │                       │
+├────────────┴─────────────────────────┴───────────────────────┤
+│  ZONE 8: Bottom stat bar  (5 real data points, cycling)      │
+└──────────────────────────────────────────────────────────────┘
+```
+
+| Zone | What it does | Always-alive motion |
+|------|-------------|---------------------|
+| 1 — Top ticker | Scrolls key facts, model names, scores from the topic | CSS marquee or GSAP `x` loop, never stops |
+| 2 — Left panel | Radar sweep, signal bars, or stat column | Radar: CSS rotate loop; Bars: GSAP yoyo on height |
+| 3 — Right panel | Waveform, data stream, or log scroll | Waveform: SVG path with CSS animation; Log: GSAP y loop |
+| 4 — TL bracket | Corner bracket + blinking ping dot | GSAP opacity yoyo |
+| 5 — Hero center | The main scene content (template-specific) | Driven by word timestamps |
+| 6 — TR bracket | Corner bracket + status chip | GSAP opacity yoyo, offset timing |
+| 7 — Keyword matrix | Grid of key terms that glow when spoken | Each word triggers on its timestamp (see keyword matrix rule below) |
+| 8 — Bottom bar | 5 data points from scene topic | Number odometer loop cycling hardcoded values |
+
+**Keyword matrix rule (mandatory for every dark-background scene):**
+
+The keyword matrix (Zone 7) is a grid of 8–14 key terms drawn from the script and data URLs. Each term is always visible at low opacity. When the narrator speaks that word, its cell glows, scales up, and settles — giving the audience something to read at every moment.
+
+```html
+<!-- keyword matrix example -->
+<div class="kw-matrix" style="position:absolute;bottom:180px;left:80px;right:80px;
+     display:flex;flex-wrap:wrap;gap:8px;opacity:0.4;">
+  <span class="kw" id="kw-model" style="font-size:13px;letter-spacing:0.1em;
+        color:#7cfc60;padding:4px 10px;border:1px solid rgba(124,252,96,0.3);border-radius:4px;">
+    [MODEL NAME]
+  </span>
+  <!-- 7–13 more terms -->
+</div>
+```
+
+```js
+// Keyword matrix — each term fires at its word's timestamp
+tl.to('#kw-model', { opacity: 1, scale: 1.15, color: '#ffffff',
+  boxShadow: '0 0 20px rgba(124,252,96,0.8)', duration: 0.3, ease: 'back.out(2)' }, wordTimestamp);
+tl.to('#kw-model', { opacity: 0.4, scale: 1, duration: 0.6 }, wordTimestamp + 0.5);
+```
+
+Key terms for the matrix come from the script + fetched URLs — model name, version, benchmark names, capability words, score values. Not invented. The matrix shows what the video is about; the hero center shows the detail.
+
+**Hardcoded sequences — not Math.random() — for all fluctuating values:**
+
+Any element that shows "live" telemetry (changing numbers, signal strength, activity bars) must cycle through a hardcoded array, never use `Math.random()` or `Date.now()`. This is required for deterministic video render — every frame must look identical on every playback.
+
+```js
+// CORRECT — hardcoded sequence
+const SEQ = [42.1, 38.7, 51.2, 44.9, 47.3, 39.8, 53.1, 41.6];
+let si = 0;
+setInterval(() => { el.textContent = SEQ[si++ % SEQ.length].toFixed(1); }, 400);
+
+// WRONG — never do this
+setInterval(() => { el.textContent = (Math.random() * 60 + 20).toFixed(1); }, 400);
+```
+
+Values in the sequence must come from the topic's real data — actual benchmark scores, real latency numbers, real token counts from the fetched URLs.
+
+**Composable zone files — each zone is its own HTML layer:**
+
+Write each zone as a separate standalone HTML file that can be composed as an iframe or inline layer. This allows the HyperFrames engine to treat zones as independent tracks.
+
+File naming per scene:
+```
+scene-01-hero.html        ← Zone 5: main content (required)
+scene-01-ticker.html      ← Zone 1: top ticker (required)
+scene-01-sidebar-l.html   ← Zone 2: left panel (required for dark-bg scenes)
+scene-01-sidebar-r.html   ← Zone 3: right panel (required for dark-bg scenes)
+scene-01-keywords.html    ← Zone 7: keyword matrix (required)
+```
+
+Each zone file has its own `data-composition-id`, `data-width/height/duration`, and GSAP timeline registered on `window.__timelines`. Zone files for sidebar/ticker can be shared across scenes if the content is the same — but the hero file is always unique per scene.
+
+**Visual density checklist (every dark-background scene must have all of these):**
 - [ ] Animated background — canvas dot grid or moving line grid
-- [ ] 16–28 floating particles — hardcoded `left/top` positions, CSS float animation
+- [ ] 8 zones populated (ticker, left panel, right panel, TL corner, hero, TR corner, keyword matrix, bottom bar)
+- [ ] Keyword matrix — 8–14 terms from script + data, each wired to its word's timestamp
+- [ ] Hardcoded sequences for all fluctuating telemetry values (no Math.random())
 - [ ] Continuous scan line — sweeps full width or full height, `repeat: -1`
 - [ ] 4 corner brackets — TL, TR, BL, BR — with continuous opacity pulse
-- [ ] Top info bar — 3 sections, blinking dot in center, relates to scene content
-- [ ] Bottom 5-stat bar — 5 data points from the scene's topic
-- [ ] Minimum 3 continuous GSAP loops — `repeat: -1, yoyo: true` on glow/pulse/float
+- [ ] Minimum 5 continuous GSAP loops — `repeat: -1, yoyo: true` running across all zones
 - [ ] Simultaneous animations — multiple elements at the same GSAP time marker
-- [ ] Scene-specific extra layer — whatever makes THIS template unique (orbit, bars, checklist, etc.)
+- [ ] Scene-specific hero layer — orbit, bars, checklist, strikethrough, etc.
 
 **Exception — light-background templates (s06, s08, s09):**
 These scenes use light backgrounds (#ededf8, #f5f5ff, #f5f5f5). Do NOT add dark cyber particles, neon corner brackets, or heavy scan lines — it breaks the professional UI look. Instead:
@@ -409,13 +499,22 @@ These scenes use light backgrounds (#ededf8, #f5f5ff, #f5f5f5). Do NOT add dark 
 
 **Audio sync — every text reveal lands on its word:**
 - Open every scene's `<script>` block with a comment that pastes the word timing table for that scene
-- Every text element on screen must be tied to a specific word in the table
+- **Every single key term the narrator speaks must trigger a visible visual reaction on screen.** Not just hero words — ALL nouns, model names, benchmark names, verbs of consequence. The audience reads every key term off the screen exactly when it is spoken. This is not optional.
 - Per-word text reveals (kinetic words, headlines, captions) — use one `tl.fromTo()` per word, each starting at that word's timestamp
+- Keyword matrix terms — each glows + scales at its word's timestamp, settles 0.5s later (see 8-zone keyword matrix rule above)
 - Hero numbers (count-up) — `START_TIME` = the timestamp of the first digit-word ("ninety-" in "ninety-four"); `duration` = the time span until the number is fully spoken
 - Badges/chips that name a thing — pop in at the timestamp of the noun ("SWE-Bench" → badge enters at "SWE-")
 - Checkmarks/strikethroughs — land on the verb or confirming word ("Verified" → checkmark stamps)
 - Bars that fill — `START_TIME` = the timestamp of the data word (e.g. "scored"); all bars offset by 0.05s, finish before the number is spoken
-- Ambient loops (background grid, particles, corner pulse, scan line) — start at `0` with `repeat: -1`; they don't need word sync
+- Word entrance pattern (apply to every content word that appears on screen):
+  ```js
+  // word appears → scales up → glows → settles
+  tl.fromTo('.word-el', { opacity: 0, scale: 0.7, y: 10 },
+    { opacity: 1, scale: 1.1, y: 0, duration: 0.25, ease: 'back.out(2)' }, wordStart);
+  tl.to('.word-el', { scale: 1, duration: 0.2, ease: 'power2.out' }, wordStart + 0.25);
+  tl.to('.word-el', { textShadow: '0 0 20px currentColor', duration: 0.6, repeat: -1, yoyo: true }, wordStart + 0.3);
+  ```
+- Ambient loops (background grid, particles, corner pulse, scan line, ticker, waveform) — start at `0` with `repeat: -1`; they don't need word sync
 - Never use round-number timestamps like `1.0`, `2.0`, `3.0` unless a word actually lands there
 
 **Example timeline block (matches the word table from Step 3.5):**
@@ -504,8 +603,21 @@ One sentence of rationale per scene below the table.
 Print the word-to-timestamp table from Step 3.5 for every scene. This is the source of truth for all animation timing.
 
 ### C. All HTML scene files
-One complete file per scene. Name them: `scene-01-[slug].html`, `scene-02-[slug].html`, etc.
-Every file is self-contained and plays in a plain browser with no dependencies.
+One file per zone per scene. Name them:
+
+```
+scene-01-hero.html         ← Zone 5 main content — always required
+scene-01-ticker.html       ← Zone 1 top ticker — always required
+scene-01-sidebar-l.html    ← Zone 2 left panel — required for dark-bg scenes
+scene-01-sidebar-r.html    ← Zone 3 right panel — required for dark-bg scenes
+scene-01-keywords.html     ← Zone 7 keyword matrix — always required
+scene-02-hero.html         ← next scene hero
+... (and so on for all scenes)
+```
+
+Every file is self-contained, opens standalone in a browser, and has its own GSAP timeline registered on `window.__timelines`. Hero files are unique per scene. Ticker and keyword matrix files may be reused across scenes if content is identical — but must still have a unique `data-composition-id`.
+
+Total file count: roughly 4–5 files per scene × number of scenes. A 9-scene video produces ~40 files. Deliver all of them.
 
 ### D. index.html
 Final assembled composition. Use this exact structure:
@@ -569,12 +681,15 @@ After writing all files, before delivering, verify every item:
 
 **Visual density:**
 - [ ] Every dark-bg scene has a canvas grid background
-- [ ] Every dark-bg scene has 16+ particles with hardcoded positions
+- [ ] Every dark-bg scene uses the 8-zone layout (ticker, L panel, R panel, corners, hero, keyword matrix, bottom bar)
+- [ ] Keyword matrix has 8–14 terms from the script, each wired to its word timestamp
+- [ ] All fluctuating telemetry values use hardcoded sequences — zero `Math.random()` calls anywhere
 - [ ] Every scene has a top bar + bottom bar
 - [ ] Every dark-bg scene has corner brackets
 - [ ] Every dark-bg scene has a scan line
-- [ ] Every dark-bg scene has 3+ `repeat: -1` loops
+- [ ] Every dark-bg scene has 5+ `repeat: -1` loops across all zones
 - [ ] Light-bg scenes (s06/s08/s09) keep professional UI look — no heavy cyber overlays
+- [ ] Each zone (hero, ticker, left panel, right panel, keywords) is its own HTML file
 
 **Scene selection quality:**
 - [ ] No two consecutive scenes use the same template
@@ -592,10 +707,13 @@ After writing all files, before delivering, verify every item:
 
 **Audio sync (word-to-word):**
 - [ ] Every scene has a word timing table pasted as a comment at the top of its `<script>` block
+- [ ] Every key term the narrator speaks has a visible visual reaction (glow + scale + settle)
+- [ ] Keyword matrix terms are wired: each glows the moment its word is spoken
 - [ ] Every text element on screen is wired to a specific word's timestamp
 - [ ] Count-up numbers start at the timestamp of their first digit-word
 - [ ] Badges/checkmarks land on the noun or verb they represent
 - [ ] No `tl.to()` timestamp is a guessed round number — every one comes from the word table
+- [ ] Word entrance pattern applied (opacity 0→1, scale 0.7→1.1→1, glow settle)
 - [ ] Ambient/continuous loops (grid, scan, particles, corner pulse) start at `0`
 
 If any box is unchecked, fix it before delivering.

@@ -35,7 +35,7 @@ https://raw.githubusercontent.com/jibranpcccc/cladedesigns/main/samples/s14-kine
 
 **If the user says "check for updates" or "check github":**
 1. Re-fetch every sample URL above — all 14 files
-2. Also try fetching s15, s16, s17 at the same base URL pattern — if any return valid HTML, read them too
+2. Also try fetching s15 through s24 at the same base URL pattern — if any return valid HTML, read them too
 3. Update your internal knowledge of every template
 4. Confirm: "Updated. Re-read [N] files. [X] new templates found." (or "no new templates")
 
@@ -496,6 +496,21 @@ The 1920×1080 screen is divided into 8 independently-animated panels. Every pan
 | P7 — Polar Radar | Circular sweep arm rotating; concentric rings; target acquisition blips | CSS `rotate` loop + SVG circle flash on ping |
 | P8 — Float Value Grid | 4×4 grid of fluctuating decimal values (weight matrix simulation) | Values cycle hardcoded sequences, all offset by different intervals |
 
+**P1 when there is no brand interface in the script:**
+
+If the scene covers an abstract topic (a concept, a general claim, an industry trend) with no specific real product UI to recreate, P1 becomes one of these alternatives — pick the one that best fits the scene content:
+
+| Scene type | P1 alternative |
+|---|---|
+| A big claim / ranking | Leaderboard table with real model names and scores from fetched URLs |
+| A process / how it works | Animated flowchart or architecture diagram in the brand accent color |
+| Industry data / trends | Recharts-style line or area chart with hardcoded data points |
+| A quote / announcement | Press release or X-post recreation with the actual quoted text |
+| A model's capability | Recreate the model's own chat interface showing the capability in action |
+| Any other abstract concept | A schematic/blueprint diagram with labeled nodes matching the VO content |
+
+Never leave P1 as an empty or generic colored block. If no real brand interface fits, build a custom data visualization from the fetched URLs.
+
 ---
 
 **P2 — Kinetic Keyword Matrix with Gliding Highlight Box:**
@@ -704,14 +719,17 @@ Object.entries(FV_SEQS).forEach(([id, seq], i) => {
 Any element that shows "live" telemetry (changing numbers, signal strength, activity bars) must cycle through a hardcoded array, never use `Math.random()` or `Date.now()`. This is required for deterministic video render — every frame must look identical on every playback.
 
 ```js
-// CORRECT — hardcoded sequence
+// CORRECT — hardcoded sequence driven by tl.call() (deterministic, GSAP-controlled)
 const SEQ = [42.1, 38.7, 51.2, 44.9, 47.3, 39.8, 53.1, 41.6];
 let si = 0;
-setInterval(() => { el.textContent = SEQ[si++ % SEQ.length].toFixed(1); }, 400);
+const UPDATE_TIMES = [0.4, 0.8, 1.2, 1.6, 2.0, 2.4, 2.8, 3.2, 3.6, 4.0, 4.4, 4.8];
+UPDATE_TIMES.forEach(t => tl.call(() => { el.textContent = SEQ[si++ % SEQ.length].toFixed(1); }, [], t));
 
-// WRONG — never do this
-setInterval(() => { el.textContent = (Math.random() * 60 + 20).toFixed(1); }, 400);
+// WRONG — never use setInterval or Math.random()
+setInterval(() => { el.textContent = (Math.random() * 60 + 20).toFixed(1); }, 400); // ← NEVER DO THIS
 ```
+
+**Why `tl.call()` not `setInterval()`:** `setInterval` runs on wall-clock time which is non-deterministic — the video renderer may pause, skip frames, or run at variable speed. `tl.call()` is driven by the GSAP timeline, so it fires at the exact same playback positions every render. Every frame looks identical every time.
 
 Values in the sequences must come from the topic's real data — actual benchmark scores, real latency numbers, real token counts from the fetched URLs. Invent nothing.
 
@@ -780,6 +798,17 @@ These scenes use light backgrounds (#ededf8, #f5f5ff, #f5f5f5). Do NOT add dark 
 | s12 | `#0a0a0a` | `#ffffff` white |
 | s13 | `#0f0a1e` | `#7c5fff` purple |
 | s14 | `#1a0d2e` | `#ffcc00` amber |
+| s15 | `#0d1a0d` | `#39ff14` neon green (split race) |
+| s16 | `#0a0a1a` | `#ff3366` hot pink (countdown) |
+| s17 | `#0a1428` | `#00cfff` sky blue (network map) |
+| s18 | `#0d0d0d` | `#ff4444` red / `#44ff88` green (code diff) |
+| s19 | `#111111` | `#ff9500` amber (live feed) |
+| s20 | `#1a1a1a` | `#e0e0e0` light grey (quote card) |
+| s21 | `#0a1020` | `#4fc3f7` light blue (dual timeline) |
+| s22 | `#141414` | `#ffd700` gold (scorecard) |
+| s23 | `#0c1020` | `#7ee8fa` cyan (token flow) |
+| s24 | `#0f0f0f` | `#ff6b35` orange-red (heat map) |
+| s25+ | inventor's choice | must contrast clearly with all previous templates |
 
 **Data rules:**
 - Every number on screen must come from a URL you fetched — no invented stats
@@ -842,7 +871,15 @@ tl.fromTo('.checkmark', { scale: 0 }, { scale: 1, duration: 0.3, ease: 'back.out
 
 ## STEP 6 — PICK TRANSITIONS
 
-Between every pair of scenes, choose a HyperShader transition:
+Between every pair of scenes, choose a HyperShader transition. For videos with 15+ scenes, all 14 transitions will repeat — that is fine. The rule is: **never use the same transition twice in a row**, and **never use the same transition 3 times in any 6-scene window** (i.e., don't lean on `whip-pan` for half the video).
+
+For 50-scene videos: think of transitions as belonging to energy tiers and rotate through tiers:
+- **Tier A (high energy):** `flash-through-white`, `glitch`, `ridged-burn`
+- **Tier B (data/tech):** `whip-pan`, `chromatic-split`, `thermal-distortion`
+- **Tier C (shift/chapter):** `sdf-iris`, `domain-warp`, `swirl-vortex`
+- **Tier D (smooth/positive):** `light-leak`, `ripple-waves`, `cross-warp-morph`, `cinematic-zoom`, `gravitational-lens`
+
+Alternate tiers so the energy doesn't flatten out over a long video.
 
 | Transition | Use when |
 |---|---|
@@ -896,22 +933,22 @@ Print the word-to-timestamp table from Step 3.5 for every scene. This is the sou
 7 files per scene, all unique, all required:
 
 ```
-scene-01-bg.html           ← canvas grid + particles
-scene-01-corners.html      ← corner brackets + ambient glow
-scene-01-ticker.html       ← top ticker — scene-specific facts
-scene-01-sidebar-l.html    ← left panel
-scene-01-sidebar-r.html    ← right panel
-scene-01-keywords.html     ← keyword matrix
-scene-01-hero.html         ← main scene content
+scene-01-bg.html           ← canvas dot grid + particles + top ticker + bottom stat bar
+scene-01-brand.html        ← P1: pixel-perfect brand interface recreation
+scene-01-keywords.html     ← P2: keyword matrix + gliding selector box
+scene-01-waveform.html     ← P3: waveform scope + P7: polar radar
+scene-01-terminal.html     ← P4: code stream + P5: system log
+scene-01-mathcurve.html    ← P6: coordinate graph + P8: float value grid
+scene-01-hero.html         ← main word-synced scene content (template-specific)
 
 scene-02-bg.html
-scene-02-corners.html
+scene-02-brand.html
 ... (7 files × every scene)
 ```
 
-Every file is self-contained, plays in a plain browser, and has its own GSAP timeline on `window.__timelines`. **Never reuse a zone file across scenes** — different ticker text, different sidebar data, different keyword set, different corner chips every time.
+Every file is self-contained, plays in a plain browser, and has its own GSAP timeline on `window.__timelines`. **Never reuse a panel file across scenes** — every file has unique ticker text, unique brand content, unique keyword set, unique terminal lines, unique float sequences.
 
-Target file count: 70 files (10 scenes) to 84 files (12 scenes). Deliver every one.
+Target file count: `scenes × 7`. A 10-scene video = 70 files. A 50-scene video = 350 files. Deliver every one.
 
 ### D. index.html
 Final assembled composition. Use this exact structure:
@@ -1042,16 +1079,23 @@ The only time you pause is if a URL returns a hard error. State the error in one
 
 ## WHAT "GOOD" LOOKS LIKE
 
-A good scene from this library has:
-- Something moving in every quadrant of the 1920×1080 canvas at all times
-- The center element is the hero, but every edge is alive
-- Text reveals are staggered or per-word, never all at once
-- Numbers count up from 0
-- Bars fill simultaneously, not one by one
-- The glow on the hero element never stops pulsing
-- The scan line never stops sweeping
+A good scene from this system has all 8 panels alive simultaneously:
 
-If you look at your scene and any region is static and empty — add something there.
+- **P1** — the brand interface shows real content and has at least one animated element (cursor, counter, streaming text, slider pulse)
+- **P2** — the gliding selector box is actively flying between keyword cells, never stationary for more than 1 word's duration
+- **P3** — the waveform is cycling and the radar is rotating at all times (these never stop)
+- **P4** — new code lines are streaming in every 0.6s
+- **P5** — new log lines are scrolling upward every 0.8s
+- **P6** — the math curve is redrawing its SVG path at least every 2 seconds
+- **P7** — radar arm is spinning, ping circles are firing at hardcoded times
+- **P8** — float grid values are updating across all 16 cells in staggered cycles
+- **Hero (center)** — every key word in the VO triggers a visual entrance at that exact timestamp
+- **Top ticker** — scrolling continuously, never paused
+- **Bottom bar** — 5 real numbers visible at all times, cycling through hardcoded sequences
+
+**The test:** pause playback at any random second. Every panel should show non-zero animation state. If any panel looks frozen, it is broken.
+
+Numbers count up from 0. Bars fill simultaneously (0.05s offset max). Glow loops never stop. Scan line never stops. If any region is empty and static — fill it.
 
 ---
 

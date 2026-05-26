@@ -127,10 +127,25 @@ Read the full script. For every sentence or logical segment, extract:
    - Add 1–2 seconds of hold after any big reveal or shocking number
 
 Then group segments into scenes. Apply these rules:
-- **One scene = one continuous visual idea**, typically 6–14 seconds
-- **If a segment is under 5 seconds** → merge it with the adjacent segment that shares its topic
-- **If a segment is over 14 seconds** → split it into two scenes at the most logical break point
-- **Target total video length**: 45–90 seconds (7–12 scenes) for a standard AI product video
+
+**Standard script (120+ words):**
+- One scene = one continuous visual idea, typically 6–14 seconds
+- Under 5 seconds → merge with adjacent scene sharing its topic
+- Over 14 seconds → split at the most logical break point
+- Target: 45–90 seconds total, 7–12 scenes
+
+**Short script (under 120 words) — maximize scene count:**
+- Count the words. A 100-word script at 2.0 wps = 50 seconds. That is enough for 9–12 scenes if you cut aggressively.
+- Minimum scene length: **4 seconds** (not 5). Every phrase that can stand alone visually gets its own scene.
+- Split at every: topic shift, new noun introduced, before/after contrast, any number or stat, any call to action
+- Target: 9–12 scenes even if some are 4–5 seconds — more scenes = more visual context switches = higher engagement
+- Never merge scenes just to hit a minimum. A 4-second scene with one punchy visual is better than a 9-second scene trying to say two things at once.
+- After splitting, if any scene is still over 10 seconds → split it again
+
+**Maximizing unique HTML files:**
+- Each scene produces 7 zone files (not 5). Add `scene-NN-bg.html` (canvas grid + particles) and `scene-NN-corners.html` (corner brackets + ambient glow) as separate composable layers.
+- NEVER share zone files across scenes. Every scene gets its own unique ticker content, unique sidebar content, unique keyword set, unique corner text. Shared files defeat the purpose.
+- A 10-scene video produces 70 unique HTML files. A 12-scene video produces 84. This is the target.
 
 ---
 
@@ -437,18 +452,20 @@ Values in the sequence must come from the topic's real data — actual benchmark
 
 **Composable zone files — each zone is its own HTML layer:**
 
-Write each zone as a separate standalone HTML file that can be composed as an iframe or inline layer. This allows the HyperFrames engine to treat zones as independent tracks.
+Write each zone as a separate standalone HTML file. Every file has its own `data-composition-id`, `data-width/height/duration`, and GSAP timeline on `window.__timelines`.
 
-File naming per scene:
+**7 files per scene — all required, all unique:**
 ```
-scene-01-hero.html        ← Zone 5: main content (required)
-scene-01-ticker.html      ← Zone 1: top ticker (required)
-scene-01-sidebar-l.html   ← Zone 2: left panel (required for dark-bg scenes)
-scene-01-sidebar-r.html   ← Zone 3: right panel (required for dark-bg scenes)
-scene-01-keywords.html    ← Zone 7: keyword matrix (required)
+scene-01-bg.html          ← canvas grid + floating particles (Zone ambient)
+scene-01-corners.html     ← 4 corner brackets + ambient glow loops (Zone 4/6)
+scene-01-ticker.html      ← top ticker bar scrolling scene-specific facts (Zone 1)
+scene-01-sidebar-l.html   ← left panel: radar / stat column / signal bars (Zone 2)
+scene-01-sidebar-r.html   ← right panel: waveform / log stream / data feed (Zone 3)
+scene-01-keywords.html    ← keyword matrix wired to word timestamps (Zone 7)
+scene-01-hero.html        ← main scene content, word-synced (Zone 5)
 ```
 
-Each zone file has its own `data-composition-id`, `data-width/height/duration`, and GSAP timeline registered on `window.__timelines`. Zone files for sidebar/ticker can be shared across scenes if the content is the same — but the hero file is always unique per scene.
+**Never share zone files across scenes.** Every scene has unique ticker text, unique sidebar data, unique keyword set, unique corner status chips. Shared = lazy = wrong. A 10-scene video = 70 files. A 12-scene video = 84 files.
 
 **Visual density checklist (every dark-background scene must have all of these):**
 - [ ] Animated background — canvas dot grid or moving line grid
@@ -603,21 +620,25 @@ One sentence of rationale per scene below the table.
 Print the word-to-timestamp table from Step 3.5 for every scene. This is the source of truth for all animation timing.
 
 ### C. All HTML scene files
-One file per zone per scene. Name them:
+7 files per scene, all unique, all required:
 
 ```
-scene-01-hero.html         ← Zone 5 main content — always required
-scene-01-ticker.html       ← Zone 1 top ticker — always required
-scene-01-sidebar-l.html    ← Zone 2 left panel — required for dark-bg scenes
-scene-01-sidebar-r.html    ← Zone 3 right panel — required for dark-bg scenes
-scene-01-keywords.html     ← Zone 7 keyword matrix — always required
-scene-02-hero.html         ← next scene hero
-... (and so on for all scenes)
+scene-01-bg.html           ← canvas grid + particles
+scene-01-corners.html      ← corner brackets + ambient glow
+scene-01-ticker.html       ← top ticker — scene-specific facts
+scene-01-sidebar-l.html    ← left panel
+scene-01-sidebar-r.html    ← right panel
+scene-01-keywords.html     ← keyword matrix
+scene-01-hero.html         ← main scene content
+
+scene-02-bg.html
+scene-02-corners.html
+... (7 files × every scene)
 ```
 
-Every file is self-contained, opens standalone in a browser, and has its own GSAP timeline registered on `window.__timelines`. Hero files are unique per scene. Ticker and keyword matrix files may be reused across scenes if content is identical — but must still have a unique `data-composition-id`.
+Every file is self-contained, plays in a plain browser, and has its own GSAP timeline on `window.__timelines`. **Never reuse a zone file across scenes** — different ticker text, different sidebar data, different keyword set, different corner chips every time.
 
-Total file count: roughly 4–5 files per scene × number of scenes. A 9-scene video produces ~40 files. Deliver all of them.
+Target file count: 70 files (10 scenes) to 84 files (12 scenes). Deliver every one.
 
 ### D. index.html
 Final assembled composition. Use this exact structure:

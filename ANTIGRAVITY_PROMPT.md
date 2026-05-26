@@ -128,15 +128,20 @@ Read the full script. For every sentence or logical segment, extract:
 
 Then group segments into scenes. Apply these rules:
 
-**Scene count targets — scale by word count (more words = more scenes = more files):**
+**Scene count targets — minimum 8 scenes per 100 words, always:**
 
-| Script length | Approx. duration | Target scenes | Target HTML files |
+| Script length | Approx. duration | Minimum scenes | Minimum HTML files |
 |---|---|---|---|
-| Under 120 words | 40–60s | 9–12 scenes | 63–84 files |
-| 120–200 words | 60–100s | 14–20 scenes | 98–140 files |
-| 200–350 words | 100–175s | 20–35 scenes | 140–245 files |
-| 350–500 words | 175–250s | 35–50 scenes | 245–350 files |
-| 500+ words | 250s+ | 50+ scenes | 350+ files |
+| 100 words | ~50s | **8 scenes** | **56 files** |
+| 200 words | ~100s | **16 scenes** | **112 files** |
+| 300 words | ~150s | **24 scenes** | **168 files** |
+| 400 words | ~200s | **32 scenes** | **224 files** |
+| 500 words | ~250s | **40 scenes** | **280 files** |
+| Every +100 words | +50s | +8 scenes | +56 files |
+
+**The formula is fixed: `floor(wordCount / 100) × 8 = minimum scene count`.**
+
+Aim for the ceiling, not the floor. A 100-word script should hit 10–12 scenes if it has natural split points. The 8-scenes-per-100-words is the hard minimum, not the target.
 
 **The rule that never changes: MORE HTML FILES = BETTER.** Every extra scene is another visual context switch that keeps the viewer locked in. Never compress two ideas into one scene to save output. Split aggressively.
 
@@ -280,6 +285,10 @@ Once all 14 built-in templates have been used, invent new ones (s15, s16, ...). 
 ---
 
 ## STEP 5 — WRITE EVERY SCENE
+
+> ⚠ **ARCHITECTURE WARNING — READ BEFORE WRITING A SINGLE LINE:**
+> Every scene = **7 separate HTML files**. Not one file. Not an index.html with all scenes. Not a big file with inline sections. **Seven individual `.html` files per scene**, each with its own `data-composition-id` and GSAP timeline. If you write a single combined file, you have built the wrong thing. Stop and rebuild as 7 files.
+> File names: `scene-NN-bg.html` / `scene-NN-brand.html` / `scene-NN-keywords.html` / `scene-NN-waveform.html` / `scene-NN-terminal.html` / `scene-NN-mathcurve.html` / `scene-NN-hero.html`
 
 **The sample files taught you visual style, color palettes, and GSAP patterns. That is all they are for. Do not copy their HTML. Do not use them as a starting point. Build every scene from scratch around the script.**
 
@@ -464,26 +473,49 @@ Every element that appears on screen must enter at the exact timestamp of the wo
 The 1920×1080 screen is divided into 8 independently-animated panels. Every panel has its own loop running at all times. No panel ever pauses waiting for another.
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│  TOP TICKER — full 1920px wide, 48px tall, scrolling facts loop     │
-├───────────────────┬──────────────────────────┬──────────────────────┤
-│ P7: Polar Radar   │                          │ P3: Waveform Scope   │
-│ 280×280           │   P1: Brand Interface    │ 280×full             │
-│ (top-left corner) │   920×540 centered hero  │ (right strip)        │
-├───────────────────┤   Brand-accurate pixel-  ├──────────────────────┤
-│ P4: Terminal Code │   perfect UI recreation  │ P8: Float Value Grid │
-│ 280×260 below     │   of Google AI Studio /  │ 280×260              │
-│ radar             │   ChatGPT / Meta View /  │ decimal arrays loop  │
-├───────────────────┤   or template scene      ├──────────────────────┤
-│ P5: System Log    │                          │ P6: Math Curve       │
-│ 280×200 scrolling │                          │ 280×200 coordinate   │
-│ upward server log ├──────────────────────────┤ graph plotting live  │
-│                   │ P2: Kinetic Keyword Mx   │ latency values       │
-│                   │ gliding highlight box    │                      │
-├───────────────────┴──────────────────────────┴──────────────────────┤
-│  BOTTOM STAT BAR — full 1920px wide, 48px tall, 5 cycling values   │
-└─────────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────── 1920px ────────────────────────────────────┐
+│  TOP TICKER        left:0 top:0 width:1920 height:48                             │  48px
+├───────── 280px ──────────┬────────────── 1360px ──────────────┬───── 280px ──────┤
+│ P7 POLAR RADAR           │                                    │ P3 WAVEFORM      │
+│ left:0                   │  P1 BRAND INTERFACE                │ left:1640        │
+│ top:48                   │  left:280 top:48                   │ top:48           │
+│ width:280 height:328     │  width:1360 height:540             │ width:280        │
+├──────────────────────────┤  (pixel-perfect UI recreation)     │ height:328       │
+│ P4 TERMINAL CODE         │                                    │                  │  540px
+│ left:0                   │                                    ├──────────────────┤
+│ top:376                  │                                    │ P8 FLOAT GRID    │
+│ width:280 height:328     ├────────────────────────────────────┤ left:1640        │
+│                          │  P2 KEYWORD MATRIX                 │ top:376          │
+├──────────────────────────┤  left:280 top:588                  │ width:280        │  444px
+│ P5 SYSTEM LOG            │  width:1360 height:444             │ height:328       │
+│ left:0                   │  (gliding selector box)            │                  │
+│ top:704                  │                                    ├──────────────────┤
+│ width:280 height:328     │                                    │ P6 MATH CURVE    │
+│                          │                                    │ left:1640        │
+│                          │                                    │ top:704          │
+│                          │                                    │ width:280        │
+│                          │                                    │ height:328       │
+├──────────────────────────┴────────────────────────────────────┴──────────────────┤
+│  BOTTOM STAT BAR   left:0 top:1032 width:1920 height:48                          │  48px
+└──────────────────────────────────────────────────────────────────────────────────┘
+      Total: 48 + 328+328+328 = 1032 + 48 = 1080px ✓
 ```
+
+**Exact CSS positions for every panel (copy these directly into your HTML):**
+```css
+.ticker-top    { position:absolute; left:0;    top:0;    width:1920px; height:48px;  }
+.p7-radar      { position:absolute; left:0;    top:48px; width:280px;  height:328px; }
+.p4-terminal   { position:absolute; left:0;    top:376px;width:280px;  height:328px; }
+.p5-log        { position:absolute; left:0;    top:704px;width:280px;  height:328px; }
+.p1-brand      { position:absolute; left:280px;top:48px; width:1360px; height:540px; }
+.p2-keywords   { position:absolute; left:280px;top:588px;width:1360px; height:444px; }
+.p3-waveform   { position:absolute; left:1640px;top:48px;width:280px;  height:328px; }
+.p8-floatgrid  { position:absolute; left:1640px;top:376px;width:280px; height:328px; }
+.p6-mathcurve  { position:absolute; left:1640px;top:704px;width:280px; height:328px; }
+.stat-bar      { position:absolute; left:0;    top:1032px;width:1920px;height:48px;  }
+```
+
+This is the **symmetrical sci-fi command console layout**: brand interface centered and dominant, left column carries all active code/sensor panels (radar → terminal → logs top-to-bottom), right column carries all data visualization panels (waveform → float grid → math curve top-to-bottom), keyword matrix sits below the brand interface occupying the full center width.
 
 | Panel | Content | Motion pattern |
 |-------|---------|---------------|
@@ -1064,14 +1096,14 @@ Do not ask clarifying questions. Do not ask for approval at any point. Execute t
 
 1. Fetch CLAUDE.md and all 14 sample files from GitHub
 2. Fetch every URL the user provided — identify what each one is
-3. **Proactively research** — search the web for every product/brand/interface the script references that wasn't covered by user URLs; collect real brand colors, fonts, layouts, screenshots
-4. For every UI the script references → decide: real screenshot available, or recreate from scratch using real brand identity?
+3. **Proactively research** — search the web for every product/brand/interface the script references that wasn't covered by user URLs; collect real brand colors, fonts, layouts, screenshots. Use the real thing if you can find it. Recreate it accurately if you can't.
+4. For every UI the script references → decide: real screenshot available, or recreate from scratch using real brand identity? Either way, build it in P1.
 5. Output the intelligence report (including everything you researched, not just user URLs)
-6. Output the scene plan + rationale
+6. Output the scene plan + rationale. Verify scene count ≥ `floor(wordCount/100) × 8`.
 7. Output the word timing table for every scene
-8. Write every HTML scene file (complete, no shortcuts, every animation wired to a word timestamp, UI recreations pixel-perfect to the real brand)
-9. Write index.html
-10. Done
+8. **Write every HTML scene as 7 separate files** — bg, brand, keywords, waveform, terminal, mathcurve, hero. Never combine into one file. Never use an index.html as a scene container.
+9. Write the final index.html composition wrapper
+10. Count total files: must equal `scenes × 7`. If short, write the missing files before finishing.
 
 The only time you pause is if a URL returns a hard error. State the error in one line, search for an alternative, and continue.
 

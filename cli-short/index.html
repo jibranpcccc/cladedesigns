@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CLI-Anything — 30s Cut</title>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    @font-face { font-family: "Inter"; src: url("../main-video/assets/fonts/space-grotesk-latin-300-normal.woff2") format("woff2"); font-weight: 300; }
+    @font-face { font-family: "Inter"; src: url("../main-video/assets/fonts/space-grotesk-latin-400-normal.woff2") format("woff2"); font-weight: 400; }
+    @font-face { font-family: "Inter"; src: url("../main-video/assets/fonts/space-grotesk-latin-700-normal.woff2") format("woff2"); font-weight: 700; }
+    @font-face { font-family: "Inter"; src: url("../main-video/assets/fonts/space-grotesk-latin-700-normal.woff2") format("woff2"); font-weight: 900; }
+    @font-face { font-family: "JetBrains Mono"; src: url("../main-video/assets/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2"); font-weight: 400; }
+    @font-face { font-family: "JetBrains Mono"; src: url("../main-video/assets/fonts/jetbrains-mono-latin-700-normal.woff2") format("woff2"); font-weight: 700; }
+
+    :root {
+      --bg:      #050816;
+      --surface: rgba(15,23,42,0.88);
+      --cyan:    #22D3EE;
+      --c-dim:   rgba(34,211,238,0.12);
+      --violet:  #8B5CF6;
+      --v-dim:   rgba(139,92,246,0.12);
+      --amber:   #FBBF24;
+      --a-dim:   rgba(251,191,36,0.12);
+      --coral:   #FB7185;
+      --r-dim:   rgba(251,113,133,0.10);
+      --green:   #22C55E;
+      --ink:     #F8FAFC;
+      --muted:   #94A3B8;
+      --mono:    "JetBrains Mono",monospace;
+      --sans:    Inter,system-ui,sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); font-family: var(--sans); }
+    #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+
+    /* ── Background layers ── */
+    .grid {
+      position: absolute; inset: 0; pointer-events: none; z-index: 0;
+      background-image: linear-gradient(rgba(34,211,238,0.035) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(34,211,238,0.035) 1px, transparent 1px);
+      background-size: 80px 80px;
+    }
+    .vignette {
+      position: absolute; inset: 0; z-index: 98; pointer-events: none;
+      background: radial-gradient(ellipse at center, transparent 38%, rgba(0,0,0,0.80) 100%);
+    }
+    .grain {
+      position: absolute; inset: 0; z-index: 99; pointer-events: none; opacity: 0.09;
+      background-image: radial-gradient(rgba(255,255,255,0.07) 1px, transparent 1.2px);
+      background-size: 3px 3px; mix-blend-mode: overlay;
+    }
+    .scanline {
+      position: absolute; inset: 0; z-index: 97; pointer-events: none;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.022) 2px, rgba(0,0,0,0.022) 4px);
+    }
+
+    /* ── Orbs ── */
+    .orb { position: absolute; border-radius: 50%; filter: blur(180px); pointer-events: none; z-index: 1; }
+    #o-cyan   { width: 900px; height: 650px; background: radial-gradient(circle, rgba(34,211,238,0.22) 0%, transparent 70%);  top: 100px;  left: -200px; }
+    #o-violet { width: 1000px; height: 750px; background: radial-gradient(circle, rgba(139,92,246,0.24) 0%, transparent 70%); top: -50px;  right: -200px; }
+    #o-amber  { width: 700px;  height: 500px; background: radial-gradient(circle, rgba(251,191,36,0.22) 0%, transparent 70%); bottom: -80px; left: 45%; opacity: 0; }
+    #o-coral  { width: 600px;  height: 450px; background: radial-gradient(circle, rgba(251,113,133,0.18) 0%, transparent 70%); bottom: 0; right: 5%; opacity: 0; }
+
+    /* ── Scene wrapper ── */
+    .scene {
+      position: absolute; inset: 0;
+      width: 1920px; height: 1080px;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: flex-start;
+      padding: 96px 156px; z-index: 10;
+    }
+
+    /* ── Kicker ── */
+    .kicker {
+      font-family: var(--mono); font-size: 22px; font-weight: 700;
+      letter-spacing: 0.32em; text-transform: uppercase;
+      margin-bottom: 26px; display: flex; align-items: center; gap: 14px;
+    }
+    .kicker::before { content: ""; width: 32px; height: 2px; display: inline-block; }
+    .k-cyan   { color: var(--cyan);  } .k-cyan::before   { background: var(--cyan);   }
+    .k-amber  { color: var(--amber); } .k-amber::before  { background: var(--amber);  }
+    .k-violet { color: var(--violet);} .k-violet::before { background: var(--violet); }
+
+    /* ── Highlights ── */
+    .hl { display: inline; padding: 2px 10px; border-radius: 8px; }
+    .hc { color: var(--cyan);   background: var(--c-dim); border: 1px solid rgba(34,211,238,0.32);  box-shadow: 0 0 26px rgba(34,211,238,0.18); }
+    .hv { color: #C4B5FD;       background: var(--v-dim); border: 1px solid rgba(139,92,246,0.38);  box-shadow: 0 0 24px rgba(139,92,246,0.22); }
+    .ha { color: var(--amber);  background: var(--a-dim); border: 1px solid rgba(251,191,36,0.38);  box-shadow: 0 0 22px rgba(251,191,36,0.20); font-family: var(--mono); font-weight: 700; }
+    .hr { color: var(--coral);  background: var(--r-dim); border: 1px solid rgba(251,113,133,0.35); box-shadow: 0 0 18px rgba(251,113,133,0.16); }
+    .hg { color: var(--green);  background: rgba(34,197,94,0.10); border: 1px solid rgba(34,197,94,0.32); }
+
+    /* ── Badge pills ── */
+    .pill {
+      display: inline-flex; align-items: center; gap: 9px;
+      font-family: var(--mono); font-size: 21px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 9px 24px; border-radius: 40px; border: 1.5px solid;
+    }
+    .pc { color:var(--cyan);  border-color:rgba(34,211,238,0.40);  background:rgba(34,211,238,0.07); }
+    .pv { color:#C4B5FD;      border-color:rgba(139,92,246,0.40);  background:rgba(139,92,246,0.08); }
+    .pa { color:var(--amber); border-color:rgba(251,191,36,0.40);  background:rgba(251,191,36,0.07); }
+    .pr { color:var(--coral); border-color:rgba(251,113,133,0.40); background:rgba(251,113,133,0.07);}
+    .pg { color:var(--green); border-color:rgba(34,197,94,0.38);   background:rgba(34,197,94,0.07); }
+
+    /* ── Divider ── */
+    .div-line { width: 0; height: 3px; background: linear-gradient(90deg, var(--cyan), transparent); border-radius: 2px; margin: 22px 0; }
+
+    /* ── Terminal ── */
+    .term { font-family: var(--mono); background: rgba(8,14,32,0.96); border: 1px solid rgba(34,211,238,0.18); border-radius: 14px; overflow: hidden; }
+    .term-bar { display: flex; align-items: center; gap: 7px; padding: 13px 18px; background: rgba(34,211,238,0.045); border-bottom: 1px solid rgba(34,211,238,0.10); }
+    .td { width: 13px; height: 13px; border-radius: 50%; }
+    .td-r{background:#FF5F57;} .td-y{background:#FEBC2E;} .td-g{background:#28C840;}
+    .term-title { font-size: 17px; color: var(--muted); letter-spacing: 0.05em; margin-left: 6px; }
+    .term-body { padding: 26px 34px; font-size: 27px; line-height: 2.0; }
+    .tp { color: var(--cyan); }
+    .tc { color: var(--ink); }
+    .ta { color: #C4B5FD; }
+    .to { color: var(--muted); font-size: 24px; }
+    .tok{ color: var(--green); }
+    .cursor { display: inline-block; width: 3px; height: 1em; background: var(--cyan); vertical-align: text-bottom; animation: blink .8s step-end infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* ── GitHub card ── */
+    .gh { background: var(--surface); border: 1px solid rgba(34,211,238,0.26); border-radius: 18px; padding: 42px 50px; box-shadow: 0 0 60px rgba(34,211,238,0.10), 0 24px 60px rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 20px; }
+    .gh-head { display: flex; align-items: center; gap: 16px; }
+    .gh-icon { width: 50px; height: 50px; background: rgba(34,211,238,0.14); border: 1px solid rgba(34,211,238,0.28); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: var(--cyan); flex-shrink: 0; }
+    .gh-name { font-family: var(--mono); font-size: 32px; font-weight: 700; color: var(--cyan); }
+    .gh-meta { font-family: var(--mono); font-size: 17px; color: var(--muted); margin-top: 3px; }
+    .gh-desc { font-size: 25px; color: var(--muted); line-height: 1.5; }
+    .gh-stats { display: flex; align-items: center; gap: 34px; }
+    .gh-stat { display: flex; align-items: center; gap: 9px; font-family: var(--mono); font-size: 29px; font-weight: 700; }
+    .gh-trend { display: flex; align-items: flex-end; gap: 5px; height: 42px; }
+    .gh-bar { width: 11px; border-radius: 3px 3px 0 0; background: linear-gradient(180deg, var(--amber), rgba(251,191,36,0.25)); }
+
+    /* ── Big stat number ── */
+    .bignum { font-family: var(--mono); font-weight: 900; line-height: 0.9; }
+
+    /* ── App dot row ── */
+    .app-row { display: flex; gap: 20px; flex-wrap: wrap; }
+    .app-chip { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid rgba(139,92,246,0.26); border-radius: 12px; padding: 16px 24px; font-family: var(--mono); font-size: 22px; font-weight: 700; color: var(--ink); }
+    .app-chip span { font-size: 28px; }
+  </style>
+</head>
+<body>
+<div id="root"
+  data-composition-id="cli-anything-short"
+  data-start="0"
+  data-duration="30"
+  data-width="1920"
+  data-height="1080">
+
+  <!-- ── Persistent BG ── -->
+  <div class="grid"></div>
+  <div class="orb" id="o-cyan"></div>
+  <div class="orb" id="o-violet"></div>
+  <div class="orb" id="o-amber"></div>
+  <div class="orb" id="o-coral"></div>
+  <div class="vignette"></div>
+  <div class="scanline"></div>
+  <div class="grain"></div>
+
+
+  <!-- ════════════════════════════════════════
+       SCENE 1  (0 – 6s)
+       HOOK — "The upgrade every AI agent has been waiting for"
+  ════════════════════════════════════════ -->
+  <div class="scene clip" id="sc1"
+    data-start="0" data-duration="6" data-track-index="0">
+
+    <!-- Eyebrow -->
+    <div id="e-brow" style="font-family:var(--mono);font-size:22px;letter-spacing:0.38em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;">
+      OPEN SOURCE · AI AGENTS · 2025
+    </div>
+
+    <!-- Headline stacked -->
+    <div id="h1" style="font-size:108px;font-weight:900;line-height:1.04;">
+      The <span class="hl hc" id="hl-up">Upgrade</span>
+    </div>
+    <div id="h2" style="font-size:108px;font-weight:900;line-height:1.04;">
+      Every <span class="hl hv" id="hl-ai">AI Agent</span>
+    </div>
+    <div id="h3" style="font-size:108px;font-weight:900;line-height:1.04;color:var(--ink);">
+      Has Been Waiting For.
+    </div>
+
+    <!-- Floating proof pills — absolute positioned -->
+    <div id="p1" class="pill pc" style="position:absolute;top:108px;right:200px;">⬡ CLI-ANYTHING</div>
+    <div id="p2" class="pill pa" style="position:absolute;bottom:140px;right:260px;">★ 40K STARS</div>
+    <div id="p3" class="pill pv" style="position:absolute;bottom:220px;right:560px;">⚡ 75 DAYS</div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════
+       SCENE 2  (6 – 12s)
+       STAT EXPLOSION — 40,000 stars · 75 days
+  ════════════════════════════════════════ -->
+  <div class="scene clip" id="sc2"
+    data-start="6" data-duration="6" data-track-index="0"
+    style="visibility:hidden; flex-direction:row; align-items:center; gap:0;">
+
+    <!-- Stars block -->
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:14px;position:relative;">
+      <div class="kicker k-amber" id="s2k1">GitHub Stars</div>
+      <div class="bignum" id="s2-num" style="font-size:210px;color:var(--amber);text-shadow:0 0 90px rgba(251,191,36,0.55);">0</div>
+      <div id="s2-sl" style="font-family:var(--mono);font-size:34px;font-weight:700;color:var(--amber);letter-spacing:0.22em;">STARS ★</div>
+      <!-- Glow disc behind number -->
+      <div id="s2-gdisc" style="position:absolute;width:640px;height:640px;border-radius:50%;background:radial-gradient(circle,rgba(251,191,36,0.17) 0%,transparent 68%);pointer-events:none;top:calc(50% - 320px);left:calc(50% - 320px);z-index:-1;"></div>
+    </div>
+
+    <!-- Centre rule -->
+    <div id="s2-rule" style="opacity:0;display:flex;flex-direction:column;align-items:center;gap:20px;flex-shrink:0;">
+      <div style="width:2px;height:240px;background:linear-gradient(180deg,transparent,var(--cyan),transparent);"></div>
+      <div style="font-family:var(--mono);font-size:26px;letter-spacing:0.3em;color:var(--muted);">IN</div>
+      <div style="width:2px;height:240px;background:linear-gradient(180deg,transparent,var(--cyan),transparent);"></div>
+    </div>
+
+    <!-- Days block -->
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:14px;">
+      <div class="kicker k-cyan" id="s2k2">Time to Viral</div>
+      <div class="bignum" id="s2-dnum" style="font-size:210px;color:var(--cyan);text-shadow:0 0 80px rgba(34,211,238,0.55);">0</div>
+      <div id="s2-dl" style="font-family:var(--mono);font-size:34px;font-weight:700;color:var(--cyan);letter-spacing:0.22em;">DAYS</div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════
+       SCENE 3  (12 – 21s)
+       PRODUCT + TERMINAL — what it does, live proof
+  ════════════════════════════════════════ -->
+  <div class="scene clip" id="sc3"
+    data-start="12" data-duration="9" data-track-index="0"
+    style="visibility:hidden; flex-direction:row; gap:72px; align-items:flex-start; padding-top:88px;">
+
+    <!-- Left: name + badges + app chips -->
+    <div style="flex:1;display:flex;flex-direction:column;gap:18px;">
+      <div class="kicker k-cyan" id="s3-kick">Making ALL Software Agent-Native</div>
+
+      <div id="s3-name" style="font-size:100px;font-weight:900;line-height:1.0;letter-spacing:-2px;">
+        <span style="color:var(--cyan);">CLI</span><span style="color:var(--muted);">-</span><span style="color:var(--ink);">Anything</span>
+      </div>
+
+      <div id="s3-tag" style="font-size:40px;font-weight:300;color:var(--muted);line-height:1.4;max-width:800px;">
+        One command converts <span class="hl hv">any pro app</span><br/>into an agent-ready CLI — automatically.
+      </div>
+
+      <div class="div-line" id="s3-div"></div>
+
+      <!-- Badge row -->
+      <div id="s3-badges" style="display:flex;gap:14px;flex-wrap:wrap;">
+        <div class="pill pc" id="s3-b1">⚡ Open Source</div>
+        <div class="pill pv" id="s3-b2">⬡ Agent-Native</div>
+        <div class="pill pa" id="s3-b3">★ 40.6k Stars</div>
+        <div class="pill pg" id="s3-b4">✓ MIT License</div>
+      </div>
+
+      <!-- App chips -->
+      <div class="app-row" id="s3-apps" style="margin-top:10px;">
+        <div class="app-chip" id="s3-a1"><span>🎨</span>GIMP</div>
+        <div class="app-chip" id="s3-a2"><span>🦾</span>Blender</div>
+        <div class="app-chip" id="s3-a3"><span>📄</span>LibreOffice</div>
+        <div class="app-chip" id="s3-a4"><span>📹</span>OBS</div>
+        <div class="app-chip" id="s3-a5"><span>🎙</span>Audacity</div>
+        <div class="app-chip" id="s3-a6" style="border-color:rgba(34,211,238,0.38);color:var(--cyan);">+13 more</div>
+      </div>
+    </div>
+
+    <!-- Right: terminal -->
+    <div style="flex:1.2;display:flex;flex-direction:column;gap:20px;">
+      <div class="term" id="s3-term">
+        <div class="term-bar">
+          <div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div>
+          <div class="term-title">cli-anything — 7-phase auto pipeline</div>
+        </div>
+        <div class="term-body">
+          <div id="t1"><span class="tp">$ </span><span class="tc">cli-anything generate</span> <span class="ta">blender</span></div>
+          <div id="t2" style="opacity:0;"><span class="to">◆ Analyzing source tree…</span></div>
+          <div id="t3" style="opacity:0;"><span class="to">◆ Designing CLI architecture…</span></div>
+          <div id="t4" style="opacity:0;"><span class="to">◆ Generating Click CLI…</span></div>
+          <div id="t5" style="opacity:0;"><span class="to">◆ Running 314 tests… </span><span id="tpass" style="opacity:0;" class="tok">PASS ✓</span></div>
+          <div id="t6" style="opacity:0;"><span class="to">◆ Publishing package…</span></div>
+          <div id="t7" style="opacity:0;"><span class="tok">✓ blender-cli v1.0.0 published</span></div>
+          <div id="t8" style="opacity:0;"><span style="color:rgba(148,163,184,0.45);font-size:22px;">  pip install blender-cli</span> <span class="cursor"></span></div>
+        </div>
+      </div>
+
+      <div id="s3-stat" style="opacity:0;display:flex;gap:16px;">
+        <div class="pill pc">2,330+ Tests</div>
+        <div class="pill pg">100% Pass Rate</div>
+        <div class="pill pv">Zero Manual Work</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════
+       SCENE 4  (21 – 26s)
+       GITHUB PROOF CARD — star counter + integrations
+  ════════════════════════════════════════ -->
+  <div class="scene clip" id="sc4"
+    data-start="21" data-duration="5" data-track-index="0"
+    style="visibility:hidden; flex-direction:row; gap:80px; align-items:flex-start; padding-top:100px;">
+
+    <!-- GitHub card -->
+    <div style="flex:1.15;">
+      <div class="kicker k-amber" id="s4-kick">Community Proof</div>
+      <div class="gh" id="s4-card">
+        <div class="gh-head">
+          <div class="gh-icon">⬡</div>
+          <div>
+            <div class="gh-name">HKUDS / CLI-Anything</div>
+            <div class="gh-meta">Public · Open Source · MIT License</div>
+          </div>
+          <div class="pill pc" style="margin-left:auto;font-size:17px;padding:7px 18px;">Trending #1</div>
+        </div>
+        <div class="gh-desc">"Making ALL Software Agent-Native"</div>
+        <div class="gh-stats">
+          <div class="gh-stat"><span style="color:var(--amber);font-size:28px;">★</span><span style="color:var(--amber);" id="s4-sc">0</span></div>
+          <div class="gh-stat"><span style="color:var(--muted);font-size:25px;">⑂</span><span style="color:var(--muted);">2.4k</span></div>
+          <div class="gh-stat"><span style="display:inline-block;width:15px;height:15px;border-radius:50%;background:#3178C6;"></span><span style="color:var(--muted);font-size:22px;font-weight:400;">Python</span></div>
+          <div class="gh-stat"><span style="color:var(--cyan);">↗</span><span style="color:var(--cyan);font-size:22px;">+540/day</span></div>
+        </div>
+        <div class="gh-trend" id="s4-trend">
+          <div class="gh-bar" style="height:5px;"></div><div class="gh-bar" style="height:9px;"></div>
+          <div class="gh-bar" style="height:15px;"></div><div class="gh-bar" style="height:12px;"></div>
+          <div class="gh-bar" style="height:21px;"></div><div class="gh-bar" style="height:30px;"></div>
+          <div class="gh-bar" style="height:26px;"></div><div class="gh-bar" style="height:37px;"></div>
+          <div class="gh-bar" style="height:42px;"></div>
+        </div>
+        <div style="font-family:var(--mono);font-size:19px;color:var(--muted);">
+          40k+ stars in <span style="color:var(--amber);font-weight:700;">75 days</span> — fastest rising AI agent tool of 2025
+        </div>
+      </div>
+    </div>
+
+    <!-- Integrations -->
+    <div style="flex:0.85;display:flex;flex-direction:column;gap:14px;padding-top:72px;">
+      <div id="s4-ih" style="font-size:44px;font-weight:900;color:var(--ink);line-height:1.2;margin-bottom:10px;">
+        Works with <span class="hl hc">every</span><br/>agent ecosystem
+      </div>
+      <div id="s4-i1" style="opacity:0;display:flex;align-items:center;gap:14px;font-size:30px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
+        <div style="width:11px;height:11px;border-radius:50%;background:var(--cyan);flex-shrink:0;"></div>
+        <span style="font-weight:700;">Claude Code</span>
+        <div class="pill pc" style="font-size:15px;padding:5px 14px;margin-left:auto;">PLUGIN</div>
+      </div>
+      <div id="s4-i2" style="opacity:0;display:flex;align-items:center;gap:14px;font-size:30px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
+        <div style="width:11px;height:11px;border-radius:50%;background:var(--violet);flex-shrink:0;"></div>
+        <span style="font-weight:700;">GitHub Copilot CLI</span>
+        <div class="pill pv" style="font-size:15px;padding:5px 14px;margin-left:auto;">EXT</div>
+      </div>
+      <div id="s4-i3" style="opacity:0;display:flex;align-items:center;gap:14px;font-size:30px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
+        <div style="width:11px;height:11px;border-radius:50%;background:var(--amber);flex-shrink:0;"></div>
+        <span style="font-weight:700;">OpenCode / Codex</span>
+        <div class="pill pa" style="font-size:15px;padding:5px 14px;margin-left:auto;">NATIVE</div>
+      </div>
+      <div id="s4-i4" style="opacity:0;display:flex;align-items:center;gap:14px;font-size:30px;padding:12px 0;">
+        <div style="width:11px;height:11px;border-radius:50%;background:var(--green);flex-shrink:0;"></div>
+        <span style="font-weight:700;">Gemini CLI</span>
+        <div class="pill pg" style="font-size:15px;padding:5px 14px;margin-left:auto;">FULL</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════
+       SCENE 5  (26 – 30s)
+       END CARD — "The Future Is CLI-Native."
+  ════════════════════════════════════════ -->
+  <div class="scene clip" id="sc5"
+    data-start="26" data-duration="4" data-track-index="0"
+    style="visibility:hidden; justify-content:center; align-items:center; text-align:center; padding:80px;">
+
+    <div id="ec-pre" style="font-family:var(--mono);font-size:22px;letter-spacing:0.42em;text-transform:uppercase;color:var(--muted);margin-bottom:22px;">
+      The verdict is in
+    </div>
+
+    <div id="ec-l1" style="font-size:120px;font-weight:900;line-height:1.0;letter-spacing:-2px;">
+      The Future Is
+    </div>
+    <div id="ec-l2" style="font-size:120px;font-weight:900;line-height:1.0;color:var(--cyan);letter-spacing:-2px;text-shadow:0 0 90px rgba(34,211,238,0.55);">
+      CLI-Native.
+    </div>
+
+    <div id="ec-badges" style="display:flex;gap:18px;margin-top:42px;justify-content:center;">
+      <div class="pill pa" id="ec-b1">★ 40,000 Stars</div>
+      <div class="pill pc" id="ec-b2">⚡ 75 Days</div>
+      <div class="pill pv" id="ec-b3">⬡ HKUDS/CLI-Anything</div>
+    </div>
+
+    <div id="ec-url" style="margin-top:28px;font-family:var(--mono);font-size:27px;color:var(--muted);">
+      github.com/<span style="color:var(--cyan);">HKUDS</span>/CLI-Anything
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════
+       GSAP TIMELINE — one paused deterministic master
+  ════════════════════════════════════════ -->
+  <script>
+    window.__timelines = window.__timelines || {};
+    var tl = gsap.timeline({ paused: true });
+
+    /* Ambient orb drift across full 30s */
+    tl.to("#o-cyan",   { x: 280, y: -90,  duration: 30, ease: "sine.inOut" }, 0);
+    tl.to("#o-violet", { x: -220, y: 110, duration: 30, ease: "sine.inOut" }, 0);
+
+
+    /* ══════════════════════════════════
+       SCENE 1  (0 → 6s)  Hook
+    ══════════════════════════════════ */
+    tl.from("#e-brow", { y: 18, autoAlpha: 0, duration: 0.35, ease: "power3.out" }, 0.15);
+    tl.from("#h1",     { y: 65, autoAlpha: 0, duration: 0.50, ease: "expo.out"   }, 0.35);
+    tl.from("#hl-up",  { scaleX: 0, transformOrigin: "left", autoAlpha: 0, duration: 0.42, ease: "expo.out" }, 0.58);
+    tl.from("#h2",     { y: 65, autoAlpha: 0, duration: 0.50, ease: "expo.out"   }, 0.70);
+    tl.from("#hl-ai",  { scaleX: 0, transformOrigin: "left", autoAlpha: 0, duration: 0.42, ease: "expo.out" }, 0.93);
+    tl.from("#h3",     { y: 65, autoAlpha: 0, duration: 0.50, ease: "expo.out"   }, 1.10);
+    /* Cyan orb swell on headline impact */
+    tl.to("#o-cyan",   { scale: 1.55, duration: 0.55, ease: "power2.out" }, 0.35);
+    tl.to("#o-cyan",   { scale: 1.00, duration: 0.90, ease: "power2.in"  }, 0.90);
+    /* Proof pills pop in */
+    tl.from("#p1", { scale: 0.65, autoAlpha: 0, duration: 0.32, ease: "back.out(1.7)" }, 2.0);
+    tl.from("#p2", { scale: 0.65, autoAlpha: 0, duration: 0.32, ease: "back.out(1.7)" }, 2.2);
+    tl.from("#p3", { scale: 0.65, autoAlpha: 0, duration: 0.32, ease: "back.out(1.7)" }, 2.4);
+
+
+    /* ══════════════════════════════════
+       SCENE 2  (6 → 12s)  Stat explosion
+    ══════════════════════════════════ */
+    tl.set("#sc2", { autoAlpha: 1 }, 6);
+    tl.set("#sc1", { autoAlpha: 0 }, 6);
+
+    /* Amber glow burst */
+    tl.to("#o-amber", { opacity: 1, duration: 0.5, ease: "power2.out" }, 6.1);
+    tl.fromTo("#s2-gdisc", { scale: 0 }, { scale: 1, duration: 0.65, ease: "back.out(1.5)" }, 6.1);
+
+    tl.from("#s2k1",  { y: 18, autoAlpha: 0, duration: 0.30, ease: "power3.out" }, 6.2);
+    tl.from("#s2k2",  { y: 18, autoAlpha: 0, duration: 0.30, ease: "power3.out" }, 6.2);
+    tl.from("#s2-num",{ scale: 0.38, autoAlpha: 0, duration: 0.52, ease: "expo.out" }, 6.3);
+    tl.from("#s2-sl", { y: 18, autoAlpha: 0, duration: 0.30, ease: "power3.out" }, 6.65);
+
+    /* Star count-up: 0 → 40,600 */
+    var sn = { v: 0 };
+    tl.to(sn, { v: 40600, duration: 2.2, ease: "power2.out",
+      onUpdate: function() {
+        var el = document.getElementById("s2-num");
+        if (el) el.textContent = Math.round(sn.v).toLocaleString();
+      }
+    }, 6.4);
+
+    /* Orb swell then breathe down */
+    tl.to("#o-amber", { scale: 1.6, duration: 0.55, ease: "power2.out" }, 6.4);
+    tl.to("#o-amber", { scale: 1.0, opacity: 0.5, duration: 1.2, ease: "power2.in" }, 6.95);
+
+    /* Centre divider */
+    tl.to("#s2-rule", { autoAlpha: 1, duration: 0.4 }, 7.0);
+
+    /* Days */
+    tl.from("#s2-dnum",{ scale: 0.38, autoAlpha: 0, duration: 0.52, ease: "expo.out" }, 7.5);
+    tl.from("#s2-dl",  { y: 18, autoAlpha: 0, duration: 0.30, ease: "power3.out" }, 7.85);
+    var dn = { v: 0 };
+    tl.to(dn, { v: 75, duration: 1.6, ease: "power2.out",
+      onUpdate: function() {
+        var el = document.getElementById("s2-dnum");
+        if (el) el.textContent = Math.round(dn.v);
+      }
+    }, 7.6);
+
+
+    /* ══════════════════════════════════
+       SCENE 3  (12 → 21s)  Product + terminal
+    ══════════════════════════════════ */
+    tl.set("#sc3", { autoAlpha: 1 }, 12);
+    tl.set("#sc2", { autoAlpha: 0 }, 12);
+    tl.to("#o-amber", { opacity: 0, duration: 0.4 }, 12);
+
+    tl.from("#s3-kick", { y: 18, autoAlpha: 0, duration: 0.30, ease: "power3.out" }, 12.2);
+    tl.from("#s3-name", { y: 75, autoAlpha: 0, duration: 0.60, ease: "expo.out"   }, 12.45);
+    tl.to("#o-cyan",    { scale: 1.7, duration: 0.60, ease: "power2.out" }, 12.45);
+    tl.to("#o-cyan",    { scale: 1.0, duration: 1.10, ease: "power2.in"  }, 13.05);
+    tl.from("#s3-tag",  { y: 36, autoAlpha: 0, duration: 0.48, ease: "power3.out" }, 13.2);
+    tl.to("#s3-div",    { width: 480, duration: 0.44, ease: "power3.out" }, 13.8);
+    tl.from("#s3-b1",   { scale: 0.68, autoAlpha: 0, duration: 0.28, ease: "back.out(1.7)" }, 14.1);
+    tl.from("#s3-b2",   { scale: 0.68, autoAlpha: 0, duration: 0.28, ease: "back.out(1.7)" }, 14.3);
+    tl.from("#s3-b3",   { scale: 0.68, autoAlpha: 0, duration: 0.28, ease: "back.out(1.7)" }, 14.5);
+    tl.from("#s3-b4",   { scale: 0.68, autoAlpha: 0, duration: 0.28, ease: "back.out(1.7)" }, 14.7);
+    tl.from("#s3-a1",   { y: 28, autoAlpha: 0, duration: 0.25, ease: "back.out(1.7)" }, 15.0);
+    tl.from("#s3-a2",   { y: 28, autoAlpha: 0, duration: 0.25, ease: "back.out(1.7)" }, 15.15);
+    tl.from("#s3-a3",   { y: 28, autoAlpha: 0, duration: 0.25, ease: "back.out(1.7)" }, 15.3);
+    tl.from("#s3-a4",   { y: 28, autoAlpha: 0, duration: 0.25, ease: "back.out(1.7)" }, 15.45);
+    tl.from("#s3-a5",   { y: 28, autoAlpha: 0, duration: 0.25, ease: "back.out(1.7)" }, 15.6);
+    tl.from("#s3-a6",   { y: 28, autoAlpha: 0, duration: 0.25, ease: "back.out(1.7)" }, 15.75);
+
+    /* Terminal enters then types line by line */
+    tl.from("#s3-term", { x: 55, autoAlpha: 0, duration: 0.50, ease: "expo.out" }, 12.5);
+    tl.to("#t2",  { autoAlpha: 1, duration: 0.18 }, 13.6);
+    tl.to("#t3",  { autoAlpha: 1, duration: 0.18 }, 14.1);
+    tl.to("#t4",  { autoAlpha: 1, duration: 0.18 }, 14.6);
+    tl.to("#t5",  { autoAlpha: 1, duration: 0.18 }, 15.1);
+    tl.to("#tpass",{ autoAlpha: 1, duration: 0.28, ease: "back.out(1.7)" }, 15.4);
+    tl.to("#t6",  { autoAlpha: 1, duration: 0.18 }, 15.9);
+    tl.to("#t7",  { autoAlpha: 1, duration: 0.28 }, 16.5);
+    tl.to("#t8",  { autoAlpha: 1, duration: 0.28 }, 17.0);
+    tl.to("#s3-stat", { autoAlpha: 1, duration: 0.40, ease: "power3.out" }, 17.6);
+
+
+    /* ══════════════════════════════════
+       SCENE 4  (21 → 26s)  GitHub proof + integrations
+    ══════════════════════════════════ */
+    tl.set("#sc4", { autoAlpha: 1 }, 21);
+    tl.set("#sc3", { autoAlpha: 0 }, 21);
+    tl.to("#o-amber", { opacity: 1, duration: 0.5, ease: "power2.out" }, 21.1);
+
+    tl.from("#s4-kick", { y: 18, autoAlpha: 0, duration: 0.30, ease: "power3.out" }, 21.2);
+    tl.from("#s4-card", { y: 45, autoAlpha: 0, duration: 0.52, ease: "expo.out"   }, 21.4);
+
+    /* GitHub star count-up: 0 → 40,600 */
+    var gn = { v: 0 };
+    tl.to(gn, { v: 40600, duration: 2.0, ease: "power3.out",
+      onUpdate: function() {
+        var el = document.getElementById("s4-sc");
+        if (el) el.textContent = Math.round(gn.v).toLocaleString();
+      }
+    }, 21.7);
+
+    /* Trend bars sweep in */
+    tl.from("#s4-trend", { scaleX: 0, transformOrigin: "left", duration: 0.80, ease: "power2.out" }, 22.0);
+
+    tl.from("#s4-ih", { x: 55, autoAlpha: 0, duration: 0.42, ease: "power3.out" }, 21.5);
+    tl.to("#s4-i1",   { autoAlpha: 1, duration: 0.26 }, 22.0);
+    tl.to("#s4-i2",   { autoAlpha: 1, duration: 0.26 }, 22.4);
+    tl.to("#s4-i3",   { autoAlpha: 1, duration: 0.26 }, 22.8);
+    tl.to("#s4-i4",   { autoAlpha: 1, duration: 0.26 }, 23.2);
+
+    tl.to("#o-amber", { scale: 1.35, duration: 1.5, ease: "sine.inOut", yoyo: true, repeat: 1 }, 22.5);
+
+
+    /* ══════════════════════════════════
+       SCENE 5  (26 → 30s)  End card
+    ══════════════════════════════════ */
+    tl.set("#sc5", { autoAlpha: 1 }, 26);
+    tl.set("#sc4", { autoAlpha: 0 }, 26);
+    tl.to("#o-amber",  { opacity: 0, duration: 0.35 }, 26);
+    tl.to("#o-cyan",   { scale: 2.0, duration: 4.0, ease: "sine.inOut" }, 26);
+    tl.to("#o-violet", { scale: 1.6, duration: 4.0, ease: "sine.inOut" }, 26);
+
+    tl.from("#ec-pre", { y: 18, autoAlpha: 0, duration: 0.32, ease: "power3.out" }, 26.2);
+    tl.from("#ec-l1",  { y: 80, autoAlpha: 0, duration: 0.60, ease: "expo.out" }, 26.45);
+    tl.from("#ec-l2",  { y: 80, autoAlpha: 0, scale: 0.88, duration: 0.65, ease: "back.out(1.4)" }, 26.85);
+    /* Ken-Burns drift starts after entry finishes at 27.5 */
+    tl.to("#ec-l2",    { scale: 1.05, duration: 2.5, ease: "none" }, 27.5);
+    tl.from("#ec-b1",  { scale: 0.65, autoAlpha: 0, duration: 0.28, ease: "back.out(1.7)" }, 27.6);
+    tl.from("#ec-b2",  { scale: 0.65, autoAlpha: 0, duration: 0.28, ease: "back.out(1.7)" }, 27.8);
+    tl.from("#ec-b3",  { scale: 0.65, autoAlpha: 0, duration: 0.28, ease: "back.out(1.7)" }, 28.0);
+    tl.from("#ec-url", { y: 18, autoAlpha: 0, duration: 0.32, ease: "power2.out" }, 28.6);
+
+    /* Sentinel */
+    tl.set({}, {}, 30);
+
+    window.__timelines["cli-anything-short"] = tl;
+  </script>
+</div>
+</body>
+</html>

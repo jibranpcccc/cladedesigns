@@ -965,6 +965,9 @@
     tl.set({}, {}, 90);
 
     window.__timelines["cli-anything"] = tl;
+
+    /* Browser preview — play automatically when not inside HyperFrames renderer */
+    if (!window.__hfPlayer) { window.addEventListener("load", function() { tl.play(); }); }
   </script>
 </div>
 </body>

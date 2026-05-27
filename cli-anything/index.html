@@ -1,0 +1,900 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CLI-Anything — The Upgrade Every AI Agent Has Been Waiting For</title>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    @font-face { font-family: "Inter"; src: url("../main-video/assets/fonts/space-grotesk-latin-300-normal.woff2") format("woff2"); font-weight: 300; font-style: normal; }
+    @font-face { font-family: "Inter"; src: url("../main-video/assets/fonts/space-grotesk-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-style: normal; }
+    @font-face { font-family: "Inter"; src: url("../main-video/assets/fonts/space-grotesk-latin-700-normal.woff2") format("woff2"); font-weight: 700; font-style: normal; }
+    @font-face { font-family: "Inter"; src: url("../main-video/assets/fonts/space-grotesk-latin-700-normal.woff2") format("woff2"); font-weight: 900; font-style: normal; }
+    @font-face { font-family: "JetBrains Mono"; src: url("../main-video/assets/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-style: normal; }
+    @font-face { font-family: "JetBrains Mono"; src: url("../main-video/assets/fonts/jetbrains-mono-latin-700-normal.woff2") format("woff2"); font-weight: 700; font-style: normal; }
+    /* ── Palette ── */
+    :root {
+      --bg:      #050816;
+      --surface: rgba(15,23,42,0.82);
+      --cyan:    #22D3EE;
+      --cyan-dim:rgba(34,211,238,0.12);
+      --violet:  #8B5CF6;
+      --violet-dim:rgba(139,92,246,0.12);
+      --amber:   #FBBF24;
+      --amber-dim:rgba(251,191,36,0.12);
+      --coral:   #FB7185;
+      --coral-dim:rgba(251,113,133,0.12);
+      --ink:     #F8FAFC;
+      --muted:   #94A3B8;
+      --slate:   #1E293B;
+      --mono:    "JetBrains Mono","SFMono-Regular",Consolas,monospace;
+      --display: Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 1920px; height: 1080px;
+      overflow: hidden; background: var(--bg);
+      font-family: var(--display);
+    }
+
+    /* ── Root ── */
+    #root {
+      position: relative;
+      width: 1920px; height: 1080px;
+      overflow: hidden; background: var(--bg);
+    }
+
+    /* ── Grid ── */
+    .grid-bg {
+      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(34,211,238,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34,211,238,0.04) 1px, transparent 1px);
+      background-size: 80px 80px;
+    }
+
+    /* ── Grain ── */
+    .grain {
+      position: absolute; inset: 0; z-index: 99; pointer-events: none; opacity: 0.10;
+      background-image:
+        radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1.2px),
+        radial-gradient(rgba(0,0,0,0.2) 1px, transparent 1.2px);
+      background-size: 3px 3px, 5px 5px;
+      background-position: 0 0, 1px 2px;
+      mix-blend-mode: overlay;
+    }
+
+    /* ── Vignette ── */
+    .vignette {
+      position: absolute; inset: 0; z-index: 98; pointer-events: none;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.75) 100%);
+    }
+
+    /* ── Scanlines ── */
+    .scanline {
+      position: absolute; inset: 0; z-index: 97; pointer-events: none;
+      background: repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 4px);
+    }
+
+    /* ── Glow orbs ── */
+    .orb {
+      position: absolute; border-radius: 50%;
+      filter: blur(180px); pointer-events: none; z-index: 1;
+    }
+    #orb-cyan   { width:800px; height:600px; background:radial-gradient(circle,rgba(34,211,238,0.20) 0%,transparent 70%); top:200px; left:-200px; }
+    #orb-violet { width:900px; height:700px; background:radial-gradient(circle,rgba(139,92,246,0.22) 0%,transparent 70%); top:50px;  right:-200px; }
+    #orb-amber  { width:600px; height:400px; background:radial-gradient(circle,rgba(251,191,36,0.18) 0%,transparent 70%); bottom:-50px; left:50%; opacity:0; }
+    #orb-coral  { width:500px; height:400px; background:radial-gradient(circle,rgba(251,113,133,0.18) 0%,transparent 70%); bottom:0; right:10%; opacity:0; }
+
+    /* ── Scene wrapper ── */
+    .scene {
+      position: absolute; inset: 0;
+      width: 1920px; height: 1080px;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: flex-start;
+      padding: 100px 160px;
+      z-index: 10;
+    }
+
+    /* ── Kicker ── */
+    .kicker {
+      font-family: var(--mono);
+      font-size: 22px; font-weight: 700;
+      letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--cyan); margin-bottom: 28px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .kicker::before {
+      content: ""; display: inline-block;
+      width: 32px; height: 2px; background: var(--cyan);
+    }
+
+    /* ── Headlines ── */
+    .headline {
+      font-size: 80px; font-weight: 900; line-height: 1.1;
+      color: var(--ink); max-width: 1400px;
+    }
+
+    /* ── Highlight spans ── */
+    .hl {
+      position: relative; display: inline;
+      padding: 0 10px; border-radius: 8px;
+    }
+    .hl-cyan {
+      color: var(--cyan);
+      background: var(--cyan-dim);
+      border: 1px solid rgba(34,211,238,0.35);
+      box-shadow: 0 0 28px rgba(34,211,238,0.20), inset 0 0 12px rgba(34,211,238,0.08);
+    }
+    .hl-violet {
+      color: #C4B5FD;
+      background: var(--violet-dim);
+      border: 1px solid rgba(139,92,246,0.40);
+      box-shadow: 0 0 28px rgba(139,92,246,0.25), inset 0 0 12px rgba(139,92,246,0.10);
+    }
+    .hl-amber {
+      color: var(--amber);
+      background: var(--amber-dim);
+      border: 1px solid rgba(251,191,36,0.40);
+      box-shadow: 0 0 24px rgba(251,191,36,0.22);
+      font-family: var(--mono); font-weight: 700;
+    }
+    .hl-coral {
+      color: var(--coral);
+      background: var(--coral-dim);
+      border: 1px solid rgba(251,113,133,0.40);
+      box-shadow: 0 0 20px rgba(251,113,133,0.20);
+      text-decoration: line-through;
+      text-decoration-color: rgba(251,113,133,0.6);
+    }
+
+    /* ── Badge pills ── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: var(--mono); font-size: 22px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 10px 26px; border-radius: 40px; border: 1.5px solid;
+    }
+    .badge-cyan   { color:var(--cyan);  border-color:rgba(34,211,238,0.4);  background:rgba(34,211,238,0.07);  }
+    .badge-violet { color:#C4B5FD;      border-color:rgba(139,92,246,0.4);  background:rgba(139,92,246,0.08);  }
+    .badge-amber  { color:var(--amber); border-color:rgba(251,191,36,0.4);  background:rgba(251,191,36,0.07);  }
+    .badge-coral  { color:var(--coral); border-color:rgba(251,113,133,0.4); background:rgba(251,113,133,0.07); }
+
+    /* ── Divider ── */
+    .divider {
+      width: 0; height: 3px;
+      background: linear-gradient(90deg, var(--cyan), transparent);
+      border-radius: 2px; margin: 24px 0;
+    }
+
+    /* ── Sub copy ── */
+    .sub {
+      font-size: 40px; font-weight: 300;
+      color: var(--muted); line-height: 1.5;
+      max-width: 1200px; margin-top: 24px;
+    }
+
+    /* ── Terminal ── */
+    .terminal {
+      font-family: var(--mono);
+      background: rgba(15,23,42,0.90);
+      border: 1px solid rgba(34,211,238,0.18);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .terminal-bar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 14px 20px;
+      background: rgba(34,211,238,0.05);
+      border-bottom: 1px solid rgba(34,211,238,0.10);
+    }
+    .terminal-dot {
+      width: 14px; height: 14px; border-radius: 50%;
+    }
+    .dot-r { background: #FF5F57; }
+    .dot-y { background: #FEBC2E; }
+    .dot-g { background: #28C840; }
+    .terminal-title {
+      font-size: 18px; color: var(--muted); letter-spacing: 0.05em; margin-left: 8px;
+    }
+    .terminal-body {
+      padding: 28px 36px; font-size: 28px; line-height: 1.8;
+    }
+    .t-prompt { color: var(--cyan); }
+    .t-cmd    { color: var(--ink); }
+    .t-arg    { color: #C4B5FD; }
+    .t-out    { color: var(--muted); font-size: 24px; }
+    .t-ok     { color: #28C840; }
+
+    /* ── Cursor ── */
+    .cursor {
+      display: inline-block; width: 3px; height: 1em;
+      background: var(--cyan); vertical-align: text-bottom;
+      animation: blink 0.8s step-end infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* ── Big number ── */
+    .big-num {
+      font-family: var(--mono);
+      font-weight: 900;
+      color: var(--amber);
+      line-height: 0.9;
+      text-shadow: 0 0 80px rgba(251,191,36,0.5), 0 0 160px rgba(251,191,36,0.25);
+    }
+
+    /* ── GitHub card ── */
+    .gh-card {
+      background: var(--surface);
+      border: 1px solid rgba(34,211,238,0.25);
+      border-radius: 16px;
+      padding: 40px 48px;
+      box-shadow: 0 0 60px rgba(34,211,238,0.10), 0 24px 60px rgba(0,0,0,0.5);
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    .gh-card-header {
+      display: flex; align-items: center; gap: 16px;
+    }
+    .gh-icon {
+      width: 48px; height: 48px;
+      background: rgba(34,211,238,0.15);
+      border: 1px solid rgba(34,211,238,0.3);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; color: var(--cyan);
+    }
+    .gh-repo-name {
+      font-family: var(--mono); font-size: 32px; font-weight: 700;
+      color: var(--cyan);
+    }
+    .gh-desc {
+      font-size: 26px; color: var(--muted); line-height: 1.5;
+    }
+    .gh-stats {
+      display: flex; gap: 32px; align-items: center; flex-wrap: wrap;
+    }
+    .gh-stat {
+      display: flex; align-items: center; gap: 10px;
+      font-family: var(--mono); font-size: 28px; font-weight: 700;
+    }
+    .gh-stat-icon { font-size: 26px; }
+    .gh-star-val { color: var(--amber); }
+    .gh-lang-dot {
+      width: 16px; height: 16px; border-radius: 50%; background: #3178C6;
+    }
+    .gh-lang { color: var(--muted); font-size: 22px; font-weight: 400; }
+    .gh-trend {
+      display: flex; align-items: flex-end; gap: 4px;
+      height: 40px;
+    }
+    .gh-trend-bar {
+      width: 10px; border-radius: 3px 3px 0 0;
+      background: linear-gradient(180deg,var(--amber),rgba(251,191,36,0.3));
+    }
+
+    /* ── App grid ── */
+    .app-grid {
+      display: flex; flex-wrap: wrap; gap: 20px;
+    }
+    .app-card {
+      background: var(--surface);
+      border: 1px solid rgba(139,92,246,0.25);
+      border-radius: 14px;
+      padding: 28px 36px;
+      display: flex; flex-direction: column; gap: 10px;
+      min-width: 240px;
+    }
+    .app-icon { font-size: 44px; line-height: 1; }
+    .app-name {
+      font-family: var(--mono); font-size: 22px; font-weight: 700;
+      color: var(--ink);
+    }
+    .app-label {
+      font-family: var(--mono); font-size: 16px;
+      color: var(--violet); text-transform: uppercase; letter-spacing: 0.15em;
+    }
+
+    /* ── Integration labels ── */
+    .int-label {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: var(--mono); font-size: 22px; font-weight: 600;
+      padding: 12px 24px; border-radius: 40px;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(34,211,238,0.25);
+      color: var(--ink); position: absolute;
+    }
+    .int-dot {
+      width: 10px; height: 10px; border-radius: 50%; background: var(--cyan);
+    }
+
+    /* ── Scene-specific ── */
+    #scene-1 { justify-content: center; align-items: center; text-align: center; padding: 80px; }
+    #scene-2 { flex-direction: row; align-items: center; gap: 120px; }
+    #scene-3 { }
+    #scene-4 { flex-direction: row; gap: 60px; align-items: center; }
+    #scene-5 { flex-direction: row; gap: 80px; align-items: flex-start; padding-top: 120px; }
+    #scene-6 { }
+    #scene-7 { flex-direction: row; gap: 80px; align-items: flex-start; padding-top: 100px; }
+    #scene-8 { justify-content: center; align-items: center; text-align: center; padding: 80px; }
+
+    /* ── Comparison panels ── */
+    .cmp-panel {
+      flex: 1; border-radius: 20px; padding: 48px;
+      display: flex; flex-direction: column; gap: 18px;
+    }
+    #panel-bad  { background: rgba(251,113,133,0.04); border: 1px solid rgba(251,113,133,0.22); }
+    #panel-good { background: rgba(34,211,238,0.04);  border: 1px solid rgba(34,211,238,0.22);  }
+    .cmp-header {
+      font-family: var(--mono); font-size: 22px; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase;
+    }
+    .cmp-line {
+      font-size: 36px; line-height: 1.5;
+    }
+
+    /* ── Phase list ── */
+    .phase-item {
+      display: flex; align-items: flex-start; gap: 20px;
+      font-size: 30px; line-height: 1.4;
+    }
+    .phase-num {
+      font-family: var(--mono); font-size: 22px; font-weight: 700;
+      color: var(--cyan); min-width: 36px; padding-top: 4px;
+    }
+    .phase-text { color: var(--muted); }
+    .phase-text strong { color: var(--ink); font-weight: 700; }
+  </style>
+</head>
+<body>
+<div id="root"
+  data-composition-id="cli-anything"
+  data-start="0"
+  data-duration="33"
+  data-width="1920"
+  data-height="1080">
+
+  <!-- ── Persistent BG ── -->
+  <div class="grid-bg"></div>
+  <div class="orb" id="orb-cyan"></div>
+  <div class="orb" id="orb-violet"></div>
+  <div class="orb" id="orb-amber"></div>
+  <div class="orb" id="orb-coral"></div>
+  <div class="vignette"></div>
+  <div class="scanline"></div>
+  <div class="grain"></div>
+
+
+  <!-- ══════════════════════════════════════════════
+       SCENE 1  (0 – 3.5s)
+       Hook — "The upgrade every AI agent has been waiting for"
+       ══════════════════════════════════════════════ -->
+  <div class="scene clip" id="scene-1"
+    data-start="0" data-duration="3.5" data-track-index="0">
+
+    <div id="s1-eyebrow" style="font-family:var(--mono);font-size:24px;letter-spacing:0.4em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;">
+      OPEN SOURCE · AI AGENTS · DEVELOPER TOOLS
+    </div>
+
+    <div id="s1-main" style="font-size:96px;font-weight:900;line-height:1.05;max-width:1400px;">
+      The <span class="hl hl-cyan" id="s1-hl1">Upgrade</span> Every
+    </div>
+    <div id="s1-main2" style="font-size:96px;font-weight:900;line-height:1.05;">
+      <span class="hl hl-violet" id="s1-hl2">AI Agent</span> Has Been
+    </div>
+    <div id="s1-main3" style="font-size:96px;font-weight:900;line-height:1.05;">
+      Waiting For.
+    </div>
+
+    <!-- Floating context pills -->
+    <div id="s1-pill1" class="badge badge-cyan" style="position:absolute;top:120px;right:220px;font-size:20px;">⬡ CLI-ANYTHING</div>
+    <div id="s1-pill2" class="badge badge-amber" style="position:absolute;bottom:160px;right:300px;font-size:20px;">★ 40K STARS</div>
+    <div id="s1-pill3" class="badge badge-violet" style="position:absolute;bottom:100px;left:200px;font-size:20px;">75 DAYS</div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════
+       SCENE 2  (3.5 – 7.5s)
+       Stat explosion — 40,000 stars / 75 days
+       ══════════════════════════════════════════════ -->
+  <div class="scene clip" id="scene-2"
+    data-start="3.5" data-duration="4" data-track-index="0"
+    style="visibility:hidden;">
+
+    <!-- Left: Big number -->
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
+      <div class="kicker" id="s2-kicker1">GitHub Stars</div>
+      <div class="big-num" id="s2-stars" style="font-size:220px;">0</div>
+      <div id="s2-label1" style="font-family:var(--mono);font-size:36px;font-weight:700;color:var(--amber);letter-spacing:0.2em;">STARS ★</div>
+      <!-- Glow particles (CSS only) -->
+      <div id="s2-glow" style="position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(251,191,36,0.18) 0%,transparent 70%);pointer-events:none;left:calc(25% - 300px);top:calc(50% - 300px);z-index:-1;"></div>
+    </div>
+
+    <!-- Divider -->
+    <div id="s2-mid" style="display:flex;flex-direction:column;align-items:center;gap:24px;opacity:0;">
+      <div style="width:2px;height:200px;background:linear-gradient(180deg,transparent,var(--cyan),transparent);"></div>
+      <div style="font-family:var(--mono);font-size:28px;color:var(--muted);">IN</div>
+      <div style="width:2px;height:200px;background:linear-gradient(180deg,transparent,var(--cyan),transparent);"></div>
+    </div>
+
+    <!-- Right: 75 days -->
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
+      <div class="kicker" id="s2-kicker2">Time to Viral</div>
+      <div class="big-num" id="s2-days" style="font-size:220px;color:var(--cyan);text-shadow:0 0 80px rgba(34,211,238,0.5);">0</div>
+      <div id="s2-label2" style="font-family:var(--mono);font-size:36px;font-weight:700;color:var(--cyan);letter-spacing:0.2em;">DAYS</div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════
+       SCENE 3  (7.5 – 11.5s)
+       Product reveal — CLI-Anything
+       ══════════════════════════════════════════════ -->
+  <div class="scene clip" id="scene-3"
+    data-start="7.5" data-duration="4" data-track-index="0"
+    style="visibility:hidden;">
+
+    <div class="kicker" id="s3-kicker">Introducing</div>
+
+    <div id="s3-name" style="font-size:128px;font-weight:900;line-height:1.0;letter-spacing:-2px;">
+      <span style="color:var(--cyan);">CLI</span><span style="color:var(--muted);">-</span><span style="color:var(--ink);">Anything</span>
+    </div>
+
+    <div id="s3-tagline" style="font-size:52px;font-weight:300;color:var(--muted);margin-top:20px;line-height:1.4;max-width:1000px;">
+      Making <span class="hl hl-violet" id="s3-hl1">ALL Software</span> Agent-Native
+    </div>
+
+    <div class="divider" id="s3-div" style="margin-top:36px;"></div>
+
+    <div id="s3-badges" style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;">
+      <div class="badge badge-cyan"   id="s3-b1">⚡ Open Source</div>
+      <div class="badge badge-violet" id="s3-b2">⬡ Agent-Native</div>
+      <div class="badge badge-amber"  id="s3-b3">★ 40.6k Stars</div>
+      <div class="badge badge-coral"  id="s3-b4">⚙ Automated Pipeline</div>
+    </div>
+
+    <div id="s3-sub" style="font-family:var(--mono);font-size:26px;color:var(--muted);margin-top:32px;">
+      github.com/<span style="color:var(--cyan);">HKUDS</span>/CLI-Anything
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════
+       SCENE 4  (11.5 – 15.5s)
+       The Problem — AI agents vs pro software
+       ══════════════════════════════════════════════ -->
+  <div class="scene clip" id="scene-4"
+    data-start="11.5" data-duration="4" data-track-index="0"
+    style="visibility:hidden;">
+
+    <div class="cmp-panel" id="panel-bad">
+      <div class="cmp-header" style="color:var(--coral);">✗ Before CLI-Anything</div>
+      <div class="cmp-line" id="s4-b1" style="color:var(--muted);">GUI automation
+        <span class="hl hl-coral">breaks constantly</span>
+      </div>
+      <div class="cmp-line" id="s4-b2" style="color:var(--muted);">APIs are
+        <span class="hl hl-coral">too limited</span>
+      </div>
+      <div class="cmp-line" id="s4-b3" style="color:var(--muted);">Agents can't touch
+        <span class="hl hl-coral">professional software</span>
+      </div>
+      <div style="margin-top:16px;font-family:var(--mono);font-size:20px;color:rgba(251,113,133,0.5);">
+        # GIMP, Blender, OBS — all out of reach
+      </div>
+    </div>
+
+    <div id="s4-arrow" style="display:flex;flex-direction:column;align-items:center;gap:16px;flex-shrink:0;">
+      <div style="font-size:72px;color:var(--cyan);">→</div>
+    </div>
+
+    <div class="cmp-panel" id="panel-good">
+      <div class="cmp-header" style="color:var(--cyan);">✓ With CLI-Anything</div>
+      <div class="cmp-line" id="s4-g1">
+        <span class="hl hl-cyan">Structured CLI</span> interface
+      </div>
+      <div class="cmp-line" id="s4-g2" style="color:var(--muted);font-size:30px;">for every professional app</div>
+      <div class="cmp-line" id="s4-g3">
+        <span class="hl hl-violet">100% deterministic</span> output
+      </div>
+      <div style="margin-top:16px;font-family:var(--mono);font-size:20px;color:rgba(34,211,238,0.6);">
+        # agents discover via --help &amp; SKILL.md
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════
+       SCENE 5  (15.5 – 20.0s)
+       Terminal — 7-phase automated pipeline
+       ══════════════════════════════════════════════ -->
+  <div class="scene clip" id="scene-5"
+    data-start="15.5" data-duration="4.5" data-track-index="0"
+    style="visibility:hidden; flex-direction:row; gap:80px; align-items:flex-start; padding-top:100px;">
+
+    <!-- Left: phase list -->
+    <div style="flex:1;display:flex;flex-direction:column;gap:8px;">
+      <div class="kicker" id="s5-kicker">Automated Pipeline</div>
+      <div class="headline" id="s5-head" style="font-size:70px;margin-bottom:24px;">
+        <span class="hl hl-amber">7-Phase</span> Build System
+      </div>
+
+      <div class="phase-item" id="s5-p1"><div class="phase-num">01</div><div class="phase-text"><strong>Analyze</strong> — codebase deep scan</div></div>
+      <div class="phase-item" id="s5-p2"><div class="phase-num">02</div><div class="phase-text"><strong>Design</strong> — CLI architecture</div></div>
+      <div class="phase-item" id="s5-p3"><div class="phase-num">03</div><div class="phase-text"><strong>Implement</strong> — Click-based CLI</div></div>
+      <div class="phase-item" id="s5-p4"><div class="phase-num">04</div><div class="phase-text"><strong>Test</strong> — 2,330+ auto-generated tests</div></div>
+      <div class="phase-item" id="s5-p5"><div class="phase-num">05</div><div class="phase-text"><strong>Document</strong> — SKILL.md + --help</div></div>
+      <div class="phase-item" id="s5-p6"><div class="phase-num">06</div><div class="phase-text"><strong>Publish</strong> — installable Python package</div></div>
+      <div class="phase-item" id="s5-p7"><div class="phase-num">07</div><div class="phase-text"><strong>Verify</strong> — 100% pass rate</div></div>
+    </div>
+
+    <!-- Right: Terminal -->
+    <div style="flex:1.2;">
+      <div class="terminal" id="s5-term">
+        <div class="terminal-bar">
+          <div class="terminal-dot dot-r"></div>
+          <div class="terminal-dot dot-y"></div>
+          <div class="terminal-dot dot-g"></div>
+          <div class="terminal-title">cli-anything — bash</div>
+        </div>
+        <div class="terminal-body">
+          <div id="s5-t1"><span class="t-prompt">$ </span><span class="t-cmd">cli-anything generate</span> <span class="t-arg">blender</span></div>
+          <div id="s5-t2" style="opacity:0;"><span class="t-out">→ Analyzing source…</span></div>
+          <div id="s5-t3" style="opacity:0;"><span class="t-out">→ Designing CLI interface…</span></div>
+          <div id="s5-t4" style="opacity:0;"><span class="t-out">→ Generating Click commands…</span></div>
+          <div id="s5-t5" style="opacity:0;"><span class="t-out">→ Running 2330 tests… </span><span class="t-ok">PASS</span></div>
+          <div id="s5-t6" style="opacity:0;"><span class="t-out">→ Publishing package…</span></div>
+          <div id="s5-t7" style="opacity:0;"><span class="t-ok">✓ blender-cli 1.0.0 ready</span> <span class="cursor"></span></div>
+        </div>
+      </div>
+
+      <div id="s5-stat" style="margin-top:28px;display:flex;gap:24px;opacity:0;">
+        <div class="badge badge-cyan">2,330+ Tests</div>
+        <div class="badge badge-amber">100% Pass Rate</div>
+        <div class="badge badge-violet">18+ Apps</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════
+       SCENE 6  (20.0 – 24.5s)
+       App grid — GIMP, Blender, LibreOffice, etc.
+       ══════════════════════════════════════════════ -->
+  <div class="scene clip" id="scene-6"
+    data-start="20" data-duration="4.5" data-track-index="0"
+    style="visibility:hidden;">
+
+    <div class="kicker" id="s6-kicker">Supported Applications</div>
+
+    <div id="s6-head" class="headline" style="font-size:64px;margin-bottom:36px;">
+      <span class="hl hl-violet">18+ Professional Apps</span> — All Agent-Native
+    </div>
+
+    <div class="app-grid" id="s6-grid">
+      <div class="app-card" id="s6-a1"><div class="app-icon">🎨</div><div class="app-name">GIMP</div><div class="app-label">Image Editor</div></div>
+      <div class="app-card" id="s6-a2"><div class="app-icon">🦾</div><div class="app-name">Blender</div><div class="app-label">3D Rendering</div></div>
+      <div class="app-card" id="s6-a3"><div class="app-icon">📄</div><div class="app-name">LibreOffice</div><div class="app-label">Office Suite</div></div>
+      <div class="app-card" id="s6-a4"><div class="app-icon">🎙</div><div class="app-name">Audacity</div><div class="app-label">Audio Editor</div></div>
+      <div class="app-card" id="s6-a5"><div class="app-icon">📹</div><div class="app-name">OBS Studio</div><div class="app-label">Video Capture</div></div>
+      <div class="app-card" id="s6-a6"><div class="app-icon">🎮</div><div class="app-name">Godot</div><div class="app-label">Game Engine</div></div>
+      <div class="app-card" id="s6-a7"><div class="app-icon">📹</div><div class="app-name">Zoom</div><div class="app-label">Video Conf.</div></div>
+      <div class="app-card" id="s6-a8" style="border-color:rgba(34,211,238,0.4);background:rgba(34,211,238,0.05);">
+        <div class="app-icon" style="font-size:36px;">+11</div>
+        <div class="app-name" style="color:var(--cyan);">And More</div>
+        <div class="app-label">Growing Fast</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════
+       SCENE 7  (24.5 – 29.5s)
+       GitHub proof card + integrations
+       ══════════════════════════════════════════════ -->
+  <div class="scene clip" id="scene-7"
+    data-start="24.5" data-duration="5" data-track-index="0"
+    style="visibility:hidden; flex-direction:row; gap:80px; align-items:flex-start; padding-top:120px;">
+
+    <!-- Left: GitHub card -->
+    <div style="flex:1.2;">
+      <div class="kicker" id="s7-kicker">The Numbers Don't Lie</div>
+      <div class="gh-card" id="s7-card">
+        <div class="gh-card-header">
+          <div class="gh-icon">⬡</div>
+          <div>
+            <div class="gh-repo-name">HKUDS / CLI-Anything</div>
+            <div style="font-family:var(--mono);font-size:18px;color:var(--muted);margin-top:4px;">Public · Open Source</div>
+          </div>
+          <div class="badge badge-cyan" style="margin-left:auto;font-size:18px;">MIT License</div>
+        </div>
+        <div class="gh-desc">"CLI-Anything: Making ALL Software Agent-Native"</div>
+        <div class="gh-stats">
+          <div class="gh-stat">
+            <span class="gh-stat-icon" style="color:var(--amber);">★</span>
+            <span class="gh-star-val" id="s7-star-count">0</span>
+          </div>
+          <div class="gh-stat">
+            <span class="gh-stat-icon" style="color:var(--muted);">⑂</span>
+            <span style="color:var(--muted);">2.4k</span>
+          </div>
+          <div class="gh-stat">
+            <div class="gh-lang-dot"></div>
+            <span class="gh-lang">Python</span>
+          </div>
+          <div class="gh-stat">
+            <span class="gh-stat-icon" style="color:var(--cyan);">↗</span>
+            <span style="color:var(--cyan);font-size:22px;">Trending #1</span>
+          </div>
+        </div>
+        <!-- Trend bars -->
+        <div class="gh-trend" id="s7-trend">
+          <div class="gh-trend-bar" style="height:8px;"></div>
+          <div class="gh-trend-bar" style="height:12px;"></div>
+          <div class="gh-trend-bar" style="height:18px;"></div>
+          <div class="gh-trend-bar" style="height:14px;"></div>
+          <div class="gh-trend-bar" style="height:22px;"></div>
+          <div class="gh-trend-bar" style="height:30px;"></div>
+          <div class="gh-trend-bar" style="height:28px;"></div>
+          <div class="gh-trend-bar" style="height:36px;"></div>
+          <div class="gh-trend-bar" style="height:40px;"></div>
+        </div>
+        <div style="font-family:var(--mono);font-size:20px;color:var(--muted);">
+          40k+ stars in <span style="color:var(--amber);font-weight:700;">75 days</span> — fastest rising AI agent tool of 2025
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Integrations -->
+    <div style="flex:0.9;display:flex;flex-direction:column;gap:24px;">
+      <div class="headline" id="s7-int-head" style="font-size:52px;">
+        Works with <span class="hl hl-cyan">every</span> agent ecosystem
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;" id="s7-ints">
+        <div class="int-label" id="s7-i1" style="position:relative;"><div class="int-dot"></div>Claude Code</div>
+        <div class="int-label" id="s7-i2" style="position:relative;"><div class="int-dot" style="background:var(--violet);"></div>GitHub Copilot CLI</div>
+        <div class="int-label" id="s7-i3" style="position:relative;"><div class="int-dot" style="background:var(--amber);"></div>OpenCode</div>
+        <div class="int-label" id="s7-i4" style="position:relative;"><div class="int-dot" style="background:var(--coral);"></div>OpenAI Codex</div>
+        <div class="int-label" id="s7-i5" style="position:relative;"><div class="int-dot" style="background:#22C55E;"></div>Gemini CLI</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════
+       SCENE 8  (29.5 – 33.0s)
+       End card
+       ══════════════════════════════════════════════ -->
+  <div class="scene clip" id="scene-8"
+    data-start="29.5" data-duration="3.5" data-track-index="0"
+    style="visibility:hidden;">
+
+    <div id="s8-pre" style="font-family:var(--mono);font-size:24px;letter-spacing:0.4em;text-transform:uppercase;color:var(--muted);margin-bottom:24px;">
+      The verdict is in
+    </div>
+
+    <div id="s8-main" style="font-size:110px;font-weight:900;line-height:1.0;max-width:1400px;letter-spacing:-2px;">
+      The Future Is
+    </div>
+    <div id="s8-accent" style="font-size:110px;font-weight:900;line-height:1.0;color:var(--cyan);text-shadow:0 0 80px rgba(34,211,238,0.5);">
+      CLI-Native.
+    </div>
+
+    <div id="s8-proof" style="margin-top:40px;display:flex;align-items:center;gap:24px;">
+      <div class="badge badge-cyan" id="s8-b1">★ 40,000 Stars</div>
+      <div class="badge badge-amber" id="s8-b2">⚡ 75 Days</div>
+      <div class="badge badge-violet" id="s8-b3">⬡ HKUDS/CLI-Anything</div>
+    </div>
+
+    <div id="s8-url" style="margin-top:32px;font-family:var(--mono);font-size:28px;color:var(--muted);">
+      github.com/<span style="color:var(--cyan);">HKUDS</span>/CLI-Anything
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════
+       GSAP TIMELINE
+       ══════════════════════════════════════════════ -->
+  <script>
+    window.__timelines = window.__timelines || {};
+    var tl = gsap.timeline({ paused: true });
+
+    /* ── Persistent ambient orb motion ── */
+    tl.to("#orb-cyan",   { x: 250, y: -80, duration: 33, ease: "sine.inOut" }, 0);
+    tl.to("#orb-violet", { x: -200, y: 120, duration: 33, ease: "sine.inOut" }, 0);
+
+    /* ═══════════════════════════════════════════
+       SCENE 1  (0 → 3.5s)  Hook
+    ═══════════════════════════════════════════ */
+    tl.from("#s1-eyebrow", { y: 20, autoAlpha: 0, duration: 0.4, ease: "power3.out" }, 0.2);
+    tl.from("#s1-main",    { y: 60, autoAlpha: 0, duration: 0.55, ease: "expo.out" }, 0.4);
+    tl.from("#s1-hl1",     { scaleX: 0, transformOrigin: "left", autoAlpha: 0, duration: 0.45, ease: "expo.out" }, 0.6);
+    tl.from("#s1-main2",   { y: 60, autoAlpha: 0, duration: 0.55, ease: "expo.out" }, 0.7);
+    tl.from("#s1-hl2",     { scaleX: 0, transformOrigin: "left", autoAlpha: 0, duration: 0.45, ease: "expo.out" }, 0.9);
+    tl.from("#s1-main3",   { y: 60, autoAlpha: 0, duration: 0.55, ease: "expo.out" }, 1.1);
+    tl.from("#s1-pill1",   { scale: 0.7, autoAlpha: 0, duration: 0.35, ease: "back.out(1.7)" }, 1.5);
+    tl.from("#s1-pill2",   { scale: 0.7, autoAlpha: 0, duration: 0.35, ease: "back.out(1.7)" }, 1.7);
+    tl.from("#s1-pill3",   { scale: 0.7, autoAlpha: 0, duration: 0.35, ease: "back.out(1.7)" }, 1.9);
+
+    /* ═══════════════════════════════════════════
+       SCENE 2  (3.5 → 7.5s)  Stat explosion
+    ═══════════════════════════════════════════ */
+    tl.set("#scene-2", { autoAlpha: 1 }, 3.5);
+    tl.set("#scene-1", { autoAlpha: 0 }, 3.5);
+
+    tl.from("#s2-kicker1", { y: 20, autoAlpha: 0, duration: 0.35, ease: "power3.out" }, 3.7);
+    tl.from("#s2-kicker2", { y: 20, autoAlpha: 0, duration: 0.35, ease: "power3.out" }, 3.7);
+
+    /* Stars count-up: 0 → 40600 */
+    var starObj = { v: 0 };
+    tl.to(starObj, {
+      v: 40600, duration: 2.0, ease: "power2.out",
+      onUpdate: function() {
+        var el = document.getElementById("s2-stars");
+        if (el) el.textContent = Math.round(starObj.v).toLocaleString();
+      }
+    }, 3.9);
+    tl.from("#s2-stars",  { scale: 0.4, autoAlpha: 0, duration: 0.5, ease: "expo.out" }, 3.9);
+    tl.from("#s2-label1", { y: 20, autoAlpha: 0, duration: 0.35, ease: "power3.out" }, 4.2);
+
+    /* Amber glow pulse on impact */
+    tl.to("#orb-amber",  { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" }, 3.9);
+    tl.fromTo("#s2-glow", { scale: 0 }, { scale: 1, duration: 0.6, ease: "back.out(1.7)" }, 3.9);
+    tl.to("#orb-amber",  { opacity: 0.4, duration: 1.0, ease: "sine.inOut" }, 4.4);
+
+    /* Days count-up: 0 → 75 */
+    var dayObj = { v: 0 };
+    tl.to(dayObj, {
+      v: 75, duration: 1.5, ease: "power2.out",
+      onUpdate: function() {
+        var el = document.getElementById("s2-days");
+        if (el) el.textContent = Math.round(dayObj.v);
+      }
+    }, 4.5);
+    tl.from("#s2-days",  { scale: 0.4, autoAlpha: 0, duration: 0.5, ease: "expo.out" }, 4.5);
+    tl.from("#s2-label2",{ y: 20, autoAlpha: 0, duration: 0.35, ease: "power3.out" }, 4.8);
+
+    tl.to("#s2-mid", { autoAlpha: 1, duration: 0.5, ease: "power2.out" }, 4.0);
+
+    /* ═══════════════════════════════════════════
+       SCENE 3  (7.5 → 11.5s)  Product reveal
+    ═══════════════════════════════════════════ */
+    tl.set("#scene-3", { autoAlpha: 1 }, 7.5);
+    tl.set("#scene-2", { autoAlpha: 0 }, 7.5);
+    tl.to("#orb-amber", { opacity: 0, duration: 0.4 }, 7.5);
+
+    tl.from("#s3-kicker",  { y: 20, autoAlpha: 0, duration: 0.3, ease: "power3.out" }, 7.7);
+    tl.from("#s3-name",    { y: 80, autoAlpha: 0, duration: 0.6, ease: "expo.out" }, 7.9);
+    /* Cyan orb swell on name reveal */
+    tl.to("#orb-cyan", { scale: 1.6, duration: 0.6, ease: "power2.out" }, 7.9);
+    tl.to("#orb-cyan", { scale: 1.0, duration: 1.0, ease: "power2.in"  }, 8.5);
+
+    tl.from("#s3-tagline", { y: 40, autoAlpha: 0, duration: 0.5, ease: "power3.out" }, 8.6);
+    tl.from("#s3-hl1",     { scaleX: 0, transformOrigin: "left", autoAlpha: 0, duration: 0.45, ease: "expo.out" }, 8.9);
+    tl.to("#s3-div",       { width: 500, duration: 0.5, ease: "power3.out" }, 9.4);
+    tl.from("#s3-b1",  { scale: 0.7, autoAlpha: 0, duration: 0.3, ease: "back.out(1.7)" }, 9.6);
+    tl.from("#s3-b2",  { scale: 0.7, autoAlpha: 0, duration: 0.3, ease: "back.out(1.7)" }, 9.8);
+    tl.from("#s3-b3",  { scale: 0.7, autoAlpha: 0, duration: 0.3, ease: "back.out(1.7)" }, 10.0);
+    tl.from("#s3-b4",  { scale: 0.7, autoAlpha: 0, duration: 0.3, ease: "back.out(1.7)" }, 10.2);
+    tl.from("#s3-sub", { y: 20, autoAlpha: 0, duration: 0.35, ease: "power2.out" }, 10.5);
+
+    /* ═══════════════════════════════════════════
+       SCENE 4  (11.5 → 15.5s)  Comparison
+    ═══════════════════════════════════════════ */
+    tl.set("#scene-4", { autoAlpha: 1 }, 11.5);
+    tl.set("#scene-3", { autoAlpha: 0 }, 11.5);
+
+    tl.from("#panel-bad",  { x: -80, autoAlpha: 0, duration: 0.5, ease: "expo.out" }, 11.7);
+    tl.from("#s4-b1", { y: 20, autoAlpha: 0, duration: 0.3, ease: "power2.out" }, 12.0);
+    tl.from("#s4-b2", { y: 20, autoAlpha: 0, duration: 0.3, ease: "power2.out" }, 12.2);
+    tl.from("#s4-b3", { y: 20, autoAlpha: 0, duration: 0.3, ease: "power2.out" }, 12.4);
+    tl.to("#orb-coral", { opacity: 1, duration: 0.5, ease: "power2.out" }, 11.7);
+    tl.from("#s4-arrow", { scale: 0, autoAlpha: 0, duration: 0.4, ease: "back.out(2)" }, 12.8);
+    tl.from("#panel-good", { x: 80, autoAlpha: 0, duration: 0.5, ease: "expo.out" }, 13.2);
+    tl.from("#s4-g1", { y: 20, autoAlpha: 0, duration: 0.3, ease: "power2.out" }, 13.5);
+    tl.from("#s4-g2", { y: 20, autoAlpha: 0, duration: 0.3, ease: "power2.out" }, 13.7);
+    tl.from("#s4-g3", { y: 20, autoAlpha: 0, duration: 0.3, ease: "power2.out" }, 13.9);
+    tl.to("#orb-coral", { opacity: 0, duration: 0.6, ease: "power2.in" }, 14.5);
+
+    /* ═══════════════════════════════════════════
+       SCENE 5  (15.5 → 20.0s)  Terminal pipeline
+    ═══════════════════════════════════════════ */
+    tl.set("#scene-5", { autoAlpha: 1 }, 15.5);
+    tl.set("#scene-4", { autoAlpha: 0 }, 15.5);
+
+    tl.from("#s5-kicker", { y: 20, autoAlpha: 0, duration: 0.3, ease: "power3.out" }, 15.7);
+    tl.from("#s5-head",   { y: 40, autoAlpha: 0, duration: 0.4, ease: "expo.out"   }, 15.9);
+    tl.from("#s5-p1", { x: -30, autoAlpha: 0, duration: 0.3, ease: "power2.out" }, 16.3);
+    tl.from("#s5-p2", { x: -30, autoAlpha: 0, duration: 0.3, ease: "power2.out" }, 16.5);
+    tl.from("#s5-p3", { x: -30, autoAlpha: 0, duration: 0.3, ease: "power2.out" }, 16.7);
+    tl.from("#s5-p4", { x: -30, autoAlpha: 0, duration: 0.3, ease: "power2.out" }, 16.9);
+    tl.from("#s5-p5", { x: -30, autoAlpha: 0, duration: 0.3, ease: "power2.out" }, 17.1);
+    tl.from("#s5-p6", { x: -30, autoAlpha: 0, duration: 0.3, ease: "power2.out" }, 17.3);
+    tl.from("#s5-p7", { x: -30, autoAlpha: 0, duration: 0.3, ease: "power2.out" }, 17.5);
+
+    tl.from("#s5-term", { x: 60, autoAlpha: 0, duration: 0.5, ease: "expo.out" }, 16.0);
+    tl.to("#s5-t2", { autoAlpha: 1, y: 0, duration: 0.25, ease: "power2.out" }, 16.6);
+    tl.to("#s5-t3", { autoAlpha: 1, y: 0, duration: 0.25, ease: "power2.out" }, 17.0);
+    tl.to("#s5-t4", { autoAlpha: 1, y: 0, duration: 0.25, ease: "power2.out" }, 17.4);
+    tl.to("#s5-t5", { autoAlpha: 1, y: 0, duration: 0.25, ease: "power2.out" }, 17.8);
+    tl.to("#s5-t6", { autoAlpha: 1, y: 0, duration: 0.25, ease: "power2.out" }, 18.2);
+    tl.to("#s5-t7", { autoAlpha: 1, y: 0, duration: 0.25, ease: "power2.out" }, 18.6);
+    tl.to("#s5-stat", { autoAlpha: 1, y: 0, duration: 0.4, ease: "power3.out" }, 19.0);
+
+    /* ═══════════════════════════════════════════
+       SCENE 6  (20.0 → 24.5s)  App grid
+    ═══════════════════════════════════════════ */
+    tl.set("#scene-6", { autoAlpha: 1 }, 20.0);
+    tl.set("#scene-5", { autoAlpha: 0 }, 20.0);
+
+    tl.from("#s6-kicker", { y: 20, autoAlpha: 0, duration: 0.3, ease: "power3.out" }, 20.2);
+    tl.from("#s6-head",   { y: 40, autoAlpha: 0, duration: 0.4, ease: "expo.out"   }, 20.4);
+    tl.from("#s6-a1", { y: 40, autoAlpha: 0, duration: 0.35, ease: "back.out(1.7)" }, 20.8);
+    tl.from("#s6-a2", { y: 40, autoAlpha: 0, duration: 0.35, ease: "back.out(1.7)" }, 21.0);
+    tl.from("#s6-a3", { y: 40, autoAlpha: 0, duration: 0.35, ease: "back.out(1.7)" }, 21.2);
+    tl.from("#s6-a4", { y: 40, autoAlpha: 0, duration: 0.35, ease: "back.out(1.7)" }, 21.4);
+    tl.from("#s6-a5", { y: 40, autoAlpha: 0, duration: 0.35, ease: "back.out(1.7)" }, 21.6);
+    tl.from("#s6-a6", { y: 40, autoAlpha: 0, duration: 0.35, ease: "back.out(1.7)" }, 21.8);
+    tl.from("#s6-a7", { y: 40, autoAlpha: 0, duration: 0.35, ease: "back.out(1.7)" }, 22.0);
+    tl.from("#s6-a8", { y: 40, autoAlpha: 0, scale: 0.8, duration: 0.5, ease: "back.out(1.7)" }, 22.3);
+
+    tl.to("#orb-violet", { scale: 1.5, duration: 0.8, ease: "power2.out" }, 20.8);
+    tl.to("#orb-violet", { scale: 1.0, duration: 1.2, ease: "power2.in"  }, 21.6);
+
+    /* ═══════════════════════════════════════════
+       SCENE 7  (24.5 → 29.5s)  GitHub proof
+    ═══════════════════════════════════════════ */
+    tl.set("#scene-7", { autoAlpha: 1 }, 24.5);
+    tl.set("#scene-6", { autoAlpha: 0 }, 24.5);
+
+    tl.from("#s7-kicker",   { y: 20, autoAlpha: 0, duration: 0.3, ease: "power3.out" }, 24.7);
+    tl.from("#s7-card",     { y: 50, autoAlpha: 0, duration: 0.55, ease: "expo.out"  }, 24.9);
+    tl.to("#orb-amber", { opacity: 1, duration: 0.5, ease: "power2.out" }, 24.9);
+
+    /* Star counter 0 → 40600 */
+    var ghStarObj = { v: 0 };
+    tl.to(ghStarObj, {
+      v: 40600, duration: 2.2, ease: "power3.out",
+      onUpdate: function() {
+        var el = document.getElementById("s7-star-count");
+        if (el) el.textContent = Math.round(ghStarObj.v).toLocaleString();
+      }
+    }, 25.2);
+
+    tl.from("#s7-trend",    { scaleX: 0, transformOrigin: "left", duration: 0.8, ease: "power2.out" }, 25.5);
+
+    tl.from("#s7-int-head", { x: 60, autoAlpha: 0, duration: 0.4, ease: "power3.out" }, 25.2);
+    tl.from("#s7-i1", { x: 40, autoAlpha: 0, duration: 0.3, ease: "power2.out" }, 25.6);
+    tl.from("#s7-i2", { x: 40, autoAlpha: 0, duration: 0.3, ease: "power2.out" }, 25.9);
+    tl.from("#s7-i3", { x: 40, autoAlpha: 0, duration: 0.3, ease: "power2.out" }, 26.2);
+    tl.from("#s7-i4", { x: 40, autoAlpha: 0, duration: 0.3, ease: "power2.out" }, 26.5);
+    tl.from("#s7-i5", { x: 40, autoAlpha: 0, duration: 0.3, ease: "power2.out" }, 26.8);
+
+    /* Amber orb breathing */
+    tl.to("#orb-amber", { scale: 1.3, duration: 1.5, ease: "sine.inOut", yoyo: true, repeat: 2 }, 25.5);
+
+    /* ═══════════════════════════════════════════
+       SCENE 8  (29.5 → 33.0s)  End card
+    ═══════════════════════════════════════════ */
+    tl.set("#scene-8", { autoAlpha: 1 }, 29.5);
+    tl.set("#scene-7", { autoAlpha: 0 }, 29.5);
+    tl.to("#orb-amber",  { opacity: 0, duration: 0.4 }, 29.5);
+    tl.to("#orb-cyan",   { scale: 1.8, duration: 3, ease: "sine.inOut" }, 29.5);
+
+    tl.from("#s8-pre",    { y: 20, autoAlpha: 0, duration: 0.35, ease: "power3.out" }, 29.7);
+    tl.from("#s8-main",   { y: 80, autoAlpha: 0, duration: 0.6,  ease: "expo.out" }, 29.9);
+    tl.from("#s8-accent", { y: 80, autoAlpha: 0, scale: 0.9, duration: 0.7, ease: "back.out(1.4)" }, 30.3);
+    /* Ken-Burns hold — starts after entry animation ends at 31.0 */
+    tl.to("#s8-accent", { scale: 1.03, duration: 2.0, ease: "none" }, 31.0);
+
+    tl.from("#s8-b1",  { scale: 0.7, autoAlpha: 0, duration: 0.3, ease: "back.out(1.7)" }, 31.0);
+    tl.from("#s8-b2",  { scale: 0.7, autoAlpha: 0, duration: 0.3, ease: "back.out(1.7)" }, 31.2);
+    tl.from("#s8-b3",  { scale: 0.7, autoAlpha: 0, duration: 0.3, ease: "back.out(1.7)" }, 31.4);
+    tl.from("#s8-proof",{ y: 30, autoAlpha: 0, duration: 0.4, ease: "power2.out" }, 31.0);
+    tl.from("#s8-url",  { y: 20, autoAlpha: 0, duration: 0.35, ease: "power2.out" }, 31.8);
+
+    /* Sentinel */
+    tl.set({}, {}, 33);
+
+    window.__timelines["cli-anything"] = tl;
+  </script>
+</div>
+</body>
+</html>

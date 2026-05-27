@@ -12,11 +12,113 @@ This repo contains multiple HyperFrames video compositions. Each sub-directory i
 
 1. **User gives**: a script (narration text, key points, CTAs) + zero or more links
 2. **Agent fetches every link** — do not skip any. Use WebFetch on each URL.
-3. **For each link, decide the visual treatment** (see table below)
-4. **Build a timing map**: map each script sentence/point to a scene + duration
-5. **Write the complete self-contained HTML** file following the HTML Rules section
-6. **Inline GSAP** from `main-video/assets/js/gsap.min.js` — never use CDN links
-7. **Verify** by reading back the output and confirming scene count + total duration
+3. **THINK FIRST — write a scene plan** (see Planning Phase below) before touching HTML
+4. **For each link, decide the visual treatment** (see table below)
+5. **Build a timing map**: map each script sentence/point to a scene + duration
+6. **Write the complete self-contained HTML** file following the HTML Rules section
+7. **Inline GSAP** from `main-video/assets/js/gsap.min.js` — never use CDN links
+8. **Verify** by reading back the output and confirming scene count + total duration
+
+---
+
+### Planning Phase (MANDATORY — do this before writing a single line of HTML)
+
+Before writing any HTML, answer every question in this checklist in plain text:
+
+**1. Scene list**
+Write one line per scene:
+```
+Scene 1 (0–6s):  Hook — what is the ONE thing the viewer must feel?
+Scene 2 (6–12s): Stat — what is the single most impressive number?
+Scene 3 (12–21s): Demo — what does the product actually DO?
+...
+```
+
+**2. Key phrase scan** — go through EVERY sentence of the script and mark:
+- Which 2–4 words per sentence are the MOST important?
+- Do any of those deserve a **highlight box** (pill span)?
+- Do any deserve their own full-screen stat explosion?
+- Is there a before/after contrast worth a split-panel?
+
+**3. Layout decision per scene** — for each scene choose ONE layout:
+```
+A) Hero (full-width headline, no card)
+B) Left text + Right card/stat
+C) Full-width stat explosion (big number centered)
+D) Split panel (two contrasting ideas side by side)
+E) Terminal / code block (left text + right terminal)
+F) Grid (multiple equal items)
+```
+
+**4. Highlight box budget** — rule: every scene should have 2–5 highlighted words/phrases using pill spans. Never leave a scene with only plain white text. Identify exactly which words get which color:
+- Cyan pill: primary feature names, action words
+- Violet pill: product names, model names
+- Amber pill: numbers, scores, dates, metrics
+- Coral pill: contrast words ("before", "broken", "old way")
+
+Only after completing this plan should you write the HTML.
+
+---
+
+### Highlight Box System (ALWAYS USE — never plain text only)
+
+Every headline and key sentence must have at least 2 highlighted words using pill spans. This is what makes the video look like the reference — not walls of plain text.
+
+**The four pill styles** (copy-paste these exactly):
+
+```html
+<!-- Cyan pill — features, actions, CTAs -->
+<span style="background:rgba(34,211,238,.15);border:1px solid rgba(34,211,238,.4);
+  border-radius:6px;padding:4px 14px;color:#22D3EE;white-space:nowrap">KEY WORD</span>
+
+<!-- Violet pill — product/model names -->
+<span style="background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.4);
+  border-radius:6px;padding:4px 14px;color:#8B5CF6;white-space:nowrap">MODEL NAME</span>
+
+<!-- Amber pill — numbers, scores, dates -->
+<span style="background:rgba(251,191,36,.15);border:1px solid rgba(251,191,36,.4);
+  border-radius:6px;padding:4px 14px;color:#FBBF24;white-space:nowrap">81.2</span>
+
+<!-- Coral pill — contrast/negative words -->
+<span style="background:rgba(251,113,133,.15);border:1px solid rgba(251,113,133,.4);
+  border-radius:6px;padding:4px 14px;color:#FB7185;white-space:nowrap">OLD WAY</span>
+```
+
+**Inline usage in headlines** (headline text breaks around pills naturally):
+```html
+<h2 style="font-family:'Inter',system-ui,sans-serif;font-size:64px;font-weight:900;
+  color:#F8FAFC;line-height:1.3;margin:0 0 28px;opacity:0">
+  Scored
+  <span style="background:rgba(251,191,36,.15);border:1px solid rgba(251,191,36,.4);
+    border-radius:6px;padding:4px 18px;color:#FBBF24">81.2</span>
+  on the AIME math test — a
+  <span style="background:rgba(34,211,238,.15);border:1px solid rgba(34,211,238,.4);
+    border-radius:6px;padding:4px 18px;color:#22D3EE">massive leap</span>
+  from the older model
+</h2>
+```
+
+**Floating badge row** — use at the top of scenes to establish context:
+```html
+<div id="s1-badges" style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:28px;opacity:0">
+  <div style="background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.3);
+    border-radius:8px;padding:10px 22px;font-family:'JetBrains Mono',monospace;
+    font-size:14px;color:#22D3EE;letter-spacing:2px">FREE FOR ALL USERS</div>
+  <div style="background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);
+    border-radius:8px;padding:10px 22px;font-family:'JetBrains Mono',monospace;
+    font-size:14px;color:#FBBF24;letter-spacing:2px">MAY 5, 2026</div>
+  <div style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.3);
+    border-radius:8px;padding:10px 22px;font-family:'JetBrains Mono',monospace;
+    font-size:14px;color:#8B5CF6;letter-spacing:2px">CHATGPT DEFAULT</div>
+</div>
+```
+
+**Checklist rule before submitting any scene:**
+- [ ] Every headline has ≥2 pill spans with actual script words
+- [ ] Every scene has a badge row OR inline pills — never neither
+- [ ] Numbers are always amber pills
+- [ ] Product/model names are always violet pills
+- [ ] The most important action word per scene is a cyan pill
 
 ### Link Type → Visual Treatment
 
